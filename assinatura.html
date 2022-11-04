@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="bootstrap-5.2.2-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <header class="container-fluid p-0">
+
+
+        <nav class="navbar bg-light navbar-expand-md py-3 box_shadow">
+            <div class="container-fluid">
+                <a class="navbar-brand ms-lg-5" href="index.html"><img src="img/icones/Bourbon.svg" alt=""></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="fs-5 navbar-nav ms-auto mb-2 mb-lg-0 me-5">
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Nossos Cafés
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Café do Brasil</a></li>
+                                <li><a class="dropdown-item" href="#">Café Cubano</a></li>
+                                <li><a class="dropdown-item" href="#">Café Papua Nova Guiné</a></li>
+                                <li><a class="dropdown-item" href="#">Café Colombiano (Medellin)</a></li>
+
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="assinatura.html">Assinatura</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contato.html">Contato</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="fs-5 btn btn-outline-primary " href="inscreva.html">Inscreva-se</a>
+                            <!-- <button type="button" class="btn btn-outline-primary">Login</button> -->
+
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="container">
+        <div class="text-center my-5">
+            <span class="h6 d-block">NÃO FIQUE SEM CAFÉ</span>
+            <h1 class="display-4 text-primary">Escolha um Plano de Assinatura</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-5">
+                <div class="bg-light rounded p-4 box_shadow">
+                    <div class="row align-items-center">
+                        <h1 class="col">Mensal</h1>
+
+                    </div>
+
+                    <ul class="list-unstyled text-muted separacao_lista">
+                        <li>1kg café</li>
+                        <li>Em grãos ou moido</li>
+                        <li>Seleciona quais cafés</li>
+                        <li>Frete Grátis</li>
+                    </ul>
+
+                    <form>
+                        <div class="form-group">
+                            <select class="form-control mb-2 bg-light" id="inputMensal" onChange="update()">
+                                <option value="0" selected>Selecione Grãos ou Moído</option>
+                                <option value="1">GRÃOS</option>
+                                <option value="2">MOÍDO</option>
+
+                            </select>
+                            <select id="moido_tipo" class="form-control hide mb-2 bg-light">
+                                <option>Qual tipo de preparo</option>
+                                <option value="expresso">Expresso</option>
+                                <option value="coado">Coado</option>
+                                <option value="moka">Moka</option>
+                                <option value="aeropress">Aeropress</option>
+                                <option value="frenchPress">French Press</option>
+                            </select>
+                            <select id="input_Mensal" class="form-control mb-2 bg-light">
+                                <option>Selecione o tipo de café</option>
+                                <option value="1">Café do Brasil</option>
+                                <option value="2">Café Cubano</option>
+                                <option value="1">Café Papua Nova Guiné</option>
+                                <option value="2">Café Colombiano (Medellin)</option>
+                            </select>
+                        </div>
+                        <div class="row align-items-center mx-1">
+                            <a href="" class="col btn btn-primary">Assinar Plano</a>
+                        </div>
+                        <h3 class="col card-title pricing-card-title text-center">R$90<small class="text-muted fw-light">/mês</small></h3>
+                    </form>
+
+                </div>
+            </div>
+
+
+            <div class="col-md-4 mb-5 order-first order-lg-1">
+                <div class="bg-dark text-light rounded p-4 box_shadow">
+                    <div class="row align-items-center">
+                        <h1 class="col">Coffee <span class="badge bg-danger">Lovers</span></h1>
+
+                    </div>
+
+                    <ul class="list-unstyled text-muted separacao_lista">
+                        <li>1kg cafés</li>
+                        <li>500g café surpresa</li>
+                        <li>Em grãos ou moido</li>
+                        <li>Seleciona quais cafés</li>
+                        <li>Frete Grátis</li>
+                    </ul>
+
+                    <form>
+                        <div class="form-group">
+                            <select class="form-control mb-2 bg-dark text-light " id="inputMensal" onChange="update()">
+                                <option value="0" selected>Selecione Grãos ou Moído</option>
+                                <option value="1">GRÃOS</option>
+                                <option value="2">MOÍDO</option>
+
+                            </select>
+                            <select id="moido_tipo" class="form-control hide mb-2 bg-dark text-light ">
+                                <option>Qual tipo de preparo</option>
+                                <option value="expresso">Expresso</option>
+                                <option value="coado">Coado</option>
+                                <option value="moka">Moka</option>
+                                <option value="aeropress">Aeropress</option>
+                                <option value="frenchPress">French Press</option>
+                            </select>
+                            <select id="input_Mensal" class="form-control mb-2 bg-dark text-light ">
+                                <option>Selecione o tipo de café</option>
+                                <option value="1">Café do Brasil</option>
+                                <option value="2">Café Cubano</option>
+                                <option value="1">Café Papua Nova Guiné</option>
+                                <option value="2">Café Colombiano (Medellin)</option>
+                            </select>
+                        </div>
+
+                        <div class="row align-items-center mx-1">
+                            <a href="" class="col btn btn-warning">Assinar Plano</a>
+                        </div>
+                        <h3 class="col card-title pricing-card-title text-center">R$120<small class="text-muted fw-light">/mês</small></h3>
+                    </form>
+
+
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4 mb-5 order-lg-2">
+                <div class="bg-light rounded p-4 box_shadow">
+                    <div class="row align-items-center">
+                        <h1 class="col">Trimestral</h1>
+                    </div>
+
+                    <ul class="list-unstyled text-muted separacao_lista">
+                        <li>3.5kg cafés</li>
+                        <li>Em grãos ou moido</li>
+                        <li>Seleciona quais cafés</li>
+                        <li>Frete Grátis</li>
+                    </ul>
+
+                    <form>
+                        <div class="form-group">
+                            <select class="form-control mb-2 bg-light" id="inputMensal" onChange="update()">
+                                <option value="0" selected>Selecione Grãos ou Moído</option>
+                                <option value="1">GRÃOS</option>
+                                <option value="2">MOÍDO</option>
+
+                            </select>
+                            <select id="moido_tipo" class="form-control hide mb-2 bg-light">
+                                <option>Qual tipo de preparo</option>
+                                <option value="expresso">Expresso</option>
+                                <option value="coado">Coado</option>
+                                <option value="moka">Moka</option>
+                                <option value="aeropress">Aeropress</option>
+                                <option value="frenchPress">French Press</option>
+                            </select>
+                            <select id="input_Mensal" class="form-control mb-2 bg-light">
+                                <option>Selecione o tipo de café</option>
+                                <option value="1">Café do Brasil</option>
+                                <option value="2">Café Cubano</option>
+                                <option value="1">Café Papua Nova Guiné</option>
+                                <option value="2">Café Colombiano (Medellin)</option>
+                            </select>
+                        </div>
+                        <div class="row align-items-center mx-1">
+                            <a href="" class="col btn btn-primary">Assinar Plano</a>
+                        </div>
+                        <h3 class="col card-title pricing-card-title text-center">R$270<small class="text-muted fw-light">/tri</small></h3>
+                    </form>
+
+                </div>
+            </div>
+
+
+        </div>
+
+    </section>
+
+    </nav>
+    <main class="assin">
+
+
+
+        <section class="bg-dark py-5">
+            <div class="container text-light">
+
+                <div class="my-5">
+                    <span class="h6 d-block">EM GRÃOS OU MOÍDO</span>
+                    <h2 class="display-4 ">Enviamos em Grãos ou Podemos Moer</h2>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-4 col-md-6">
+                        <div class="mb-2">
+                            <img src="img/icones/graos.svg" alt="">
+                        </div>
+                        <h3>EM GRÃOS</h3>
+                        <p>Esse é o melhor modo de apreciar o café, você pode moer do jeito que quiser. Aprecie!</p>
+                    </div>
+                    <div class="col-xl-4 col-md-6">
+                        <div class="mb-2">
+                            <img src="img/icones/express.svg" alt="">
+                        </div>
+                        <h3>EXPRESSO</h3>
+                        <p>Se o expresso é sua bebida favorita, enviamos já moído para você. Dizem que o expresso é o néctar do café</p>
+                    </div>
+                    <div class="col-xl-4 col-md-6">
+                        <div class="mb-2">
+                            <img src="img/icones/hario.svg" alt="">
+                        </div>
+                        <h3>COADO</h3>
+                        <p>Muitos tomam café coado, e para falar a verdade... com pão quentinho, hum...</p>
+                    </div>
+                    <div class="col-xl-4 col-md-6">
+                        <div class="mb-2">
+                            <img src="img/icones/moka.svg" alt="">
+                        </div>
+                        <h3>MOKA</h3>
+                        <p>Moka, muito usado na Italia, mas bastante apreciado pelo mundo. Para nós sem problema.</p>
+                    </div>
+                    <div class=" col-xl-4 col-md-6">
+                        <div class="mb-2">
+                            <img src="img/icones/french.svg" alt="">
+                        </div>
+                        <h3>FRENCH PRESS</h3>
+                        <p>Fica super saboso, para apreciar com calma, lendo um bom livro... apreciando a chuva...</p>
+                    </div>
+                    <div class="col-xl-4 col-md-6">
+                        <div class="mb-2">
+                            <img src="img/icones/aeropress.svg" alt="">
+                        </div>
+                        <h3>AEROPRESS</h3>
+                        <p>Quer dizer que você é moderno! Podemos moer de forma correta para apreciar com modernidade.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+
+        <footer class="bg-dark text-white">
+            <div class="container py-5">
+                <div class="row py-5">
+                    <div class="col-md-3">
+                        <h4 class="h6">PÁGINAS</h4>
+                        <ul class="list-unstyled">
+                            <li><a href="assinatura.html">Assinatura</a></li>
+                            <li><a href="contato.html">Contato</a></li>
+                            <li><a href="inscricao.html">Inscreva-se</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-3">
+                        <h4 class="h6">PRODUTOS</h4>
+                        <ul class="list-unstyled">
+                            <li><a href="cafes.html">Cafés</a></li>
+                            <li><a href="acessórios.html">Acessórios</a></li>
+                        </ul>
+
+                    </div>
+                    <div class="col-md-4">
+                        <h4 class="h6">DADOS DE CONTATO</h4>
+                        <ul class="list-unstyled text-secondary">
+                            <li>contato@bourboncafes.com</li>
+                            <li>11 99999-9999</li>
+                            <li>Seg à Sex das 8hs às 18hs</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-2">
+                        <h4>REDES SOCIAIS</h4>
+                        <ul class="d-flex justify-content-md-between list-unstyled">
+                            <li><a href="btn"><img src="img/icones/instagram.svg" alt=""></a></li>
+                            <li><a href="btn"><img src="img/icones/facebook.svg" alt=""></a></li>
+                            <li><a href="btn"><img src="img/icones/twitter.svg" alt=""></a></li>
+                            <li><a href="btn"><img src="img/icones/youtube.svg" alt=""></a></li>
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="bg-primary text-center py-3">
+                <p class="mb-0">Bourbon &copy; 2022. Alugns direitos reservados</p>
+            </div>
+
+        </footer>
+    </main>
+
+    <script src="js/script.js"></script>
+    <script src="bootstrap-5.2.2-dist/js/popper.min.js"></script>
+    <script src="bootstrap-5.2.2-dist/js/bootstrap.js"></script>
+</body>
+
+</html>

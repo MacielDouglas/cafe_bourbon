@@ -1,0 +1,64 @@
+a {
+  text-decoration: none;
+}
+.dropdown:hover > .dropdown-menu {
+  display: block;
+}
+
+.bg_carousel {
+  background: linear-gradient(to right, #fff 30%, #212529 0%);
+}
+
+@media (max-width: 1000px) {
+  .bg_carousel {
+    background: #212529;
+  }
+}
+
+.card {
+  margin-top: -20px;
+}
+
+.btn_cafe {
+  align-self: flex-end;
+}
+
+.card_graos div + div {
+  margin-bottom: 24px;
+}
+
+#home_quote {
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+    url("/img/cafe_rosquinha.jpg") center center;
+  background-size: cover;
+}
+
+@media (max-width: 767px) {
+  #home_quote .diplay-4 {
+    font-size: 2.5rem;
+  }
+}
+
+footer {
+  margin-top: -16px;
+}
+
+.assin {
+  background-image: url("/img/expresso.jpg");
+}
+
+.box_shadow {
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.05);
+}
+
+.separacao_lista li + li {
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+.separacao_lista li {
+  padding: 1rem;
+}
+
+.hide {
+  display: none;
+}
