@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bourbon - Café Cubano</title>
+    <link rel="stylesheet" href="bootstrap-5.2.2-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <header class="container-fluid p-0">
+
+
+        <nav class="navbar bg-light navbar-expand-md py-3 box_shadow">
+            <div class="container-fluid">
+                <a class="navbar-brand ms-lg-5" href="index.html"><img src="img/icones/Bourbon.svg" alt=""></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="fs-5 navbar-nav ms-auto mb-2 mb-lg-0 me-5">
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Nossos Cafés
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="cafebrasil.html">Café do Brasil</a></li>
+                                <li><a class="dropdown-item" href="cafecubano.html">Café Cubano</a></li>
+                                <li><a class="dropdown-item" href="cafepapua.html">Café Papua Nova Guiné</a></li>
+                                <li><a class="dropdown-item" href="cafecolombia.html">Café Colombiano (Medellin)</a></li>
+
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="assinatura.html">Assinatura</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contato.html">Contato</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="fs-5 btn btn-outline-primary " href="inscreva.html">Inscreva-se</a>
+                            <!-- <button type="button" class="btn btn-outline-primary">Login</button> -->
+
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="assin">
+        <section class="container-fluid bg-dark">
+            <div class="container text-light py-5">
+                <span class=" h6 d-block">NOSSOS CAFÉS</span>
+                <h1 class="display-4">Esperimente Café Cubano</h1>
+            </div>
+            <div class="container-fluid bg-dark row">
+                <div class="col-md mb-5">
+                    <div class="bg-white rounded p-5 box_shadow">
+                        <div class="row text-center">
+                            <h1 class="col py-3">Café Cubano</h1>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-6 col-md-6 mb-3">
+                                <div>
+                                    <img class="card-img-top img-fluid" src="img/CafeCubano.jpg" width="318" height="400" alt="Cafe Cubano">
+                                </div>
+
+                                <!-- <div class="card" style="width: 28rem; height: 14rem;"> -->
+
+                            </div>
+                            <div class="card bg-light mb-3 py-3 col-xl-6 col-md-6 d-flex align-items-center justify-content-md-center">
+                                <div class="d-flex flex-column align-items-center justify-content-md-center">
+
+                                    <div class="card-body ">
+                                        <h5 class="card-title">CAFÉ CUBANO</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">Excusividade caribenha</h6>
+                                        <p class="card-text">Esse é um café exclusivo, dificíl de consegui.
+                                            Sabor: corpo macio, acidez cítrica elegante.
+                                            Cheiro: caramelo, frutas negras, rapadura, chá preto.
+                                        </p>
+
+                                    </div>
+
+                                    <form class="bg-light col-xl-6 col-md-6">
+                                        <div class="form-group">
+                                            <select class="form-control mb-2 bg-light" id="inputMensal" onChange="update()">
+                                                <option value="0" selected>Selecione Grãos ou Moído</option>
+                                                <option value="1">GRÃOS</option>
+                                                <option value="2">MOÍDO</option>
+
+                                            </select>
+                                            <select id="moido_tipo" class="form-control hide mb-2 bg-light">
+                                                <option>Qual tipo de preparo</option>
+                                                <option value="expresso">Expresso</option>
+                                                <option value="coado">Coado</option>
+                                                <option value="moka">Moka</option>
+                                                <option value="aeropress">Aeropress</option>
+                                                <option value="frenchPress">French Press</option>
+                                            </select>
+                                            <select id="input_Mensal" class="form-control mb-2 bg-light">
+                                                <option>Quantiade</option>
+                                                <option value="1">250g R$ 20,00</option>
+                                                <option value="2">500g R$ 38,00</option>
+                                                <option value="1">1kg R$ 72,00</option>
+                                            </select>
+                                        </div>
+                                        <div class="row align-items-center mx-1">
+                                            <a href="#" class="btn btn-warning btn_cafe">Comprar</a>
+
+                                        </div>
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+            <section class="container py-5">
+                <div class="my-5 text-light text-center">
+                    <span class="h6 d-block">CONHEÇA NOSSO OUTROS CAFÉS</span>
+                    <h2 class="display-4 ">Esperimente Também</h2>
+                </div>
+
+                <div class="row card_graos">
+
+                    <div class="col-xl-4 col-md-4 d-flex flex-column align-items-center">
+                        <img class="card-img-top img-fluid" src="img/CafedoBrasil.jpg" width="318" height="400 alt=" Cafe do Brasil">
+                        <!-- <div class="card" style="width: 28rem; height: 14rem;"> -->
+                        <div class="card card_index">
+                            <div class="card-body">
+                                <h5 class="card-title">CAFÉ DO BRASIL</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Nosso carro chefe</h6>
+                                <p class="card-text">Esse é o mais vendido.<br>
+                                    Sabor: doçura alta, corpo aveludado, acidez cítrica.<br>
+                                    Cheiro: pitanga, chá preto, curau de milho, chocolate.
+                                </p>
+                                <a href="cafebrasil.html" class="btn btn-warning btn_cafe">SAIBA MAIS</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-md-4  d-flex flex-column align-items-center">
+                        <img class="card-img-top img-fluid" src="img/CafePapua.jpg" width="318" height="400" alt=" Cafe do Brasil">
+                        <!-- <div class="card" style="width: 28rem; height: 14rem;"> -->
+                        <div class="card card_index">
+                            <div class="card-body">
+                                <h5 class="card-title">CAFÉ PAPPUA NOVA GUINE</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Café asiatico</h6>
+                                <p class="card-text">Aroma rico e vibrante que combina o sabor frutado às notas profundas da torra.<br>
+                                    Sabor: adocicado, corpo leve.<br>
+                                    Cheiro: framboesa, pêssego, frutas frescas, amendoas.
+                                </p>
+                                <a href="cafepapua.html" class="btn btn-warning">SAIBA MAIS</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-md-4 d-flex flex-column align-items-center">
+                        <img class="card-img-top img-fluid" src="img/cafe_colombiano.jpg" width="318" height="400 alt=" Cafe do Brasil">
+                        <!-- <div class="card" style="width: 28rem; height: 14rem;"> -->
+                        <div class="card card_index">
+                            <div class="card-body">
+                                <h5 class="card-title">CAFÉ COLOMBIANO (MEDELLIN)</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Tem gosto de quero mais</h6>
+                                <p class="card-text">Saboroso, requintado.<br>
+                                    Sabor: acidez cítrica e málica, doçura de melado e corpo macio.<br>
+                                    Cheiro: frutas amarelas, tangerina, nozes, especiarias.
+                                </p>
+                                <a href="cafecolombia.html" class="btn btn-warning">SAIBA MAIS</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+
+
+
+            <section class="bg-dark py-5">
+                <div class="container text-light">
+
+                    <div class="my-5">
+                        <span class="h6 d-block">EM GRÃOS OU MOÍDO</span>
+                        <h2 class="display-4 ">Enviamos em Grãos ou Podemos Moer</h2>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-4 col-md-6">
+                            <div class="mb-2">
+                                <img src="img/icones/graos.svg" alt="">
+                            </div>
+                            <h3>EM GRÃOS</h3>
+                            <p>Esse é o melhor modo de apreciar o café, você pode moer do jeito que quiser. Aprecie!</p>
+                        </div>
+                        <div class="col-xl-4 col-md-6">
+                            <div class="mb-2">
+                                <img src="img/icones/express.svg" alt="">
+                            </div>
+                            <h3>EXPRESSO</h3>
+                            <p>Se o expresso é sua bebida favorita, enviamos já moído para você. Dizem que o expresso é o néctar do café</p>
+                        </div>
+                        <div class="col-xl-4 col-md-6">
+                            <div class="mb-2">
+                                <img src="img/icones/hario.svg" alt="">
+                            </div>
+                            <h3>COADO</h3>
+                            <p>Muitos tomam café coado, e para falar a verdade... com pão quentinho, hum...</p>
+                        </div>
+                        <div class="col-xl-4 col-md-6">
+                            <div class="mb-2">
+                                <img src="img/icones/moka.svg" alt="">
+                            </div>
+                            <h3>MOKA</h3>
+                            <p>Moka, muito usado na Italia, mas bastante apreciado pelo mundo. Para nós sem problema.</p>
+                        </div>
+                        <div class=" col-xl-4 col-md-6">
+                            <div class="mb-2">
+                                <img src="img/icones/french.svg" alt="">
+                            </div>
+                            <h3>FRENCH PRESS</h3>
+                            <p>Fica super saboso, para apreciar com calma, lendo um bom livro... apreciando a chuva...</p>
+                        </div>
+                        <div class="col-xl-4 col-md-6">
+                            <div class="mb-2">
+                                <img src="img/icones/aeropress.svg" alt="">
+                            </div>
+                            <h3>AEROPRESS</h3>
+                            <p>Quer dizer que você é moderno! Podemos moer de forma correta para apreciar com modernidade.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+
+
+            <footer class="bg-dark text-white">
+                <div class="container py-5">
+                    <div class="row py-5">
+                        <div class="col-md-3">
+                            <h4 class="h6">PÁGINAS</h4>
+                            <ul class="list-unstyled">
+                                <li><a href="assinatura.html">Assinatura</a></li>
+                                <li><a href="contato.html">Contato</a></li>
+                                <li><a href="inscricao.html">Inscreva-se</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="col-md-3">
+                            <h4 class="h6">PRODUTOS</h4>
+                            <ul class="list-unstyled">
+                                <li><a href="cafes.html">Cafés</a></li>
+                                <li><a href="acessórios.html">Acessórios</a></li>
+                            </ul>
+
+                        </div>
+                        <div class="col-md-4">
+                            <h4 class="h6">DADOS DE CONTATO</h4>
+                            <ul class="list-unstyled text-secondary">
+                                <li>contato@bourboncafes.com</li>
+                                <li>11 99999-9999</li>
+                                <li>Seg à Sex das 8hs às 18hs</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-2">
+                            <h4>REDES SOCIAIS</h4>
+                            <ul class="d-flex justify-content-md-between list-unstyled">
+                                <li><a href="btn"><img src="img/icones/instagram.svg" alt=""></a></li>
+                                <li><a href="btn"><img src="img/icones/facebook.svg" alt=""></a></li>
+                                <li><a href="btn"><img src="img/icones/twitter.svg" alt=""></a></li>
+                                <li><a href="btn"><img src="img/icones/youtube.svg" alt=""></a></li>
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="bg-primary text-center py-3">
+                    <p class="mb-0">Bourbon &copy; 2022. Alugns direitos reservados</p>
+                </div>
+
+            </footer>
+    </main>
+
+    <script src="js/script.js"></script>
+    <script src="bootstrap-5.2.2-dist/js/popper.min.js"></script>
+    <script src="bootstrap-5.2.2-dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>
