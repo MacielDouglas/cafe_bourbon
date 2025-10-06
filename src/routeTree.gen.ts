@@ -9,8 +9,44 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignInRouteImport } from './routes/signIn'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as CursosRouteImport } from './routes/cursos'
+import { Route as ComprasRouteImport } from './routes/compras'
+import { Route as CafesRouteImport } from './routes/cafes'
+import { Route as AssinaturaRouteImport } from './routes/assinatura'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SignInRoute = SignInRouteImport.update({
+  id: '/signIn',
+  path: '/signIn',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CursosRoute = CursosRouteImport.update({
+  id: '/cursos',
+  path: '/cursos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComprasRoute = ComprasRouteImport.update({
+  id: '/compras',
+  path: '/compras',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CafesRoute = CafesRouteImport.update({
+  id: '/cafes',
+  path: '/cafes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssinaturaRoute = AssinaturaRouteImport.update({
+  id: '/assinatura',
+  path: '/assinatura',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +55,116 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/assinatura': typeof AssinaturaRoute
+  '/cafes': typeof CafesRoute
+  '/compras': typeof ComprasRoute
+  '/cursos': typeof CursosRoute
+  '/login': typeof LoginRoute
+  '/signIn': typeof SignInRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/assinatura': typeof AssinaturaRoute
+  '/cafes': typeof CafesRoute
+  '/compras': typeof ComprasRoute
+  '/cursos': typeof CursosRoute
+  '/login': typeof LoginRoute
+  '/signIn': typeof SignInRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/assinatura': typeof AssinaturaRoute
+  '/cafes': typeof CafesRoute
+  '/compras': typeof ComprasRoute
+  '/cursos': typeof CursosRoute
+  '/login': typeof LoginRoute
+  '/signIn': typeof SignInRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/assinatura'
+    | '/cafes'
+    | '/compras'
+    | '/cursos'
+    | '/login'
+    | '/signIn'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/assinatura'
+    | '/cafes'
+    | '/compras'
+    | '/cursos'
+    | '/login'
+    | '/signIn'
+  id:
+    | '__root__'
+    | '/'
+    | '/assinatura'
+    | '/cafes'
+    | '/compras'
+    | '/cursos'
+    | '/login'
+    | '/signIn'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AssinaturaRoute: typeof AssinaturaRoute
+  CafesRoute: typeof CafesRoute
+  ComprasRoute: typeof ComprasRoute
+  CursosRoute: typeof CursosRoute
+  LoginRoute: typeof LoginRoute
+  SignInRoute: typeof SignInRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signIn': {
+      id: '/signIn'
+      path: '/signIn'
+      fullPath: '/signIn'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cursos': {
+      id: '/cursos'
+      path: '/cursos'
+      fullPath: '/cursos'
+      preLoaderRoute: typeof CursosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compras': {
+      id: '/compras'
+      path: '/compras'
+      fullPath: '/compras'
+      preLoaderRoute: typeof ComprasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cafes': {
+      id: '/cafes'
+      path: '/cafes'
+      fullPath: '/cafes'
+      preLoaderRoute: typeof CafesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assinatura': {
+      id: '/assinatura'
+      path: '/assinatura'
+      fullPath: '/assinatura'
+      preLoaderRoute: typeof AssinaturaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +177,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AssinaturaRoute: AssinaturaRoute,
+  CafesRoute: CafesRoute,
+  ComprasRoute: ComprasRoute,
+  CursosRoute: CursosRoute,
+  LoginRoute: LoginRoute,
+  SignInRoute: SignInRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
