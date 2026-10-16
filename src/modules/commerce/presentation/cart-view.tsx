@@ -91,7 +91,9 @@ export function CartView({ initialCart }: { initialCart: SerializedCart }) {
         <p className="max-w-md text-sm text-muted-foreground">
           Explore o catálogo de cafés, queijos e vinhos e monte sua mesa.
         </p>
-        <Button render={<Link href="/produtos" />}>Ver o catálogo</Button>
+        <Button nativeButton={false} render={<Link href="/produtos" />}>
+          Ver o catálogo
+        </Button>
       </div>
     );
   }

@@ -37,6 +37,7 @@ export function CartIndicator() {
       variant="ghost"
       size="icon"
       aria-label={count > 0 ? `Carrinho (${count} itens)` : "Carrinho"}
+      nativeButton={false}
       render={<Link href="/carrinho" />}
       className="relative"
     >

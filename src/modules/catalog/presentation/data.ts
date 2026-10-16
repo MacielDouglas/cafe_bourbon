@@ -17,7 +17,11 @@ export interface CatalogListInput {
 }
 
 function describe(error: unknown): string {
-  return error instanceof Error ? error.name : "erro desconhecido";
+  if (!(error instanceof Error)) return "erro desconhecido";
+  const code = (error as { code?: unknown }).code;
+  return typeof code === "string"
+    ? `${error.name} (${code}): ${error.message}`
+    : `${error.name}: ${error.message}`;
 }
 
 /** Lista produtos tratando indisponibilidade do banco sem quebrar a página. */

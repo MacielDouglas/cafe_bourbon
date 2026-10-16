@@ -72,6 +72,7 @@ export function AccountActions() {
           variant="ghost"
           size="icon"
           aria-label="Entrar"
+          nativeButton={false}
           render={<Link href="/entrar" />}
         >
           <UserIcon />

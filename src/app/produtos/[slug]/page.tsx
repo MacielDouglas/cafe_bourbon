@@ -19,6 +19,8 @@ import {
   SensoryProfile,
 } from "@/modules/catalog/presentation/sensory-profile";
 
+export const instant = false;
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }

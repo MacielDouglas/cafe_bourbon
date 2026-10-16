@@ -123,7 +123,9 @@ export function SubscriptionForm({
           demonstrativa — nenhuma cobrança é realizada nesta versão.
         </p>
         <div className="flex flex-wrap gap-3">
-          <Button render={<Link href="/produtos" />}>Continuar comprando</Button>
+          <Button nativeButton={false} render={<Link href="/produtos" />}>
+            Continuar comprando
+          </Button>
           <Button
             variant="outline"
             onClick={() => setConfirmed(null)}
