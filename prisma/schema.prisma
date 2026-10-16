@@ -1,0 +1,194 @@
+// Catálogo Café Bourbon — núcleo comum + perfis específicos por tipo.
+// Queijos/vinhos nascem com isDemoData=true (dados demonstrativos, ver docs/audit.md).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ProductType {
+  COFFEE
+  CHEESE
+  WINE
+}
+
+enum SubscriptionPlan {
+  MENSAL
+  COFFEE_LOVERS
+  TRIMESTRAL
+}
+
+enum GrindOption {
+  GRAOS
+  MOIDO
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  slug        String      @unique
+  description String
+  type        ProductType
+  priceCents  Int?
+  currency    String      @default("BRL")
+  imageUrl    String?
+  available   Boolean     @default(true)
+  isDemoData  Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  coffeeProfile CoffeeProfile?
+  cheeseProfile CheeseProfile?
+  wineProfile   WineProfile?
+
+  @@index([type, available])
+  @@index([slug])
+}
+
+model CoffeeProfile {
+  id          String   @id @default(cuid())
+  productId   String   @unique
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  origin      String
+  variety     String?
+  process     String?
+  roastLevel  Int
+  intensity   Int
+  acidity     Int
+  body        Int
+  notes       String[]
+  brewMethods String[]
+}
+
+model CheeseProfile {
+  id        String   @id @default(cuid())
+  productId String   @unique
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  milkType  String
+  style     String
+  agingDays Int?
+  texture   String
+  intensity Int
+  acidity   Int?
+  notes     String[]
+  origin    String?
+}
+
+model WineProfile {
+  id         String   @id @default(cuid())
+  productId  String   @unique
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  grapes     String[]
+  region     String?
+  style      String
+  vintage    Int?
+  body       Int
+  acidity    Int
+  tannins    Int?
+  notes      String[]
+  alcoholPct Float?
+}
+
+model Pairing {
+  id          String   @id @default(cuid())
+  productIds  String[]
+  origin      String
+  score       Int
+  criteria    Json
+  explanation String
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([published])
+}
+
+// Carrinho demonstrativo — preço sempre lido do Product no servidor.
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String?
+  sessionKey String?
+  productId String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([sessionKey])
+}
+
+model Subscription {
+  id         String           @id @default(cuid())
+  userId     String?
+  plan       SubscriptionPlan
+  grind      GrindOption
+  brewMethod String?
+  coffeeId   String
+  status     String           @default("ACTIVE")
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  @@index([userId])
+}
+
+// ---- Better Auth (adapter Prisma) ----
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+
+  @@map("verification")
+}

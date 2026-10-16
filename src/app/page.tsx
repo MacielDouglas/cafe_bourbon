@@ -1,0 +1,255 @@
+import { Suspense } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { StateLink, StateMessage } from "@/components/state-message";
+import { categoryLinks } from "@/components/layout/navigation";
+import { loadProducts } from "@/modules/catalog/presentation/data";
+import { ProductCard } from "@/modules/catalog/presentation/product-card";
+import { CatalogGridSkeleton } from "@/modules/catalog/presentation/catalog-skeleton";
+import type { ProductType } from "@/modules/catalog/domain/value-objects";
+
+const collectionImage: Partial<Record<ProductType, string>> = {
+  COFFEE: "/images/cafes/cafe-do-brasil.jpg",
+};
+
+const steps = [
+  {
+    number: "01",
+    title: "Origem",
+    description:
+      "Selecionamos lotes de origem única — Brasil, Cuba, Papua Nova Guiné e Colômbia (Medellín).",
+  },
+  {
+    number: "02",
+    title: "Torra",
+    description:
+      "Torramos em pequenos lotes toda semana, calibrando perfil, corpo e acidez para cada origem.",
+  },
+  {
+    number: "03",
+    title: "Harmonização",
+    description:
+      "Combinamos café, queijo e vinho por perfis sensoriais — intensidade, corpo, acidez e notas.",
+  },
+] as const;
+
+async function FeaturedCoffees() {
+  const { products, failed } = await loadProducts({
+    type: "COFFEE",
+    pageSize: 4,
+  });
+
+  if (failed) {
+    return (
+      <StateMessage
+        eyebrow="Cafés"
+        title="Não conseguimos carregar os cafés"
+        description="O catálogo está indisponível agora. Tente novamente em instantes."
+        action={<StateLink href="/produtos?tipo=COFFEE">Recarregar</StateLink>}
+      />
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-4">
+      {products.map((product) => (
+        <ProductCard key={product.id.value} product={product} />
+      ))}
+    </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <div className="flex flex-col">
+      {/* Hero */}
+      <section className="relative isolate flex min-h-[78vh] items-end overflow-hidden bg-foreground">
+        <Image
+          src="/images/cafe-preparo.jpg"
+          alt="Preparo de café especial"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-80"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-16 text-creme sm:px-6 lg:px-8">
+          <span className="text-[0.6875rem] font-medium tracking-[0.22em] uppercase opacity-80">
+            Torra artesanal · Franca, São Paulo
+          </span>
+          <h1 className="max-w-3xl text-4xl font-medium tracking-tight text-balance sm:text-6xl">
+            Do grão à mesa: cafés, queijos e vinhos para harmonizar.
+          </h1>
+          <p className="max-w-xl text-lg opacity-85">
+            Perfis sensoriais de origem única, pensados para dividir a mesa e
+            descobrir novas combinações.
+          </p>
+          <div className="mt-2 flex flex-wrap gap-3">
+            <Link
+              href="/produtos"
+              className="rounded-full bg-creme px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-creme/85"
+            >
+              Explorar catálogo
+            </Link>
+            <Link
+              href="/produtos?tipo=COFFEE"
+              className="rounded-full border border-creme/40 px-6 py-3 text-sm font-medium text-creme transition-colors hover:bg-creme/10"
+            >
+              Ver cafés
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Manifesto */}
+      <section className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 lg:py-28">
+        <p className="text-2xl leading-snug font-medium tracking-tight text-balance sm:text-3xl">
+          Nascida de uma longa ambição de unir forma e função. Escolhemos cada
+          lote para durar e para reunir memórias à mesa.
+        </p>
+        <p className="mt-6 text-sm tracking-[0.18em] text-muted-foreground uppercase">
+          Café Bourbon · desde sempre
+        </p>
+      </section>
+
+      {/* Cafés em destaque */}
+      <section className="mx-auto w-full max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+        <div className="flex flex-wrap items-end justify-between gap-4 pb-8">
+          <div className="flex flex-col gap-2">
+            <span className="text-[0.6875rem] font-medium tracking-[0.18em] text-brand uppercase">
+              Cafés de origem
+            </span>
+            <h2 className="text-3xl font-medium tracking-tight">Nossos cafés</h2>
+          </div>
+          <Link
+            href="/produtos?tipo=COFFEE"
+            className="text-sm font-medium text-brand underline-offset-4 hover:underline"
+          >
+            Ver todos os cafés
+          </Link>
+        </div>
+        <Suspense fallback={<CatalogGridSkeleton count={4} />}>
+          <FeaturedCoffees />
+        </Suspense>
+      </section>
+
+      {/* Coleções */}
+      <section className="mx-auto w-full max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+        <div className="grid gap-5 md:grid-cols-3">
+          {categoryLinks.map((category) => {
+            const image = collectionImage[category.type];
+            return (
+              <Link
+                key={category.type}
+                href={category.href}
+                className="group relative isolate flex min-h-72 flex-col justify-end overflow-hidden rounded-xl p-7 ring-1 ring-foreground/5"
+              >
+                {image ? (
+                  <>
+                    <Image
+                      src={image}
+                      alt={category.label}
+                      fill
+                      sizes="(min-width: 768px) 33vw, 100vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent" />
+                  </>
+                ) : (
+                  <div className="absolute inset-0 bg-secondary" />
+                )}
+                <div
+                  className={
+                    image
+                      ? "relative text-creme"
+                      : "relative text-foreground"
+                  }
+                >
+                  <span className="text-[0.6875rem] font-medium tracking-[0.18em] uppercase opacity-80">
+                    Coleção
+                  </span>
+                  <h3 className="mt-1 text-2xl font-medium">{category.label}</h3>
+                  <p className="text-sm opacity-85">{category.blurb}</p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* História */}
+      <section
+        id="historia"
+        className="border-y border-border bg-secondary/40 scroll-mt-20"
+      >
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8">
+          <div className="relative aspect-4/3 overflow-hidden rounded-xl bg-muted ring-1 ring-foreground/5">
+            <Image
+              src="/images/cafe-rosquinha.jpg"
+              alt="Café servido com rosquinha"
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover"
+            />
+          </div>
+          <div className="flex flex-col gap-5">
+            <span className="text-[0.6875rem] font-medium tracking-[0.18em] text-brand uppercase">
+              Nossa história
+            </span>
+            <h2 className="text-3xl font-medium tracking-tight sm:text-4xl">
+              Feito por quem toma café todos os dias.
+            </h2>
+            <p className="leading-relaxed text-foreground/80">
+              Há mais de uma década percebemos que faltava à mesa um café pensado
+              por quem o prepara diariamente. Nossa abordagem é direta: escolher
+              bem, torrar com cuidado e combinar com queijos e vinhos que
+              valorizam cada gole.
+            </p>
+            <p className="leading-relaxed text-foreground/80">
+              Cada peça, cada lote, cada combinação acumula memórias e conquista,
+              sem alarde, seu lugar à mesa.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Processo */}
+      <section
+        id="processo"
+        className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-8 scroll-mt-20"
+      >
+        <h2 className="max-w-2xl text-3xl font-medium tracking-tight sm:text-4xl">
+          Do produtor à sua xícara, em três passos.
+        </h2>
+        <div className="mt-12 grid gap-10 md:grid-cols-3">
+          {steps.map((step) => (
+            <div key={step.number} className="flex flex-col gap-3">
+              <span className="text-sm font-medium tracking-[0.18em] text-brand uppercase">
+                {step.number}
+              </span>
+              <h3 className="text-xl font-medium">{step.title}</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {step.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-foreground text-creme">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-4 py-16 sm:px-6 md:flex-row md:items-center lg:px-8">
+          <h2 className="max-w-xl text-2xl font-medium tracking-tight sm:text-3xl">
+            Monte sua mesa com cafés, queijos e vinhos que conversam entre si.
+          </h2>
+          <Link
+            href="/produtos"
+            className="rounded-full bg-creme px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-creme/85"
+          >
+            Ir ao catálogo
+          </Link>
+        </div>
+      </section>
+    </div>
+  );
+}
