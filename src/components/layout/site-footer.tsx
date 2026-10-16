@@ -7,6 +7,8 @@ import { categoryLinks, coffeeLinks } from "@/components/layout/navigation";
 const helpLinks = [
   { label: "Nossa história", href: "/#historia" },
   { label: "Nosso processo", href: "/#processo" },
+  { label: "Descobrir seu paladar", href: "/descobrir" },
+  { label: "Barista virtual", href: "/barista" },
   { label: "Contato", href: "mailto:contato@bourboncafes.com" },
 ];
 

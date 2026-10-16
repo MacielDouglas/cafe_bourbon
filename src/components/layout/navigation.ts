@@ -37,6 +37,8 @@ export const categoryLinks: CategoryLink[] = [
 /** Links de destaque do cabeçalho. */
 export const primaryLinks: SimpleLink[] = [
   { label: "Harmonizações", href: "/harmonizacoes" },
+  { label: "Descobrir", href: "/descobrir" },
+  { label: "Barista", href: "/barista" },
 ];
 
 /** Cafés de origem — atalhos usados no mega-menu e no rodapé. */
