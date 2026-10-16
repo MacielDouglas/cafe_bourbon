@@ -9,6 +9,8 @@ const helpLinks = [
   { label: "Nosso processo", href: "/#processo" },
   { label: "Descobrir seu paladar", href: "/descobrir" },
   { label: "Barista virtual", href: "/barista" },
+  { label: "Assinatura de café", href: "/assinatura" },
+  { label: "Carrinho", href: "/carrinho" },
   { label: "Contato", href: "mailto:contato@bourboncafes.com" },
 ];
 

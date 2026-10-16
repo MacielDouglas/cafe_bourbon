@@ -39,6 +39,7 @@ export const primaryLinks: SimpleLink[] = [
   { label: "Harmonizações", href: "/harmonizacoes" },
   { label: "Descobrir", href: "/descobrir" },
   { label: "Barista", href: "/barista" },
+  { label: "Assinatura", href: "/assinatura" },
 ];
 
 /** Cafés de origem — atalhos usados no mega-menu e no rodapé. */

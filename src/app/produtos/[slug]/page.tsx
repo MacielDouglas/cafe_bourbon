@@ -114,7 +114,11 @@ export default async function ProductPage({ params }: PageProps) {
             )}
           </div>
 
-          <ProductActions productName={product.name} purchasable={product.purchasable} />
+          <ProductActions
+            productId={product.id.value}
+            productName={product.name}
+            purchasable={product.purchasable}
+          />
 
           {product.type === "COFFEE" && (
             <Link

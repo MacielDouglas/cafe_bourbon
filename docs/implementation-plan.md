@@ -32,3 +32,12 @@ Questionário curto (shadcn `form`+`radio-group`+`slider`) → `RecommendProduct
 
 ## Fase 8 — Commerce + Auth + qualidade
 Carrinho demonstrativo (preço do servidor) + assinatura melhorada + login Better Auth. `typecheck+lint+test+build`, docs Vercel/Neon, sem segredos no git.
+
+## Status de execução
+- [x] Fase 2 — Fundação (Next.js + shadcn BaseUI + Better Auth)
+- [x] Fase 3 — Domínio + persistência (Prisma + Neon + seed)
+- [x] Fase 4 — Catálogo + UI
+- [x] Fase 5 — Motor de harmonização
+- [x] Fase 6 — Descoberta
+- [x] Fase 7 — Assistente Groq
+- [x] Fase 8 — Commerce + Auth + qualidade (deploy: `docs/deploy.md`)
