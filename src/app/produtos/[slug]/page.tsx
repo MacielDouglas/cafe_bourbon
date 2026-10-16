@@ -116,6 +116,15 @@ export default async function ProductPage({ params }: PageProps) {
 
           <ProductActions productName={product.name} purchasable={product.purchasable} />
 
+          {product.type === "COFFEE" && (
+            <Link
+              href={`/harmonizacoes?cafe=${product.slug}`}
+              className="inline-flex w-fit items-center text-sm font-medium text-brand underline-offset-4 hover:underline"
+            >
+              Ver harmonizações sugeridas
+            </Link>
+          )}
+
           <p className="max-w-prose leading-relaxed text-foreground/80">
             {product.description}
           </p>

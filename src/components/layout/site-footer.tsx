@@ -59,6 +59,14 @@ export function SiteFooter() {
                 Todos os produtos
               </Link>
             </li>
+            <li>
+              <Link
+                href="/harmonizacoes"
+                className="text-sm text-foreground/75 transition-colors hover:text-brand"
+              >
+                Harmonizações
+              </Link>
+            </li>
             {categoryLinks.map((category) => (
               <li key={category.type}>
                 <Link

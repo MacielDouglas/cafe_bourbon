@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { categoryLinks, coffeeLinks } from "@/components/layout/navigation";
+import { categoryLinks, coffeeLinks, primaryLinks } from "@/components/layout/navigation";
 
 export function MobileMenu() {
   const router = useRouter();
@@ -68,6 +68,16 @@ export function MobileMenu() {
             >
               Ver tudo
             </Link>
+            {primaryLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className="text-2xl font-medium"
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
 
           <div className="flex flex-col gap-3">

@@ -5,7 +5,7 @@ import { Logo } from "@/components/layout/logo";
 import { MegaMenu } from "@/components/layout/mega-menu";
 import { MobileMenu } from "@/components/layout/mobile-menu";
 import { SearchButton } from "@/components/layout/search-button";
-import { categoryLinks } from "@/components/layout/navigation";
+import { categoryLinks, primaryLinks } from "@/components/layout/navigation";
 
 export function SiteHeader() {
   return (
@@ -24,6 +24,15 @@ export function SiteHeader() {
                 className="py-2 text-sm text-foreground/70 transition-colors hover:text-foreground"
               >
                 {category.label}
+              </Link>
+            ))}
+            {primaryLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="py-2 text-sm text-foreground/70 transition-colors hover:text-foreground"
+              >
+                {link.label}
               </Link>
             ))}
           </nav>
