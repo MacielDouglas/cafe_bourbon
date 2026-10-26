@@ -56,6 +56,7 @@ export function createProduct(overrides: Partial<ProductInput> = {}): Product {
       overrides.description ?? "Descrição de teste usada pelos cenários unitários.",
     type,
     priceCents: overrides.priceCents ?? 2000,
+    stock: overrides.stock ?? 100,
     imageUrl: overrides.imageUrl ?? null,
     available: overrides.available ?? true,
     isDemoData: overrides.isDemoData ?? false,

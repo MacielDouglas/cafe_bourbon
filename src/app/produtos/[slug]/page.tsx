@@ -85,6 +85,7 @@ export default async function ProductPage({ params }: PageProps) {
               fill
               priority
               sizes="(min-width: 1024px) 50vw, 100vw"
+              unoptimized={product.imageUrl.startsWith("/api/media/")}
               className="object-cover"
             />
           ) : (

@@ -3,11 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { MinusIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { formatCents } from "@/modules/catalog/presentation/format";
 import { productTypeLabel } from "@/modules/catalog/presentation/labels";
 import type { SerializedCart } from "@/modules/commerce/presentation/serialize";
 import { notifyCartUpdated } from "@/lib/auth-client";
@@ -33,6 +35,7 @@ function Thumb({
         alt={name}
         fill
         sizes="96px"
+        unoptimized={imageUrl.startsWith("/api/media/")}
         className="object-cover"
       />
     );
@@ -46,7 +49,14 @@ function Thumb({
   );
 }
 
-export function CartView({ initialCart }: { initialCart: SerializedCart }) {
+export function CartView({
+  initialCart,
+  isAuthenticated,
+}: {
+  initialCart: SerializedCart;
+  isAuthenticated: boolean;
+}) {
+  const router = useRouter();
   const [cart, setCart] = useState(initialCart);
   const [pending, setPending] = useState<string | null>(null);
 
@@ -82,6 +92,51 @@ export function CartView({ initialCart }: { initialCart: SerializedCart }) {
 
   function clear() {
     return send("__all__", "/api/cart", { method: "DELETE" });
+  }
+
+  async function checkout() {
+    if (!isAuthenticated) {
+      toast.info("Entre na sua conta para finalizar o pedido.");
+      router.push("/entrar");
+      return;
+    }
+
+    setPending("__checkout__");
+    try {
+      const response = await fetch("/api/checkout", { method: "POST" });
+
+      if (response.status === 401) {
+        toast.info("Entre na sua conta para finalizar o pedido.");
+        router.push("/entrar");
+        return;
+      }
+      if (!response.ok) {
+        const data = (await response.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        toast.error(data?.error ?? "Não foi possível concluir o pedido.");
+        return;
+      }
+
+      const data = (await response.json()) as {
+        order: { id: string; totalCents: number; itemCount: number };
+      };
+      setCart({
+        lines: [],
+        totalQuantity: 0,
+        totalCents: 0,
+        totalLabel: formatCents(0),
+      });
+      notifyCartUpdated();
+      toast.success("Pedido demonstrativo confirmado", {
+        description: `Pedido ${data.order.id.slice(-6)} · ${data.order.itemCount} item(ns) · ${formatCents(data.order.totalCents)}`,
+      });
+      router.refresh();
+    } catch {
+      toast.error("Não foi possível concluir o pedido.");
+    } finally {
+      setPending(null);
+    }
   }
 
   if (cart.lines.length === 0) {
@@ -189,8 +244,14 @@ export function CartView({ initialCart }: { initialCart: SerializedCart }) {
           Carrinho demonstrativo — preços calculados no servidor. O checkout não
           realiza pagamento nesta versão.
         </p>
-        <Button size="lg" disabled>
-          Finalizar compra (em breve)
+        <Button
+          size="lg"
+          onClick={() => void checkout()}
+          disabled={pending !== null}
+        >
+          {pending === "__checkout__"
+            ? "Confirmando..."
+            : "Finalizar pedido (demonstrativo)"}
         </Button>
         <Button variant="ghost" size="sm" onClick={clear} disabled={pending !== null}>
           Esvaziar carrinho

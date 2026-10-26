@@ -70,6 +70,7 @@ export const productInputSchema = z.object({
   description: z.string().trim().min(10).max(2000),
   type: z.enum(["COFFEE", "CHEESE", "WINE"]),
   priceCents: z.number().int().min(0).max(100_000_000).nullable(),
+  stock: z.number().int().min(0).max(1_000_000),
   imageUrl: z.string().trim().min(1).max(300).nullable(),
   available: z.boolean(),
   isDemoData: z.boolean(),

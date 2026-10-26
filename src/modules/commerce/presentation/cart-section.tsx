@@ -2,7 +2,10 @@ import { connection } from "next/server";
 import { StateLink, StateMessage } from "@/components/state-message";
 import type { SerializedCart } from "@/modules/commerce/presentation/serialize";
 import { commerceUseCases } from "@/modules/commerce/presentation/composition";
-import { readCartIdentity } from "@/modules/commerce/presentation/identity";
+import {
+  currentUserId,
+  readCartIdentity,
+} from "@/modules/commerce/presentation/identity";
 import { serializeCart } from "@/modules/commerce/presentation/serialize";
 import { CartView } from "@/modules/commerce/presentation/cart-view";
 
@@ -16,7 +19,6 @@ export async function CartSection() {
   } catch {
     cart = null;
   }
-
   if (!cart) {
     return (
       <StateMessage
@@ -28,5 +30,10 @@ export async function CartSection() {
     );
   }
 
-  return <CartView initialCart={cart} />;
+  return (
+    <CartView
+      initialCart={cart}
+      isAuthenticated={(await currentUserId()) !== null}
+    />
+  );
 }

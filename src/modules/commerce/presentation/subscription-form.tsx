@@ -190,6 +190,10 @@ export function SubscriptionForm({
           <Select
             value={coffeeId}
             onValueChange={(value) => setCoffeeId(String(value))}
+            items={coffees.map((coffee) => ({
+              value: coffee.id,
+              label: coffee.name,
+            }))}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Escolha um café" />
@@ -230,6 +234,10 @@ export function SubscriptionForm({
           <Select
             value={brewMethod}
             onValueChange={(value) => setBrewMethod(value as BrewMethod | "")}
+            items={brewMethods.map((method) => ({
+              value: method,
+              label: brewMethodLabel[method],
+            }))}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Qualquer método" />

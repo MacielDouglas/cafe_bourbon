@@ -39,7 +39,9 @@ export class PrismaProductRepository implements ProductRepository {
         : {}),
     };
 
-    const [records, total] = await this.prisma.$transaction([
+    // Leituras independentes: Promise.all evita transação interativa do Neon,
+    // que pode estourar o tempo de início (P2028) em conexões frias.
+    const [records, total] = await Promise.all([
       this.prisma.product.findMany({
         where,
         include: includeProfiles,

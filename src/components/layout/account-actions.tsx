@@ -23,6 +23,7 @@ export function AccountActions() {
   const [signingOut, setSigningOut] = useState(false);
 
   const user = data?.user;
+  const isOwner = user?.role === "OWNER" || user?.role === "ADMIN";
 
   async function handleSignOut() {
     setSigningOut(true);
@@ -48,8 +49,19 @@ export function AccountActions() {
               <DialogDescription>{user.email}</DialogDescription>
             </DialogHeader>
             <div className="flex flex-col gap-2">
+              {isOwner && (
+                <Button
+                  nativeButton={false}
+                  render={
+                    <Link href="/admin" onClick={() => setOpen(false)} />
+                  }
+                >
+                  Painel do owner
+                </Button>
+              )}
               <Button
                 variant="outline"
+                nativeButton={false}
                 render={
                   <Link href="/assinatura" onClick={() => setOpen(false)} />
                 }

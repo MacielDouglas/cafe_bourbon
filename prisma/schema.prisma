@@ -26,6 +26,18 @@ enum GrindOption {
   MOIDO
 }
 
+enum UserRole {
+  OWNER
+  ADMIN
+  CUSTOMER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
 model Product {
   id          String      @id @default(cuid())
   name        String
@@ -35,17 +47,32 @@ model Product {
   priceCents  Int?
   currency    String      @default("BRL")
   imageUrl    String?
+  stock       Int         @default(100)
+  mediaId     String?     @unique
   available   Boolean     @default(true)
   isDemoData  Boolean     @default(false)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
+  media         MediaAsset?    @relation(fields: [mediaId], references: [id], onDelete: SetNull)
   coffeeProfile CoffeeProfile?
   cheeseProfile CheeseProfile?
   wineProfile   WineProfile?
 
   @@index([type, available])
   @@index([slug])
+}
+
+model MediaAsset {
+  id        String   @id @default(cuid())
+  mimeType  String   @default("image/webp")
+  base64    String
+  byteSize  Int
+  width     Int?
+  height    Int?
+  createdAt DateTime @default(now())
+
+  product Product?
 }
 
 model CoffeeProfile {
@@ -134,6 +161,37 @@ model Subscription {
   @@index([userId])
 }
 
+// Pedido demonstrativo gerado pelo checkout do carrinho (sem pagamento real).
+model Order {
+  id            String      @id @default(cuid())
+  userId        String?
+  customerName  String
+  customerEmail String
+  status        OrderStatus @default(CONFIRMED)
+  totalCents    Int
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  items OrderItem[]
+
+  @@index([createdAt])
+  @@index([userId])
+}
+
+model OrderItem {
+  id             String @id @default(cuid())
+  orderId        String
+  order          Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      String
+  productName    String
+  unitPriceCents Int
+  quantity       Int
+  subtotalCents  Int
+
+  @@index([orderId])
+  @@index([productId])
+}
+
 // ---- Better Auth (adapter Prisma) ----
 model User {
   id            String    @id @default(cuid())
@@ -141,6 +199,7 @@ model User {
   email         String    @unique
   emailVerified Boolean   @default(false)
   image         String?
+  role          UserRole  @default(CUSTOMER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]

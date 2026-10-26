@@ -23,7 +23,9 @@ export class ManageCart {
     quantity = 1,
   ): Promise<void> {
     const product = await this.findPurchasable(productId);
-    await this.carts.add(identity, product.id.value, clampQuantity(quantity));
+    const amount = clampQuantity(quantity);
+    this.ensureStock(product, amount);
+    await this.carts.add(identity, product.id.value, amount);
   }
 
   async setQuantity(
@@ -36,11 +38,9 @@ export class ManageCart {
       return;
     }
     const product = await this.findPurchasable(productId);
-    await this.carts.setQuantity(
-      identity,
-      product.id.value,
-      clampQuantity(quantity),
-    );
+    const amount = clampQuantity(quantity);
+    this.ensureStock(product, amount);
+    await this.carts.setQuantity(identity, product.id.value, amount);
   }
 
   async remove(identity: CartIdentity, productId: string): Promise<void> {
@@ -60,5 +60,13 @@ export class ManageCart {
       throw new DomainError("Produto indisponível para compra.");
     }
     return product;
+  }
+
+  private ensureStock(product: Product, quantity: number): void {
+    if (product.stock < quantity) {
+      throw new DomainError(
+        `Estoque insuficiente para ${product.name}. Disponível: ${product.stock}.`,
+      );
+    }
   }
 }

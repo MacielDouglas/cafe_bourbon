@@ -26,6 +26,7 @@ export class Product {
     readonly description: string,
     readonly type: ProductType,
     readonly price: Money | null,
+    readonly stock: number,
     readonly imageUrl: string | null,
     readonly available: boolean,
     readonly isDemoData: boolean,
@@ -52,6 +53,7 @@ export class Product {
       data.description,
       data.type,
       data.priceCents === null ? null : Money.cents(data.priceCents),
+      data.stock,
       data.imageUrl,
       data.available,
       data.isDemoData,
@@ -60,7 +62,7 @@ export class Product {
   }
 
   get purchasable(): boolean {
-    return this.available && this.price !== null;
+    return this.available && this.price !== null && this.stock > 0;
   }
 
   get sensory(): SensoryAxes {

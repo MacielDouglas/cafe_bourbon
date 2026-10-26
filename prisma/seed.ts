@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
+import { hashPassword } from "better-auth/crypto";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) {
@@ -18,6 +19,7 @@ interface SeedBase {
   description: string;
   priceCents: number;
   imageUrl: string | null;
+  stock?: number;
   available: boolean;
   isDemoData: boolean;
 }
@@ -502,12 +504,21 @@ async function upsertProduct(seed: SeedProduct): Promise<string> {
     type: seed.type,
     priceCents: seed.priceCents,
     imageUrl: seed.imageUrl,
+    stock: seed.stock ?? 50,
     available: seed.available,
     isDemoData: seed.isDemoData,
   };
   const product = await prisma.product.upsert({
     where: { slug: seed.slug },
-    update: base,
+    update: {
+      name: base.name,
+      description: base.description,
+      type: base.type,
+      priceCents: base.priceCents,
+      imageUrl: base.imageUrl,
+      available: base.available,
+      isDemoData: base.isDemoData,
+    },
     create: base,
   });
   if (seed.type === "COFFEE") {
@@ -530,6 +541,37 @@ async function upsertProduct(seed: SeedProduct): Promise<string> {
     });
   }
   return product.id;
+}
+
+async function seedOwner(): Promise<void> {
+  const email = "coffeemen@coffee.com";
+  const name = "CoffeMen";
+  const password = "teste1234";
+
+  const user = await prisma.user.upsert({
+    where: { email },
+    update: { name, role: "OWNER" },
+    create: { name, email, role: "OWNER", emailVerified: true },
+  });
+
+  const existingAccount = await prisma.account.findFirst({
+    where: { userId: user.id, providerId: "credential" },
+  });
+
+  if (!existingAccount) {
+    await prisma.account.create({
+      data: {
+        userId: user.id,
+        accountId: user.id,
+        providerId: "credential",
+        password: await hashPassword(password),
+      },
+    });
+    console.log(`Usuário owner criado: ${email} (senha inicial: ${password}).`);
+    return;
+  }
+
+  console.log(`Usuário owner já existe: ${email} (senha preservada).`);
 }
 
 async function main() {
@@ -575,6 +617,8 @@ async function main() {
   console.log(
     `Seed concluído: ${products.length} produtos e ${pairings.length} harmonizações editoriais.`,
   );
+
+  await seedOwner();
 }
 
 main()

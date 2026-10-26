@@ -37,6 +37,7 @@ describe("Product", () => {
     description: "Descrição longa o suficiente para o schema.",
     type: "COFFEE",
     priceCents: 2000,
+    stock: 10,
     imageUrl: null,
     available: true,
     isDemoData: false,

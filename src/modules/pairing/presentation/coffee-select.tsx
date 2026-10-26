@@ -26,6 +26,10 @@ export function CoffeeSelect({
         const slug = typeof next === "string" ? next : "";
         router.push(slug ? `/harmonizacoes?cafe=${slug}` : "/harmonizacoes");
       }}
+      items={coffees.map((coffee) => ({
+        value: coffee.slug,
+        label: coffee.name,
+      }))}
     >
       <SelectTrigger className="w-full sm:w-80">
         <SelectValue placeholder="Selecione um café" />
