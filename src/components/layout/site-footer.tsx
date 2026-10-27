@@ -36,12 +36,12 @@ export function SiteFooter() {
           <p className="text-[0.6875rem] font-medium tracking-[0.18em] text-muted-foreground uppercase">
             Cafés
           </p>
-          <ul className="flex flex-col gap-2.5">
+          <ul className="flex flex-col gap-0.5">
             {coffeeLinks.map((coffee) => (
               <li key={coffee.href}>
                 <Link
                   href={coffee.href}
-                  className="text-sm text-foreground/75 transition-colors hover:text-brand"
+                  className="inline-flex min-h-9 items-center rounded-sm text-sm text-foreground/75 outline-none transition-colors hover:text-brand focus-visible:ring-2 focus-visible:ring-ring/60"
                 >
                   {coffee.label}
                 </Link>
@@ -54,11 +54,11 @@ export function SiteFooter() {
           <p className="text-[0.6875rem] font-medium tracking-[0.18em] text-muted-foreground uppercase">
             Categoria
           </p>
-          <ul className="flex flex-col gap-2.5">
+          <ul className="flex flex-col gap-0.5">
             <li>
               <Link
                 href="/produtos"
-                className="text-sm text-foreground/75 transition-colors hover:text-brand"
+                className="inline-flex min-h-9 items-center rounded-sm text-sm text-foreground/75 outline-none transition-colors hover:text-brand focus-visible:ring-2 focus-visible:ring-ring/60"
               >
                 Todos os produtos
               </Link>
@@ -66,7 +66,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="/harmonizacoes"
-                className="text-sm text-foreground/75 transition-colors hover:text-brand"
+                className="inline-flex min-h-9 items-center rounded-sm text-sm text-foreground/75 outline-none transition-colors hover:text-brand focus-visible:ring-2 focus-visible:ring-ring/60"
               >
                 Harmonizações
               </Link>
@@ -75,7 +75,7 @@ export function SiteFooter() {
               <li key={category.type}>
                 <Link
                   href={category.href}
-                  className="text-sm text-foreground/75 transition-colors hover:text-brand"
+                  className="inline-flex min-h-9 items-center rounded-sm text-sm text-foreground/75 outline-none transition-colors hover:text-brand focus-visible:ring-2 focus-visible:ring-ring/60"
                 >
                   {category.label}
                 </Link>
@@ -88,12 +88,12 @@ export function SiteFooter() {
           <p className="text-[0.6875rem] font-medium tracking-[0.18em] text-muted-foreground uppercase">
             A Bourbon
           </p>
-          <ul className="flex flex-col gap-2.5">
+          <ul className="flex flex-col gap-0.5">
             {helpLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sm text-foreground/75 transition-colors hover:text-brand"
+                  className="inline-flex min-h-9 items-center rounded-sm text-sm text-foreground/75 outline-none transition-colors hover:text-brand focus-visible:ring-2 focus-visible:ring-ring/60"
                 >
                   {link.label}
                 </Link>

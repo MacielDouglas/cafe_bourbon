@@ -6,7 +6,10 @@ import type {
   ProductRepository,
 } from "@/modules/catalog/domain/repository";
 import { AskVirtualBarista } from "@/modules/assistant/application/ask-virtual-barista";
-import type { LanguageModelProvider } from "@/modules/assistant/application/language-model-provider";
+import type {
+  LanguageModelProvider,
+  LanguageModelRequest,
+} from "@/modules/assistant/application/language-model-provider";
 import { Pairing } from "@/modules/pairing/domain/pairing";
 import type {
   PairingFilter,
@@ -54,9 +57,12 @@ class FakePairingRepository implements PairingRepository {
 
 class FakeLanguageModelProvider implements LanguageModelProvider {
   readonly id = "fake";
+  lastRequest: LanguageModelRequest | null = null;
+
   constructor(private readonly behavior: "reply" | "empty" | "throw", private readonly text = "") {}
 
-  async generate(): Promise<string> {
+  async generate(request: LanguageModelRequest): Promise<string> {
+    this.lastRequest = request;
     if (this.behavior === "throw") throw new Error("boom");
     if (this.behavior === "empty") return "";
     return this.text;
@@ -100,6 +106,25 @@ const curado = createProduct({
   },
 });
 
+const encorpado = createProduct({
+  id: "wine-encorpado",
+  type: "WINE",
+  name: "Tinto Encorpado",
+  slug: "tinto-encorpado",
+  profile: {
+    kind: "WINE",
+    grapes: ["Cabernet Sauvignon"],
+    region: null,
+    style: "Tinto encorpado",
+    vintage: null,
+    body: 5,
+    acidity: 3,
+    tannins: 5,
+    notes: ["cassis", "cedro"],
+    alcoholPct: 13.5,
+  },
+});
+
 const editorialPairing = Pairing.create({
   id: "pair-brasil-curado",
   productIds: ["coffee-brasil", "cheese-curado"],
@@ -114,7 +139,7 @@ const editorialPairing = Pairing.create({
 
 function useCase(provider: LanguageModelProvider | null, pairings = [editorialPairing]) {
   return new AskVirtualBarista(
-    new FakeProductRepository([brasil, curado]),
+    new FakeProductRepository([brasil, curado, encorpado]),
     new FakePairingRepository(pairings),
     provider,
   );
@@ -129,6 +154,52 @@ describe("AskVirtualBarista", () => {
     expect(result.degraded).toBe(false);
     expect(result.productSlugs).toEqual(["cafe-do-brasil", "queijo-curado"]);
     expect(result.pairingIds).toEqual(["pair-brasil-curado"]);
+  });
+
+  it("inclui vinhos no contexto quando o cliente pede vinho", async () => {
+    const provider = new FakeLanguageModelProvider(
+      "reply",
+      "Recomendo o Tinto Encorpado.",
+    );
+    const result = await useCase(provider).execute({
+      message: "Quero uma sugestão de vinho",
+    });
+
+    expect(provider.lastRequest?.prompt).toContain("Tinto Encorpado");
+    expect(provider.lastRequest?.prompt).toContain("Vinhos: 1");
+    expect(result.productSlugs).toEqual(["tinto-encorpado"]);
+  });
+
+  it("mantém as três categorias em pedidos genéricos", async () => {
+    const provider = new FakeLanguageModelProvider(
+      "reply",
+      "Podemos começar com o Café do Brasil.",
+    );
+    await useCase(provider).execute({ message: "O que você recomenda?" });
+
+    const prompt = provider.lastRequest?.prompt ?? "";
+    expect(prompt).toContain("Cafés: 1");
+    expect(prompt).toContain("Queijos: 1");
+    expect(prompt).toContain("Vinhos: 1");
+    expect(prompt).toContain("Café do Brasil");
+    expect(prompt).toContain("Queijo Curado");
+    expect(prompt).toContain("Tinto Encorpado");
+  });
+
+  it("inclui vinho e queijo ao montar uma harmonização", async () => {
+    const provider = new FakeLanguageModelProvider(
+      "reply",
+      "Sugiro o Tinto Encorpado com o Queijo Curado.",
+    );
+    const result = await useCase(provider).execute({
+      message: "Quero um vinho para acompanhar queijo curado",
+    });
+
+    const prompt = provider.lastRequest?.prompt ?? "";
+    expect(prompt).toContain("Tinto Encorpado");
+    expect(prompt).toContain("Queijo Curado");
+    expect(result.productSlugs).toContain("tinto-encorpado");
+    expect(result.productSlugs).toContain("queijo-curado");
   });
 
   it("não inventa produtos ausentes do contexto", async () => {

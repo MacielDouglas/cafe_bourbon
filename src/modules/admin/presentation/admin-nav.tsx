@@ -25,9 +25,9 @@ export function AdminNav() {
             key={link.href}
             href={link.href}
             className={cn(
-              "rounded-lg px-3 py-1.5 text-sm transition-colors",
+              "inline-flex min-h-10 items-center rounded-lg px-4 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
               active
-                ? "bg-secondary font-medium text-foreground"
+                ? "bg-primary font-medium text-primary-foreground shadow-soft"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >

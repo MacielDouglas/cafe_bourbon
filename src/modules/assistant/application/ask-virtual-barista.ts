@@ -17,7 +17,8 @@ export interface BaristaReply {
 
 const ALL_TYPES: ProductType[] = ["COFFEE", "CHEESE", "WINE"];
 const MAX_TYPES_PAGE = 50;
-const MAX_CONTEXT_PRODUCTS = 6;
+const MAX_CONTEXT_PRODUCTS = 10;
+const BASE_PRODUCTS_PER_TYPE = 2;
 const MAX_PAIRINGS = 3;
 const MAX_MESSAGE = 1000;
 
@@ -26,6 +27,60 @@ const TYPE_LABEL: Record<ProductType, string> = {
   CHEESE: "Queijo",
   WINE: "Vinho",
 };
+
+const TYPE_KEYWORDS: Record<ProductType, readonly string[]> = {
+  COFFEE: [
+    "cafe",
+    "cafes",
+    "espresso",
+    "expresso",
+    "coado",
+    "moka",
+    "aeropress",
+    "prensa",
+    "grao",
+    "graos",
+    "arabica",
+    "conilon",
+    "torra",
+  ],
+  CHEESE: [
+    "queijo",
+    "queijos",
+    "frescal",
+    "curado",
+    "maturado",
+    "azul",
+    "gorgonzola",
+    "brie",
+    "camembert",
+    "parmesao",
+  ],
+  WINE: [
+    "vinho",
+    "vinhos",
+    "tinto",
+    "tintos",
+    "branco",
+    "brancos",
+    "rose",
+    "espumante",
+    "espumantes",
+    "cabernet",
+    "merlot",
+    "chardonnay",
+    "sauvignon",
+    "tannat",
+    "syrah",
+    "pinot",
+    "malbec",
+  ],
+};
+
+interface CatalogSnapshot {
+  products: Product[];
+  totals: Record<ProductType, number>;
+}
 
 const STOPWORDS = new Set([
   "para",
@@ -53,11 +108,14 @@ const STOPWORDS = new Set([
 ]);
 
 const SYSTEM_PROMPT =
-  "Você é o barista virtual do Café Bourbon, uma cafeteria de cafés especiais, queijos e vinhos. " +
+  "Você é o barista virtual do Café Bourbon, uma casa de cafés especiais, queijos e vinhos. " +
   "Responda em português do Brasil, em no máximo 4 frases, com tom acolhedor e direto. " +
-  "Sugira APENAS produtos presentes no contexto fornecido, citando-os pelo nome. " +
-  "Nunca invente preço, disponibilidade ou produtos que não estejam no contexto. " +
-  "Se o contexto não cobrir a pergunta, oriente o cliente a explorar /descobrir ou /harmonizacoes.";
+  "O contexto traz um resumo do catálogo disponível e uma amostra de produtos. " +
+  "Sugira APENAS produtos da amostra, citando-os pelo nome, e nunca invente preço, disponibilidade ou produtos. " +
+  "Nunca afirme que uma categoria está ausente quando o resumo indicar itens disponíveis. " +
+  "Se o cliente pedir vinho, priorize os vinhos da amostra, incluindo tintos, brancos e espumantes. " +
+  "Se faltar um produto específico, ofereça uma alternativa da mesma categoria e indique /produtos. " +
+  "Para harmonizações, combine categorias diferentes presentes no contexto.";
 
 function normalize(text: string): string {
   return text
@@ -72,18 +130,117 @@ function tokenize(message: string): string[] {
     .filter((token) => token.length >= 3 && !STOPWORDS.has(token));
 }
 
-function relevance(product: Product, tokens: readonly string[]): number {
+function detectRequestedTypes(tokens: readonly string[]): ProductType[] {
+  return ALL_TYPES.filter((type) =>
+    TYPE_KEYWORDS[type].some((keyword) => tokens.includes(keyword)),
+  );
+}
+
+function profileSummary(product: Product): string {
+  const { profile } = product;
+  switch (profile.kind) {
+    case "COFFEE":
+      return [
+        profile.origin,
+        `torra ${profile.roastLevel}/5`,
+        `corpo ${profile.body}/5`,
+        `acidez ${profile.acidity}/5`,
+      ].join("; ");
+    case "CHEESE":
+      return [
+        `leite ${profile.milkType}`,
+        profile.style,
+        profile.agingDays !== null ? `${profile.agingDays} dias de cura` : null,
+        `intensidade ${profile.intensity}/5`,
+      ]
+        .filter((part): part is string => part !== null)
+        .join("; ");
+    case "WINE":
+      return [
+        `uvas ${profile.grapes.join(", ")}`,
+        profile.style,
+        `corpo ${profile.body}/5`,
+        `acidez ${profile.acidity}/5`,
+        profile.tannins !== null ? `taninos ${profile.tannins}/5` : null,
+      ]
+        .filter((part): part is string => part !== null)
+        .join("; ");
+  }
+}
+
+function relevance(
+  product: Product,
+  tokens: readonly string[],
+  requestedTypes: readonly ProductType[],
+): number {
   if (tokens.length === 0) return 0;
   const name = normalize(product.name);
   const rest = normalize(
-    [product.description, product.sensory.notes.join(" "), product.type].join(" "),
+    [
+      product.description,
+      profileSummary(product),
+      product.sensory.notes.join(" "),
+      TYPE_LABEL[product.type],
+      ...TYPE_KEYWORDS[product.type],
+    ].join(" "),
   );
-  let score = 0;
+  let score = requestedTypes.includes(product.type) ? 3 : 0;
   for (const token of tokens) {
     if (name.includes(token)) score += 3;
     if (rest.includes(token)) score += 1;
   }
   return score;
+}
+
+function selectContext(
+  pool: readonly Product[],
+  tokens: readonly string[],
+  requestedTypes: readonly ProductType[],
+): Product[] {
+  const ranked = pool
+    .map((product) => ({
+      product,
+      score: relevance(product, tokens, requestedTypes),
+    }))
+    .sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name));
+
+  const targets = requestedTypes.length > 0 ? requestedTypes : ALL_TYPES;
+  const quotas = new Map<ProductType, number>(
+    ALL_TYPES.map((type) => [type, BASE_PRODUCTS_PER_TYPE] as const),
+  );
+  const extra = MAX_CONTEXT_PRODUCTS - BASE_PRODUCTS_PER_TYPE * ALL_TYPES.length;
+  for (let index = 0; index < extra; index += 1) {
+    const type = targets[index % targets.length];
+    quotas.set(type, (quotas.get(type) ?? 0) + 1);
+  }
+
+  const order =
+    requestedTypes.length > 0
+      ? [...requestedTypes, ...ALL_TYPES.filter((type) => !requestedTypes.includes(type))]
+      : ALL_TYPES;
+  const selected: Product[] = [];
+  const selectedIds = new Set<string>();
+  const push = (product: Product) => {
+    if (selected.length >= MAX_CONTEXT_PRODUCTS || selectedIds.has(product.id.value)) {
+      return;
+    }
+    selectedIds.add(product.id.value);
+    selected.push(product);
+  };
+
+  for (const type of order) {
+    const quota = quotas.get(type) ?? 0;
+    for (const entry of ranked
+      .filter((candidate) => candidate.product.type === type)
+      .slice(0, quota)) {
+      push(entry.product);
+    }
+  }
+  for (const entry of ranked) {
+    push(entry.product);
+  }
+
+  return selected;
 }
 
 function brl(cents: number): string {
@@ -96,7 +253,7 @@ function brl(cents: number): string {
 function describeProduct(product: Product): string {
   const price = product.price ? brl(product.price.cents) : "preço sob consulta";
   const notes = product.sensory.notes.slice(0, 4).join(", ");
-  return `- ${product.name} (${TYPE_LABEL[product.type]}, slug: ${product.slug}) — notas: ${notes}. ${price}.`;
+  return `- ${product.name} (${TYPE_LABEL[product.type]}, slug: ${product.slug}) — ${profileSummary(product)}; notas: ${notes}. ${price}.`;
 }
 
 export class AskVirtualBarista {
@@ -108,7 +265,8 @@ export class AskVirtualBarista {
 
   async execute(input: AskVirtualBaristaInput): Promise<BaristaReply> {
     const message = input.message.trim().slice(0, MAX_MESSAGE);
-    const context = await this.retrieveContext(message);
+    const snapshot = await this.retrieveContext(message);
+    const context = snapshot.products;
 
     if (context.length === 0) {
       return {
@@ -127,7 +285,7 @@ export class AskVirtualBarista {
     try {
       const reply = await this.provider.generate({
         system: SYSTEM_PROMPT,
-        prompt: this.buildPrompt(message, context),
+        prompt: this.buildPrompt(message, snapshot),
       });
       if (!reply) return this.degradedReply(context);
       return await this.finalize(reply, context, false);
@@ -136,36 +294,49 @@ export class AskVirtualBarista {
     }
   }
 
-  private async retrieveContext(message: string): Promise<Product[]> {
+  private async retrieveContext(message: string): Promise<CatalogSnapshot> {
     const tokens = tokenize(message);
-    const pool: Product[] = [];
-    for (const type of ALL_TYPES) {
-      const page = await this.products.list({
+    const requestedTypes = detectRequestedTypes(tokens);
+    const pages = await Promise.all(
+      ALL_TYPES.map(async (type) => ({
         type,
-        availableOnly: true,
-        pageSize: MAX_TYPES_PAGE,
-      });
+        page: await this.products.list({
+          type,
+          availableOnly: true,
+          pageSize: MAX_TYPES_PAGE,
+        }),
+      })),
+    );
+    const pool: Product[] = [];
+    const totals: Record<ProductType, number> = {
+      COFFEE: 0,
+      CHEESE: 0,
+      WINE: 0,
+    };
+    for (const { type, page } of pages) {
+      totals[type] = page.total;
       pool.push(...page.items);
     }
-    const ranked = pool
-      .map((product) => ({ product, score: relevance(product, tokens) }))
-      .sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name));
-    const relevant = ranked.filter((entry) => entry.score > 0);
-    const chosen = (relevant.length > 0 ? relevant : ranked).slice(
-      0,
-      MAX_CONTEXT_PRODUCTS,
-    );
-    return chosen.map((entry) => entry.product);
+
+    return {
+      products: selectContext(pool, tokens, requestedTypes),
+      totals,
+    };
   }
 
-  private buildPrompt(message: string, context: readonly Product[]): string {
+  private buildPrompt(message: string, snapshot: CatalogSnapshot): string {
     return [
       `Pergunta do cliente: ${message}`,
       "",
-      "Produtos disponíveis (contexto):",
-      ...context.map(describeProduct),
+      "Resumo do catálogo disponível:",
+      `- Cafés: ${snapshot.totals.COFFEE}`,
+      `- Queijos: ${snapshot.totals.CHEESE}`,
+      `- Vinhos: ${snapshot.totals.WINE}`,
       "",
-      "Responda sugerindo produtos do contexto pelo nome.",
+      "Amostra de produtos disponíveis (contexto):",
+      ...snapshot.products.map(describeProduct),
+      "",
+      "Sugira produtos da amostra pelo nome. Se o produto exato pedido não estiver na amostra, ofereça uma alternativa da mesma categoria e indique /produtos para ver o catálogo completo.",
     ].join("\n");
   }
 

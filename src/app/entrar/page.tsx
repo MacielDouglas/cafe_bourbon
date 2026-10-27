@@ -10,9 +10,6 @@ export default function EntrarPage() {
   return (
     <div className="mx-auto flex max-w-md flex-col gap-8 px-4 py-20 sm:px-6">
       <header className="flex flex-col gap-3">
-        <span className="text-[0.6875rem] font-medium tracking-[0.18em] text-brand uppercase">
-          Minha conta
-        </span>
         <h1 className="text-3xl font-medium tracking-tight">Entrar</h1>
         <p className="text-sm text-muted-foreground">
           Acesse para gerenciar suas assinaturas de café.
@@ -25,7 +22,7 @@ export default function EntrarPage() {
         Ainda não tem conta?{" "}
         <Link
           href="/criar-conta"
-          className="font-medium text-brand underline-offset-4 hover:underline"
+          className="rounded-sm font-medium text-brand underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring/60"
         >
           Criar conta
         </Link>

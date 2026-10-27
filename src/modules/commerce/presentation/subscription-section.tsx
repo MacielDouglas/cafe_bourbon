@@ -37,7 +37,6 @@ export async function SubscriptionSection() {
   if (!coffees) {
     return (
       <StateMessage
-        eyebrow="Assinatura"
         title="Não conseguimos carregar os planos"
         description="O banco de dados está indisponível no momento. Tente novamente em instantes."
         action={<StateLink href="/produtos">Ver o catálogo</StateLink>}

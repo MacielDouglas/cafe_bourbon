@@ -43,7 +43,6 @@ export default async function ProductPage({ params }: PageProps) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-24 sm:px-6 lg:px-8">
         <StateMessage
-          eyebrow="Produto"
           title="Não conseguimos carregar este produto"
           description="O banco de dados está indisponível no momento. Tente novamente em instantes."
           action={<StateLink href="/produtos">Voltar ao catálogo</StateLink>}
@@ -62,13 +61,16 @@ export default async function ProductPage({ params }: PageProps) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <nav className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-        <Link href="/produtos" className="transition-colors hover:text-foreground">
+        <Link
+          href="/produtos"
+          className="rounded-sm outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/60"
+        >
           Catálogo
         </Link>
         <span aria-hidden>/</span>
         <Link
           href={`/produtos?tipo=${product.type}`}
-          className="transition-colors hover:text-foreground"
+          className="rounded-sm outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/60"
         >
           {productTypePluralLabel[product.type]}
         </Link>
@@ -77,7 +79,7 @@ export default async function ProductPage({ params }: PageProps) {
       </nav>
 
       <div className="mt-8 grid gap-12 lg:grid-cols-2">
-        <div className="relative aspect-square overflow-hidden rounded-xl bg-muted ring-1 ring-foreground/5">
+        <div className="relative aspect-square overflow-hidden rounded-2xl bg-muted shadow-soft ring-1 ring-foreground/5">
           {product.imageUrl ? (
             <Image
               src={product.imageUrl}
@@ -99,9 +101,6 @@ export default async function ProductPage({ params }: PageProps) {
 
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <span className="text-[0.6875rem] font-medium tracking-[0.18em] text-brand uppercase">
-              {productTypeLabel[product.type]}
-            </span>
             <h1 className="text-3xl font-medium tracking-tight sm:text-4xl">
               {product.name}
             </h1>
@@ -109,7 +108,9 @@ export default async function ProductPage({ params }: PageProps) {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-2xl">{price ?? "Indisponível"}</span>
+            <span className="text-3xl font-medium tracking-tight">
+              {price ?? "Indisponível"}
+            </span>
             {product.isDemoData && (
               <Badge variant="outline" className="text-muted-foreground">
                 Dados demonstrativos
@@ -126,7 +127,7 @@ export default async function ProductPage({ params }: PageProps) {
           {product.type === "COFFEE" && (
             <Link
               href={`/harmonizacoes?cafe=${product.slug}`}
-              className="inline-flex w-fit items-center text-sm font-medium text-brand underline-offset-4 hover:underline"
+              className="inline-flex min-h-9 w-fit items-center rounded-sm text-sm font-medium text-brand underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring/60"
             >
               Ver harmonizações sugeridas
             </Link>
@@ -139,9 +140,7 @@ export default async function ProductPage({ params }: PageProps) {
           <Separator />
 
           <div className="flex flex-col gap-4">
-            <p className="text-[0.6875rem] font-medium tracking-[0.18em] text-muted-foreground uppercase">
-              Perfil sensorial
-            </p>
+            <h2 className="text-sm font-medium">Perfil sensorial</h2>
             <SensoryProfile sensory={product.sensory} />
             <SensoryNotes notes={product.sensory.notes} />
           </div>
@@ -163,9 +162,7 @@ export default async function ProductPage({ params }: PageProps) {
             <>
               <Separator />
               <div className="flex flex-col gap-3">
-                <p className="text-[0.6875rem] font-medium tracking-[0.18em] text-muted-foreground uppercase">
-                  Métodos de preparo
-                </p>
+                <h2 className="text-sm font-medium">Métodos de preparo</h2>
                 <SensoryNotes notes={brewMethods.map((method) => brewMethodLabel[method])} />
               </div>
             </>

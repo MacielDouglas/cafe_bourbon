@@ -8,7 +8,6 @@ export async function EditorialPairings() {
   if (failed) {
     return (
       <StateMessage
-        eyebrow="Escolhas da casa"
         title="Harmonizações temporariamente indisponíveis"
         description="Não conseguimos falar com o banco de dados agora. Tente novamente em instantes."
         action={<StateLink href="/harmonizacoes">Recarregar</StateLink>}
@@ -19,7 +18,6 @@ export async function EditorialPairings() {
   if (pairings.length === 0) {
     return (
       <StateMessage
-        eyebrow="Escolhas da casa"
         title="Ainda não há curadoria publicada"
         description="Use o harmonizador acima enquanto preparamos novas combinações."
         action={<StateLink href="/produtos">Ver catálogo</StateLink>}

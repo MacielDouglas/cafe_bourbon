@@ -26,7 +26,7 @@ export function PairingScoreBadge({
         <span className="text-3xl leading-none font-medium tabular-nums">
           {value}
         </span>
-        <span className="text-[0.6875rem] font-medium tracking-[0.18em] text-muted-foreground uppercase">
+        <span className="text-xs font-medium text-muted-foreground">
           {pairingTierLabel[tier]}
         </span>
       </div>

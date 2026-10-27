@@ -25,7 +25,6 @@ export default async function AdminHomePage() {
   if (failed || !overview) {
     return (
       <StateMessage
-        eyebrow="Vendas"
         title="Não conseguimos carregar as métricas"
         description="O banco de dados está indisponível no momento. Tente novamente em instantes."
         action={<StateLink href="/admin">Recarregar</StateLink>}

@@ -178,7 +178,7 @@ export function CartView({
 
   if (cart.lines.length === 0) {
     return (
-      <div className="flex flex-col items-start gap-4 rounded-xl border border-dashed border-border px-8 py-16 sm:items-center sm:text-center">
+      <div className="flex flex-col items-start gap-4 rounded-2xl border border-border bg-card px-8 py-16 shadow-soft sm:items-center sm:text-center">
         <h2 className="text-xl font-medium">Seu carrinho está vazio</h2>
         <p className="max-w-md text-sm text-muted-foreground">
           Explore o catálogo de cafés, queijos e vinhos e monte sua mesa.
@@ -197,7 +197,7 @@ export function CartView({
           <li key={line.productId} className="flex gap-4 py-5">
             <Link
               href={`/produtos/${line.slug}`}
-              className="relative size-24 shrink-0 overflow-hidden rounded-lg bg-muted ring-1 ring-foreground/5"
+              className="relative size-24 shrink-0 overflow-hidden rounded-xl bg-muted shadow-soft outline-none ring-1 ring-foreground/5 focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <Thumb imageUrl={line.imageUrl} name={line.name} type={line.type} />
             </Link>
@@ -205,17 +205,17 @@ export function CartView({
             <div className="flex min-w-0 flex-1 flex-col gap-2">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex min-w-0 flex-col">
-                  <span className="text-[0.625rem] font-medium tracking-[0.14em] text-muted-foreground uppercase">
-                    {productTypeLabel[line.type]}
-                  </span>
                   <Link
                     href={`/produtos/${line.slug}`}
-                    className="truncate font-medium transition-colors hover:text-brand"
+                    className="truncate rounded-sm font-medium outline-none transition-colors hover:text-brand focus-visible:ring-2 focus-visible:ring-ring/60"
                   >
                     {line.name}
                   </Link>
                   <span className="text-sm text-muted-foreground">
                     {line.priceLabel} cada
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {productTypeLabel[line.type]}
                   </span>
                 </div>
                 <span className="shrink-0 font-medium tabular-nums">
@@ -224,10 +224,10 @@ export function CartView({
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="flex items-center rounded-lg border border-border">
+                <div className="flex items-center rounded-lg border border-border bg-card shadow-soft">
                   <Button
                     variant="ghost"
-                    size="icon-sm"
+                    size="icon"
                     aria-label={`Diminuir ${line.name}`}
                     disabled={pending === line.productId}
                     onClick={() => setQuantity(line.productId, line.quantity - 1)}
@@ -239,7 +239,7 @@ export function CartView({
                   </span>
                   <Button
                     variant="ghost"
-                    size="icon-sm"
+                    size="icon"
                     aria-label={`Aumentar ${line.name}`}
                     disabled={pending === line.productId || line.quantity >= 99}
                     onClick={() => setQuantity(line.productId, line.quantity + 1)}
@@ -250,7 +250,6 @@ export function CartView({
 
                 <Button
                   variant="ghost"
-                  size="sm"
                   className="text-muted-foreground"
                   disabled={pending === line.productId}
                   onClick={() => removeLine(line.productId)}
@@ -264,7 +263,7 @@ export function CartView({
         ))}
       </ul>
 
-      <aside className="flex h-fit flex-col gap-5 rounded-xl border border-border p-6">
+      <aside className="flex h-fit flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-soft">
         <h2 className="text-lg font-medium">Resumo</h2>
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>Itens</span>

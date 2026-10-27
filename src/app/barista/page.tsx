@@ -10,9 +10,6 @@ export default function BaristaPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
       <header className="flex max-w-2xl flex-col gap-3">
-        <span className="text-[0.6875rem] font-medium tracking-[0.18em] text-brand uppercase">
-          Assistente
-        </span>
         <h1 className="text-4xl font-medium tracking-tight sm:text-5xl">
           Barista virtual
         </h1>

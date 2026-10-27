@@ -22,7 +22,6 @@ export async function CartSection() {
   if (!cart) {
     return (
       <StateMessage
-        eyebrow="Carrinho"
         title="Não conseguimos carregar seu carrinho"
         description="O banco de dados está indisponível no momento. Tente novamente em instantes."
         action={<StateLink href="/produtos">Voltar ao catálogo</StateLink>}

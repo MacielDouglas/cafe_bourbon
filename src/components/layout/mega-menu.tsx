@@ -18,7 +18,7 @@ export function MegaMenu({ className }: { className?: string }) {
       </NavLink>
 
       <div className="invisible absolute top-full left-1/2 z-50 w-[min(56rem,90vw)] -translate-x-1/2 pt-3 opacity-0 transition-all duration-150 group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
-        <div className="grid grid-cols-[1.4fr_1fr_1.1fr] gap-8 rounded-xl border border-border bg-popover p-7 text-popover-foreground shadow-xl">
+        <div className="grid grid-cols-[1.4fr_1fr_1.1fr] gap-8 rounded-2xl border border-border bg-popover p-8 text-popover-foreground shadow-lift">
           <div className="flex flex-col gap-5">
             <p className="text-[0.6875rem] font-medium tracking-[0.18em] text-muted-foreground uppercase">
               Coleções
@@ -26,7 +26,10 @@ export function MegaMenu({ className }: { className?: string }) {
             <ul className="flex flex-col gap-4">
               {categoryLinks.map((category) => (
                 <li key={category.type}>
-                  <Link href={category.href} className="group/item block">
+                  <Link
+                    href={category.href}
+                    className="group/item block rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+                  >
                     <span className="block text-base font-medium transition-colors group-hover/item:text-brand">
                       {category.label}
                     </span>
@@ -48,7 +51,7 @@ export function MegaMenu({ className }: { className?: string }) {
                 <li key={coffee.href}>
                   <Link
                     href={coffee.href}
-                    className="text-sm text-foreground/75 transition-colors hover:text-brand"
+                    className="inline-flex min-h-9 items-center rounded-sm text-sm text-foreground/75 outline-none transition-colors hover:text-brand focus-visible:ring-2 focus-visible:ring-ring/60"
                   >
                     {coffee.label}
                   </Link>
@@ -59,7 +62,7 @@ export function MegaMenu({ className }: { className?: string }) {
 
           <Link
             href="/produtos?tipo=COFFEE"
-            className="group/promo flex flex-col gap-3"
+            className="group/promo flex flex-col gap-3 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-4 focus-visible:ring-offset-popover"
           >
             <div className="relative aspect-4/3 w-full overflow-hidden rounded-lg bg-muted">
               <Image

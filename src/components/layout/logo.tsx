@@ -10,11 +10,14 @@ function Logo({ className }: { className?: string }) {
     <Link
       href="/"
       aria-label="Café Bourbon — página inicial"
-      className={cn("inline-flex items-center", className)}
+      className={cn(
+        "inline-flex items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-4 focus-visible:ring-offset-background",
+        className,
+      )}
     >
       <span
         aria-hidden
-        className="block h-5 w-[102px] bg-current [mask-image:url(/bourbon.svg)] [mask-repeat:no-repeat] [mask-position:left_center] [mask-size:contain]"
+        className="block h-6 w-[122px] bg-current [mask-image:url(/bourbon.svg)] [mask-repeat:no-repeat] [mask-position:left_center] [mask-size:contain]"
       />
     </Link>
   );

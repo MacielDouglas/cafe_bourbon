@@ -104,7 +104,7 @@ export function TasteQuiz() {
     <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr]">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-8 rounded-xl border border-border p-6"
+        className="flex flex-col gap-8 rounded-2xl border border-border bg-card p-6 shadow-soft"
       >
         {scaleFields.map((field) => (
           <div key={field.key} className="flex flex-col gap-3">
@@ -137,10 +137,10 @@ export function TasteQuiz() {
                 type="button"
                 onClick={() => setCategories((current) => toggled(current, option.value))}
                 className={cn(
-                  "rounded-full border px-4 py-1.5 text-sm transition-colors",
+                  "inline-flex min-h-10 items-center rounded-full border px-5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-card",
                   categories.includes(option.value)
-                    ? "border-foreground bg-foreground text-background"
-                    : "border-border text-foreground/70 hover:border-foreground/40",
+                    ? "border-primary bg-primary text-primary-foreground shadow-soft"
+                    : "border-border text-foreground/70 hover:border-foreground/40 hover:bg-secondary",
                 )}
                 aria-pressed={categories.includes(option.value)}
               >
@@ -162,10 +162,10 @@ export function TasteQuiz() {
                 type="button"
                 onClick={() => setNotes((current) => toggled(current, note))}
                 className={cn(
-                  "rounded-full border px-3 py-1 text-xs capitalize transition-colors",
+                  "inline-flex min-h-9 items-center rounded-full border px-4 text-xs capitalize outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-card",
                   notes.includes(note)
-                    ? "border-brand bg-brand/10 text-brand"
-                    : "border-border text-foreground/70 hover:border-foreground/40",
+                    ? "border-brand/40 bg-brand/10 text-brand"
+                    : "border-border text-foreground/70 hover:border-foreground/40 hover:bg-secondary",
                 )}
                 aria-pressed={notes.includes(note)}
               >
@@ -190,7 +190,7 @@ export function TasteQuiz() {
         </Button>
       </form>
 
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-5" aria-live="polite">
         {error && (
           <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
             {error}
@@ -198,7 +198,7 @@ export function TasteQuiz() {
         )}
 
         {!result && !error && (
-          <p className="rounded-xl border border-dashed border-border px-6 py-12 text-center text-sm text-muted-foreground">
+          <p className="rounded-2xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground shadow-soft">
             Ajuste os controles e toque em “Ver recomendações” para receber uma
             seleção feita sob medida.
           </p>
@@ -210,7 +210,7 @@ export function TasteQuiz() {
               <p className="text-sm text-muted-foreground">{result.reason}</p>
             )}
             {result.recommendations.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-border px-6 py-12 text-center text-sm text-muted-foreground">
+              <p className="rounded-2xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground shadow-soft">
                 Não encontramos produtos para esse perfil. Tente ampliar as
                 coleções ou o preço máximo.
               </p>
@@ -220,19 +220,22 @@ export function TasteQuiz() {
                   <li key={item.slug}>
                     <Link
                       href={`/produtos/${item.slug}`}
-                      className="flex items-center justify-between gap-4 rounded-xl border border-border px-4 py-3 transition-colors hover:border-foreground/30"
+                      className="flex items-center justify-between gap-4 rounded-xl border border-border bg-card px-4 py-4 shadow-soft outline-none transition-shadow hover:shadow-lift focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                     >
                       <span className="flex min-w-0 flex-col">
-                        <span className="text-[0.625rem] font-medium tracking-[0.14em] text-muted-foreground uppercase">
-                          {item.typeLabel}
-                          {item.isDemoData ? " · demonstrativo" : ""}
-                        </span>
                         <span className="truncate font-medium">{item.name}</span>
                         <span className="truncate text-sm text-muted-foreground">
                           {item.subtitle}
                         </span>
-                        <span className="mt-1 text-xs text-brand">
-                          {discoveryScoreTierLabel[item.tier]} · {item.score}/100
+                        <span className="mt-1 text-xs">
+                          <span className="text-brand">
+                            {discoveryScoreTierLabel[item.tier]} · {item.score}/100
+                          </span>
+                          <span className="text-muted-foreground">
+                            {" · "}
+                            {item.typeLabel}
+                            {item.isDemoData ? " demonstrativo" : ""}
+                          </span>
                         </span>
                         <span className="sr-only">{item.reason}</span>
                       </span>

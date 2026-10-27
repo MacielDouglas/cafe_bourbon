@@ -79,7 +79,7 @@ export function ProductImageManager({
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-border p-5">
+    <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 shadow-soft">
       <div>
         <h2 className="font-medium">Imagem principal</h2>
         <p className="text-sm text-muted-foreground">
@@ -88,7 +88,7 @@ export function ProductImageManager({
         </p>
       </div>
 
-      <div className="relative aspect-square w-full max-w-xs overflow-hidden rounded-lg bg-muted ring-1 ring-foreground/5">
+      <div className="relative aspect-square w-full max-w-xs overflow-hidden rounded-xl bg-muted shadow-soft ring-1 ring-foreground/5">
         {preview ? (
           <Image
             src={preview}

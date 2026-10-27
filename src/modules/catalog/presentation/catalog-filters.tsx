@@ -33,10 +33,10 @@ export function CatalogFilters({
             key={tab.label}
             href={hrefFor(tab.type, search)}
             className={cn(
-              "rounded-full px-4 py-1.5 text-sm transition-colors",
+              "inline-flex min-h-10 items-center rounded-full border px-5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
               isActive
-                ? "bg-foreground text-background"
-                : "text-foreground/70 hover:bg-secondary hover:text-foreground",
+                ? "border-primary bg-primary text-primary-foreground shadow-soft"
+                : "border-border bg-card text-foreground/70 hover:border-foreground/20 hover:bg-secondary hover:text-foreground",
             )}
           >
             {tab.label}

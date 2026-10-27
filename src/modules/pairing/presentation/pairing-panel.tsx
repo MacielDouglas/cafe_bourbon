@@ -30,12 +30,12 @@ function ProductChip({ product }: { product: Product }) {
   return (
     <Link
       href={`/produtos/${product.slug}`}
-      className="flex min-w-0 flex-1 flex-col gap-0.5 rounded-lg border border-border px-3 py-2 transition-colors hover:border-foreground/30"
+      className="flex min-h-14 min-w-0 flex-1 flex-col justify-center gap-0.5 rounded-lg bg-secondary/70 px-3 py-2 outline-none transition-colors hover:bg-secondary focus-visible:ring-2 focus-visible:ring-ring/60"
     >
-      <span className="text-[0.625rem] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+      <span className="truncate text-sm font-medium">{product.name}</span>
+      <span className="text-xs text-muted-foreground">
         {productTypeLabel[product.type]}
       </span>
-      <span className="truncate text-sm font-medium">{product.name}</span>
     </Link>
   );
 }
@@ -58,12 +58,15 @@ function KitOffer({ products }: { products: Product[] }) {
     products.length >= 2 && products.every((product) => product.purchasable);
 
   return (
-    <div className="flex flex-col gap-4 rounded-lg border border-brand/20 bg-brand/5 p-4">
+    <div className="flex flex-col gap-4 border-t border-border pt-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1.5">
-          <span className="text-[0.625rem] font-medium tracking-[0.16em] text-brand uppercase">
-            Kit de harmonização · {HARMONIZATION_KIT_DISCOUNT_PERCENT}% off
-          </span>
+          <h3 className="text-sm font-medium">
+            Kit de harmonização{" "}
+            <span className="font-normal text-brand">
+              · {HARMONIZATION_KIT_DISCOUNT_PERCENT}% off
+            </span>
+          </h3>
           <ul className="flex flex-col gap-0.5 text-sm text-muted-foreground">
             {products.map((product) => (
               <li
@@ -154,7 +157,7 @@ export function PairingPanel({
   footer?: ReactNode;
 }) {
   return (
-    <article className="flex flex-col gap-5 rounded-xl border border-border p-5">
+    <article className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-soft transition-shadow hover:shadow-lift">
       <header className="flex items-start justify-between gap-4">
         <PairingScoreBadge value={score.value} tier={score.tier} />
         <Badge variant="outline" className="text-muted-foreground">

@@ -14,7 +14,6 @@ export async function CatalogResults({ params }: { params: CatalogSearchParams }
   if (failed) {
     return (
       <StateMessage
-        eyebrow="Catálogo"
         title="Catálogo temporariamente indisponível"
         description="Não conseguimos falar com o banco de dados agora. Tente novamente em instantes."
         action={<StateLink href="/produtos">Recarregar</StateLink>}
@@ -25,7 +24,6 @@ export async function CatalogResults({ params }: { params: CatalogSearchParams }
   if (products.length === 0) {
     return (
       <StateMessage
-        eyebrow="Sem resultados"
         title="Nada por aqui ainda"
         description={
           params.busca

@@ -17,7 +17,6 @@ export default async function AdminEditProductPage({ params }: PageProps) {
   if (failed) {
     return (
       <StateMessage
-        eyebrow="Produto"
         title="Não conseguimos carregar o produto"
         description="O banco de dados está indisponível no momento. Tente novamente em instantes."
         action={<StateLink href="/admin/produtos">Voltar aos produtos</StateLink>}

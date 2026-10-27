@@ -316,12 +316,12 @@ export function ProductForm({ mode, product }: ProductFormProps) {
           />
         </div>
 
-        <label className="flex items-center gap-2 self-end pb-1 text-sm">
+        <label className="flex min-h-10 cursor-pointer items-center gap-2 self-end rounded-md text-sm focus-within:ring-2 focus-within:ring-ring/60">
           <input
             type="checkbox"
             checked={available}
             onChange={(event) => setAvailable(event.target.checked)}
-            className="size-4"
+            className="size-5 accent-brand"
           />
           Disponível para venda
         </label>
@@ -410,7 +410,7 @@ export function ProductForm({ mode, product }: ProductFormProps) {
               {brewMethodOptions.map((option) => (
                 <label
                   key={option.value}
-                  className="flex items-center gap-1.5 text-sm"
+                  className="flex min-h-9 cursor-pointer items-center gap-2 rounded-md border border-border bg-card px-3 text-sm transition-colors focus-within:ring-2 focus-within:ring-ring/60"
                 >
                   <input
                     type="checkbox"
@@ -422,7 +422,7 @@ export function ProductForm({ mode, product }: ProductFormProps) {
                           : current.filter((method) => method !== option.value),
                       )
                     }
-                    className="size-4"
+                    className="size-5 accent-brand"
                   />
                   {option.label}
                 </label>

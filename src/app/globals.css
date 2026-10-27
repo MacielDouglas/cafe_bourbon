@@ -48,82 +48,85 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --shadow-soft: 0 1px 2px oklch(0.2 0.014 55 / 6%), 0 10px 30px oklch(0.2 0.014 55 / 8%);
+  --shadow-lift: 0 2px 4px oklch(0.2 0.014 55 / 8%), 0 18px 48px oklch(0.2 0.014 55 / 14%);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Identidade visual "editorial" — base neutra clara (off-white/eggshell),
    texto quase-preto e o bordô Bourbon como único acento de marca. Cor real
    entra pelos produtos (fotos). */
 :root {
-  --background: oklch(0.984 0.005 85);
-  --foreground: oklch(0.19 0.012 55);
-  --card: oklch(0.984 0.005 85);
-  --card-foreground: oklch(0.19 0.012 55);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.19 0.012 55);
-  --primary: oklch(0.19 0.012 55);
-  --primary-foreground: oklch(0.984 0.005 85);
-  --secondary: oklch(0.955 0.007 85);
-  --secondary-foreground: oklch(0.19 0.012 55);
-  --muted: oklch(0.958 0.006 85);
-  --muted-foreground: oklch(0.50 0.012 65);
-  --accent: oklch(0.94 0.009 80);
-  --accent-foreground: oklch(0.19 0.012 55);
+  --background: oklch(0.976 0.01 82);
+  --foreground: oklch(0.2 0.014 55);
+  --card: oklch(0.986 0.008 82);
+  --card-foreground: oklch(0.2 0.014 55);
+  --popover: oklch(0.992 0.006 82);
+  --popover-foreground: oklch(0.2 0.014 55);
+  --primary: oklch(0.2 0.014 55);
+  --primary-foreground: oklch(0.986 0.008 82);
+  --secondary: oklch(0.945 0.014 78);
+  --secondary-foreground: oklch(0.2 0.014 55);
+  --muted: oklch(0.952 0.011 80);
+  --muted-foreground: oklch(0.47 0.016 62);
+  --accent: oklch(0.922 0.018 72);
+  --accent-foreground: oklch(0.2 0.014 55);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.90 0.006 85);
-  --input: oklch(0.90 0.006 85);
-  --ring: oklch(0.55 0.06 40);
-  --brand: oklch(0.42 0.12 25);
-  --brand-foreground: oklch(0.984 0.005 85);
+  --border: oklch(0.886 0.013 76);
+  --input: oklch(0.886 0.013 76);
+  --ring: oklch(0.5 0.075 42);
+  --brand: oklch(0.42 0.13 27);
+  --brand-foreground: oklch(0.986 0.008 82);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.375rem;
-  --sidebar: oklch(0.984 0.005 85);
-  --sidebar-foreground: oklch(0.19 0.012 55);
-  --sidebar-primary: oklch(0.19 0.012 55);
-  --sidebar-primary-foreground: oklch(0.984 0.005 85);
-  --sidebar-accent: oklch(0.955 0.007 85);
-  --sidebar-accent-foreground: oklch(0.19 0.012 55);
-  --sidebar-border: oklch(0.90 0.006 85);
-  --sidebar-ring: oklch(0.55 0.06 40);
+  --radius: 0.5rem;
+  --sidebar: oklch(0.965 0.012 80);
+  --sidebar-foreground: oklch(0.2 0.014 55);
+  --sidebar-primary: oklch(0.2 0.014 55);
+  --sidebar-primary-foreground: oklch(0.986 0.008 82);
+  --sidebar-accent: oklch(0.922 0.018 72);
+  --sidebar-accent-foreground: oklch(0.2 0.014 55);
+  --sidebar-border: oklch(0.886 0.013 76);
+  --sidebar-ring: oklch(0.5 0.075 42);
 }
 
 .dark {
-  --background: oklch(0.17 0.008 60);
-  --foreground: oklch(0.96 0.004 85);
-  --card: oklch(0.21 0.009 60);
-  --card-foreground: oklch(0.96 0.004 85);
-  --popover: oklch(0.21 0.009 60);
-  --popover-foreground: oklch(0.96 0.004 85);
-  --primary: oklch(0.96 0.004 85);
-  --primary-foreground: oklch(0.19 0.012 55);
-  --secondary: oklch(0.27 0.01 60);
-  --secondary-foreground: oklch(0.96 0.004 85);
-  --muted: oklch(0.27 0.01 60);
-  --muted-foreground: oklch(0.72 0.008 70);
-  --accent: oklch(0.30 0.012 60);
-  --accent-foreground: oklch(0.96 0.004 85);
+  --background: oklch(0.17 0.01 62);
+  --foreground: oklch(0.95 0.008 82);
+  --card: oklch(0.21 0.012 62);
+  --card-foreground: oklch(0.95 0.008 82);
+  --popover: oklch(0.21 0.012 62);
+  --popover-foreground: oklch(0.95 0.008 82);
+  --primary: oklch(0.95 0.008 82);
+  --primary-foreground: oklch(0.2 0.014 55);
+  --secondary: oklch(0.27 0.014 62);
+  --secondary-foreground: oklch(0.95 0.008 82);
+  --muted: oklch(0.27 0.014 62);
+  --muted-foreground: oklch(0.73 0.012 72);
+  --accent: oklch(0.3 0.016 62);
+  --accent-foreground: oklch(0.95 0.008 82);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.60 0.08 40);
-  --brand: oklch(0.58 0.14 27);
-  --brand-foreground: oklch(0.17 0.008 60);
+  --border: oklch(1 0 0 / 13%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.58 0.09 38);
+  --brand: oklch(0.58 0.13 27);
+  --brand-foreground: oklch(0.17 0.01 62);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.21 0.009 60);
-  --sidebar-foreground: oklch(0.96 0.004 85);
-  --sidebar-primary: oklch(0.96 0.004 85);
-  --sidebar-primary-foreground: oklch(0.19 0.012 55);
-  --sidebar-accent: oklch(0.27 0.01 60);
-  --sidebar-accent-foreground: oklch(0.96 0.004 85);
-  --sidebar-border: oklch(1 0 0 / 12%);
-  --sidebar-ring: oklch(0.60 0.08 40);
+  --sidebar: oklch(0.21 0.012 62);
+  --sidebar-foreground: oklch(0.95 0.008 82);
+  --sidebar-primary: oklch(0.6 0.14 29);
+  --sidebar-primary-foreground: oklch(0.17 0.01 62);
+  --sidebar-accent: oklch(0.3 0.016 62);
+  --sidebar-accent-foreground: oklch(0.95 0.008 82);
+  --sidebar-border: oklch(1 0 0 / 13%);
+  --sidebar-ring: oklch(0.58 0.09 38);
 }
 
 @layer base {
@@ -136,15 +139,33 @@
   html {
     @apply font-sans;
     scroll-behavior: smooth;
+    scrollbar-color: var(--border) transparent;
+  }
+  body {
+    caret-color: var(--brand);
   }
   ::selection {
     @apply bg-brand text-brand-foreground;
+  }
+  :focus-visible {
+    outline-color: var(--ring);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
 /* Tokens de marca Café Bourbon (Tailwind v4). */
 @theme {
-  --color-espresso: oklch(0.19 0.012 55);
-  --color-creme: oklch(0.984 0.005 85);
-  --color-bordo: oklch(0.42 0.12 25);
+  --color-espresso: oklch(0.2 0.014 55);
+  --color-creme: oklch(0.976 0.01 82);
+  --color-linho: oklch(0.945 0.014 78);
+  --color-bordo: oklch(0.42 0.13 27);
 }

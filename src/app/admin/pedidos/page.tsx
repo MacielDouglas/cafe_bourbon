@@ -29,7 +29,6 @@ export default async function AdminOrdersPage() {
   if (failed) {
     return (
       <StateMessage
-        eyebrow="Pedidos"
         title="Não conseguimos carregar os pedidos"
         description="O banco de dados está indisponível no momento. Tente novamente em instantes."
         action={<StateLink href="/admin/pedidos">Recarregar</StateLink>}

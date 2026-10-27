@@ -113,7 +113,7 @@ export function SubscriptionForm({
 
   if (confirmed) {
     return (
-      <div className="flex flex-col items-start gap-4 rounded-xl border border-border bg-secondary/40 px-8 py-12">
+      <div className="flex flex-col items-start gap-4 rounded-2xl border border-border bg-card px-8 py-12 shadow-soft">
         <span className="flex size-10 items-center justify-center rounded-full bg-brand text-brand-foreground">
           <CheckIcon />
         </span>
@@ -151,10 +151,10 @@ export function SubscriptionForm({
                 onClick={() => setPlan(item.id)}
                 aria-pressed={active}
                 className={cn(
-                  "flex flex-col gap-3 rounded-xl border p-5 text-left transition-colors",
+                  "flex flex-col gap-3 rounded-2xl border p-5 text-left outline-none transition-all focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                   active
-                    ? "border-foreground ring-1 ring-foreground/20"
-                    : "border-border hover:border-foreground/40",
+                    ? "border-brand/40 bg-card shadow-lift ring-1 ring-brand/20"
+                    : "border-border bg-card shadow-soft hover:border-foreground/30 hover:shadow-lift",
                 )}
               >
                 <span className="flex items-center justify-between">
@@ -218,7 +218,7 @@ export function SubscriptionForm({
             {grindOptions.map((option) => (
               <label
                 key={option.value}
-                className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm"
+                className="flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-4 text-sm transition-colors has-data-[checked]:border-brand/40 has-data-[checked]:bg-brand/5 focus-within:ring-2 focus-within:ring-ring/60"
               >
                 <RadioGroupItem value={option.value} />
                 {option.label}
@@ -262,7 +262,7 @@ export function SubscriptionForm({
             Você será direcionado para entrar.{" "}
             <Link
               href="/entrar"
-              className="font-medium text-brand underline-offset-4 hover:underline"
+              className="rounded-sm font-medium text-brand underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring/60"
             >
               Entrar agora
             </Link>

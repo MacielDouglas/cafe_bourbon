@@ -9,7 +9,6 @@ export async function Harmonizer({ coffeeSlug }: { coffeeSlug?: string }) {
   if (failed) {
     return (
       <StateMessage
-        eyebrow="Harmonizador"
         title="Não conseguimos calcular agora"
         description="O banco de dados está indisponível no momento. Tente novamente em instantes."
         action={<StateLink href="/harmonizacoes">Recarregar</StateLink>}
@@ -20,7 +19,6 @@ export async function Harmonizer({ coffeeSlug }: { coffeeSlug?: string }) {
   if (coffees.length === 0) {
     return (
       <StateMessage
-        eyebrow="Harmonizador"
         title="Nenhum café disponível"
         description="Assim que houver cafés disponíveis no catálogo, o harmonizador volta a funcionar."
         action={<StateLink href="/produtos">Ver catálogo</StateLink>}
@@ -32,7 +30,7 @@ export async function Harmonizer({ coffeeSlug }: { coffeeSlug?: string }) {
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-2">
-          <span className="text-[0.6875rem] font-medium tracking-[0.18em] text-muted-foreground uppercase">
+          <span className="text-sm font-medium">
             Escolha o café
           </span>
           <CoffeeSelect coffees={coffees} value={base?.slug} />
@@ -60,13 +58,12 @@ export async function Harmonizer({ coffeeSlug }: { coffeeSlug?: string }) {
           </div>
         ) : (
           <StateMessage
-            eyebrow="Sem combinações"
             title="Não encontramos par para este café"
             description="Tente outro café ou explore as escolhas da casa logo abaixo."
           />
         )
       ) : (
-        <p className="rounded-xl border border-dashed border-border px-6 py-12 text-center text-sm text-muted-foreground">
+        <p className="rounded-2xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground shadow-soft">
           Selecione um café para ver as harmonizações sugeridas com queijos e
           vinhos.
         </p>

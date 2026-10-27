@@ -107,14 +107,14 @@ export function AdminProductTable({ products }: { products: AdminProduct[] }) {
 
   if (products.length === 0) {
     return (
-      <p className="rounded-xl border border-dashed border-border px-6 py-12 text-center text-sm text-muted-foreground">
+      <p className="rounded-2xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground shadow-soft">
         Nenhum produto cadastrado. Crie o primeiro no botão acima.
       </p>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-border">
+    <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-soft">
       <table className="w-full min-w-[760px] text-sm">
         <thead className="bg-muted/50 text-left text-xs text-muted-foreground uppercase">
           <tr>
@@ -170,7 +170,6 @@ export function AdminProductTable({ products }: { products: AdminProduct[] }) {
                       className="w-20"
                     />
                     <Button
-                      size="sm"
                       variant="outline"
                       disabled={busy || draft === undefined}
                       onClick={() => void saveStock(product)}
@@ -184,6 +183,7 @@ export function AdminProductTable({ products }: { products: AdminProduct[] }) {
                     type="button"
                     disabled={busy}
                     onClick={() => void toggleAvailability(product)}
+                    className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-card disabled:opacity-50"
                   >
                     <Badge
                       variant={product.available ? "secondary" : "destructive"}
@@ -196,7 +196,7 @@ export function AdminProductTable({ products }: { products: AdminProduct[] }) {
                   <div className="flex items-center justify-end gap-1">
                     <Button
                       variant="ghost"
-                      size="icon-sm"
+                      size="icon"
                       aria-label={`Editar ${product.name}`}
                       disabled={busy}
                       nativeButton={false}
@@ -206,7 +206,7 @@ export function AdminProductTable({ products }: { products: AdminProduct[] }) {
                     </Button>
                     <Button
                       variant="ghost"
-                      size="icon-sm"
+                      size="icon"
                       aria-label={`Excluir ${product.name}`}
                       disabled={busy}
                       onClick={() => void remove(product)}

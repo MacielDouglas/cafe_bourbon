@@ -77,7 +77,12 @@ export function ChatPanel() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex min-h-72 flex-col gap-4 rounded-xl border border-border p-5">
+      <div
+        role="log"
+        aria-live="polite"
+        aria-busy={loading}
+        className="flex min-h-72 flex-col gap-4 rounded-2xl border border-border bg-card p-6 shadow-soft"
+      >
         {messages.length === 0 && (
           <p className="m-auto max-w-md text-center text-sm text-muted-foreground">
             Pergunte ao nosso barista virtual sobre cafés, queijos, vinhos e
@@ -97,7 +102,7 @@ export function ChatPanel() {
               className={cn(
                 "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
                 message.role === "user"
-                  ? "bg-foreground text-background"
+                  ? "bg-primary text-primary-foreground shadow-soft"
                   : "bg-secondary text-secondary-foreground",
               )}
             >
@@ -116,7 +121,7 @@ export function ChatPanel() {
                   <Link
                     key={slug}
                     href={`/produtos/${slug}`}
-                    className="rounded-full border border-border px-3 py-1 text-xs text-foreground/75 transition-colors hover:border-foreground/40"
+                    className="inline-flex min-h-9 items-center rounded-full border border-border px-4 text-xs text-foreground/75 outline-none transition-colors hover:border-foreground/40 hover:bg-secondary focus-visible:ring-2 focus-visible:ring-ring/60"
                   >
                     {humanizeSlug(slug)}
                   </Link>
@@ -129,7 +134,11 @@ export function ChatPanel() {
         {loading && (
           <span className="text-sm text-muted-foreground">Pensando...</span>
         )}
-        {error && <span className="text-sm text-destructive">{error}</span>}
+        {error && (
+          <span role="alert" className="text-sm text-destructive">
+            {error}
+          </span>
+        )}
       </div>
 
       {messages.length === 0 && (
@@ -139,7 +148,7 @@ export function ChatPanel() {
               key={suggestion}
               type="button"
               onClick={() => send(suggestion)}
-              className="rounded-full border border-border px-3 py-1 text-xs text-foreground/70 transition-colors hover:border-foreground/40"
+              className="inline-flex min-h-9 items-center rounded-full border border-border bg-card px-4 text-left text-xs text-foreground/70 outline-none transition-colors hover:border-foreground/40 hover:bg-secondary focus-visible:ring-2 focus-visible:ring-ring/60"
             >
               {suggestion}
             </button>

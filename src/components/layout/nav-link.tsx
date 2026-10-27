@@ -43,7 +43,11 @@ export function NavLink({
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={cn(className, active && activeClassName)}
+      className={cn(
+        "rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-4 focus-visible:ring-offset-background",
+        className,
+        active && activeClassName,
+      )}
       {...props}
     />
   );

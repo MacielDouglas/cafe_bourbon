@@ -15,7 +15,7 @@ export function CartSkeleton() {
           </div>
         ))}
       </div>
-      <Skeleton className="h-64 w-full rounded-xl" />
+      <Skeleton className="h-64 w-full rounded-2xl" />
     </div>
   );
 }

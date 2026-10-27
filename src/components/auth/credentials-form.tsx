@@ -47,7 +47,10 @@ export function CredentialsForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-soft"
+    >
       {isSignUp && (
         <label className="flex flex-col gap-2">
           <span className="text-sm font-medium">Nome</span>

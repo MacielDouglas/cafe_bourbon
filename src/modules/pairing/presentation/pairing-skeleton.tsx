@@ -6,7 +6,7 @@ export function PairingGridSkeleton({ count = 4 }: { count?: number }) {
       {Array.from({ length: count }).map((_, index) => (
         <div
           key={index}
-          className="flex flex-col gap-5 rounded-xl border border-border p-5"
+          className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-soft"
         >
           <div className="flex items-start justify-between gap-4">
             <Skeleton className="h-10 w-32" />
