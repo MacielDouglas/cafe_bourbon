@@ -5,6 +5,7 @@ import type {
   OrderSummary,
 } from "@/modules/commerce/domain/order";
 import type { OrderRepository } from "@/modules/commerce/domain/order-repository";
+import { computeHarmonizationDiscount } from "@/modules/shared/domain/harmonization-kit";
 import { DomainError } from "@/modules/shared/domain/errors";
 
 export interface CheckoutCustomer {
@@ -41,9 +42,6 @@ export class CreateOrder {
     );
     const byId = new Map(products.map((product) => [product.id.value, product]));
 
-    const lines: OrderLine[] = [];
-    let totalCents = 0;
-
     for (const item of items) {
       const product = byId.get(item.productId);
       if (!product) {
@@ -57,8 +55,36 @@ export class CreateOrder {
           `Estoque insuficiente para ${product.name}. Disponível: ${product.stock}.`,
         );
       }
+    }
+
+    const discount = computeHarmonizationDiscount(
+      items.flatMap((item) => {
+        const product = byId.get(item.productId);
+        if (!product) return [];
+        return [
+          {
+            productId: product.id.value,
+            type: product.type,
+            priceCents: product.price?.cents ?? 0,
+            quantity: item.quantity,
+          },
+        ];
+      }),
+    );
+
+    const lines: OrderLine[] = [];
+    let totalCents = 0;
+
+    for (const item of items) {
+      const product = byId.get(item.productId);
+      if (!product) continue;
       const unitPriceCents = product.price?.cents ?? 0;
-      const subtotalCents = unitPriceCents * item.quantity;
+      const grossSubtotalCents = unitPriceCents * item.quantity;
+      const lineDiscountCents = Math.min(
+        grossSubtotalCents,
+        discount.discountByProductId.get(product.id.value) ?? 0,
+      );
+      const subtotalCents = grossSubtotalCents - lineDiscountCents;
       totalCents += subtotalCents;
       lines.push({
         productId: product.id.value,

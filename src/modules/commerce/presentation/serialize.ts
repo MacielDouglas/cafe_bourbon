@@ -21,6 +21,10 @@ export interface SerializedCart {
   totalQuantity: number;
   totalCents: number;
   totalLabel: string;
+  kitDiscountCents: number;
+  kitDiscountLabel: string;
+  kitDiscountPercent: number;
+  kitCount: number;
 }
 
 /** Converte o agregado de domínio para um payload seguro (preços do servidor). */
@@ -42,5 +46,9 @@ export function serializeCart(summary: CartSummary): SerializedCart {
     totalQuantity: summary.totalQuantity,
     totalCents: summary.total.cents,
     totalLabel: formatCents(summary.total.cents),
+    kitDiscountCents: summary.discount.cents,
+    kitDiscountLabel: formatCents(summary.discount.cents),
+    kitDiscountPercent: summary.discountPercent,
+    kitCount: summary.kitCount,
   };
 }

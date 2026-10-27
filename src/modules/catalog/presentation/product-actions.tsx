@@ -45,6 +45,7 @@ export function ProductActions({
 
       const data = (await response.json()) as { totalQuantity: number };
       notifyCartUpdated();
+      router.refresh();
       toast.success("Adicionado ao carrinho", {
         description: `${productName} · ${data.totalQuantity} item(ns) no carrinho.`,
         action: { label: "Ver carrinho", onClick: () => router.push("/carrinho") },

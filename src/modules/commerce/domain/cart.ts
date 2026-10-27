@@ -1,6 +1,10 @@
 import { z } from "zod";
 import type { Product } from "@/modules/catalog/domain/product";
 import { Money } from "@/modules/catalog/domain/value-objects";
+import {
+  HARMONIZATION_KIT_DISCOUNT_PERCENT,
+  computeHarmonizationDiscount,
+} from "@/modules/shared/domain/harmonization-kit";
 import { DomainError } from "@/modules/shared/domain/errors";
 
 export const MAX_CART_QUANTITY = 99;
@@ -17,12 +21,16 @@ export interface CartLine {
   product: Product;
   quantity: number;
   subtotal: Money;
+  discount: Money;
 }
 
 export interface CartSummary {
   lines: CartLine[];
   totalQuantity: number;
   total: Money;
+  discount: Money;
+  discountPercent: number;
+  kitCount: number;
 }
 
 export function clampQuantity(quantity: number): number {
@@ -90,8 +98,24 @@ export class Cart {
 
   /** Preços sempre vêm dos produtos do servidor, nunca do cliente. */
   priced(products: ReadonlyMap<string, Product>): CartSummary {
+    const discount = computeHarmonizationDiscount(
+      this.items.flatMap((item) => {
+        const product = products.get(item.productId);
+        if (!product) return [];
+        return [
+          {
+            productId: product.id.value,
+            type: product.type,
+            priceCents: product.price?.cents ?? 0,
+            quantity: item.quantity,
+          },
+        ];
+      }),
+    );
+
     const lines: CartLine[] = [];
     let totalCents = 0;
+    let discountCents = 0;
     let totalQuantity = 0;
 
     for (const item of this.items) {
@@ -99,15 +123,28 @@ export class Cart {
       if (!product) continue;
       const unit = product.price?.cents ?? 0;
       const subtotalCents = unit * item.quantity;
+      const lineDiscountCents = Math.min(
+        subtotalCents,
+        discount.discountByProductId.get(product.id.value) ?? 0,
+      );
       totalCents += subtotalCents;
+      discountCents += lineDiscountCents;
       totalQuantity += item.quantity;
       lines.push({
         product,
         quantity: item.quantity,
         subtotal: Money.cents(subtotalCents),
+        discount: Money.cents(lineDiscountCents),
       });
     }
 
-    return { lines, totalQuantity, total: Money.cents(totalCents) };
+    return {
+      lines,
+      totalQuantity,
+      total: Money.cents(totalCents - discountCents),
+      discount: Money.cents(discountCents),
+      discountPercent: HARMONIZATION_KIT_DISCOUNT_PERCENT,
+      kitCount: discount.kitCount,
+    };
   }
 }

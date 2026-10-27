@@ -1,4 +1,5 @@
 import { connection } from "next/server";
+import { revalidatePath } from "next/cache";
 import { currentUser } from "@/infrastructure/auth/authorization";
 import { commerceUseCases } from "@/modules/commerce/presentation/composition";
 import { ensureCartIdentity } from "@/modules/commerce/presentation/identity";
@@ -21,6 +22,7 @@ export async function POST() {
       name: user.name,
       email: user.email,
     });
+    revalidatePath("/carrinho");
     return Response.json({
       order: {
         id: order.id,

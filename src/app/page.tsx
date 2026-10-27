@@ -10,6 +10,8 @@ import type { ProductType } from "@/modules/catalog/domain/value-objects";
 
 const collectionImage: Partial<Record<ProductType, string>> = {
   COFFEE: "/images/cafes/cafe-do-brasil.jpg",
+  CHEESE: "/images/queijos.jpg",
+  WINE: "/images/vinhos.jpg",
 };
 
 const steps = [

@@ -5,6 +5,11 @@ import type {
   CartIdentity,
   CartRepository,
 } from "@/modules/commerce/domain/cart-repository";
+import {
+  HARMONIZATION_KIT_MAX_PRODUCTS,
+  HARMONIZATION_KIT_MIN_PRODUCTS,
+  assertHarmonizationKit,
+} from "@/modules/shared/domain/harmonization-kit";
 import { DomainError } from "@/modules/shared/domain/errors";
 
 /**
@@ -26,6 +31,39 @@ export class ManageCart {
     const amount = clampQuantity(quantity);
     this.ensureStock(product, amount);
     await this.carts.add(identity, product.id.value, amount);
+  }
+
+  async addKit(identity: CartIdentity, productIds: string[]): Promise<void> {
+    const unique = [...new Set(productIds)];
+    if (
+      unique.length < HARMONIZATION_KIT_MIN_PRODUCTS ||
+      unique.length > HARMONIZATION_KIT_MAX_PRODUCTS
+    ) {
+      throw new DomainError(
+        `Kit de harmonização deve ter ${HARMONIZATION_KIT_MIN_PRODUCTS} ou ${HARMONIZATION_KIT_MAX_PRODUCTS} produtos.`,
+      );
+    }
+
+    const products = await this.products.findByIds(unique);
+    if (products.length !== unique.length) {
+      throw new DomainError("Um dos produtos do kit não existe mais.");
+    }
+    assertHarmonizationKit(products);
+
+    for (const product of products) {
+      if (!product.purchasable) {
+        throw new DomainError(`Produto indisponível: ${product.name}.`);
+      }
+      if (product.stock < 1) {
+        throw new DomainError(
+          `Estoque insuficiente para ${product.name}. Disponível: ${product.stock}.`,
+        );
+      }
+    }
+
+    for (const product of products) {
+      await this.carts.add(identity, product.id.value, 1);
+    }
   }
 
   async setQuantity(

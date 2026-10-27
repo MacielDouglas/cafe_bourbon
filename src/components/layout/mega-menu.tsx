@@ -3,17 +3,19 @@ import Link from "next/link";
 import { ChevronDownIcon } from "lucide-react";
 import { cn } from "cn";
 import { categoryLinks, coffeeLinks } from "@/components/layout/navigation";
+import { NavLink } from "@/components/layout/nav-link";
 
 export function MegaMenu({ className }: { className?: string }) {
   return (
     <div className={cn("group relative", className)}>
-      <Link
+      <NavLink
         href="/produtos"
         className="inline-flex items-center gap-1 py-2 text-sm text-foreground/70 transition-colors hover:text-foreground group-hover:text-foreground"
+        activeClassName="font-medium text-brand"
       >
         Catálogo
         <ChevronDownIcon className="size-3.5 transition-transform duration-200 group-hover:rotate-180" />
-      </Link>
+      </NavLink>
 
       <div className="invisible absolute top-full left-1/2 z-50 w-[min(56rem,90vw)] -translate-x-1/2 pt-3 opacity-0 transition-all duration-150 group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
         <div className="grid grid-cols-[1.4fr_1fr_1.1fr] gap-8 rounded-xl border border-border bg-popover p-7 text-popover-foreground shadow-xl">

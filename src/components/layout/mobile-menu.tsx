@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MenuIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { categoryLinks, coffeeLinks, primaryLinks } from "@/components/layout/navigation";
+import { NavLink } from "@/components/layout/nav-link";
 
 export function MobileMenu() {
   const router = useRouter();
@@ -52,31 +52,34 @@ export function MobileMenu() {
               Coleções
             </p>
             {categoryLinks.map((category) => (
-              <Link
+              <NavLink
                 key={category.type}
                 href={category.href}
                 onClick={() => setOpen(false)}
-                className="text-2xl font-medium"
+                className="text-2xl font-medium text-foreground/70 transition-colors hover:text-foreground"
+                activeClassName="text-brand"
               >
                 {category.label}
-              </Link>
+              </NavLink>
             ))}
-            <Link
+            <NavLink
               href="/produtos"
               onClick={() => setOpen(false)}
-              className="text-2xl font-medium"
+              className="text-2xl font-medium text-foreground/70 transition-colors hover:text-foreground"
+              activeClassName="text-brand"
             >
               Ver tudo
-            </Link>
+            </NavLink>
             {primaryLinks.map((link) => (
-              <Link
+              <NavLink
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="text-2xl font-medium"
+                className="text-2xl font-medium text-foreground/70 transition-colors hover:text-foreground"
+                activeClassName="text-brand"
               >
                 {link.label}
-              </Link>
+              </NavLink>
             ))}
           </div>
 
@@ -85,14 +88,15 @@ export function MobileMenu() {
               Cafés de origem
             </p>
             {coffeeLinks.map((coffee) => (
-              <Link
+              <NavLink
                 key={coffee.href}
                 href={coffee.href}
                 onClick={() => setOpen(false)}
-                className="text-base text-foreground/75"
+                className="text-base text-foreground/75 transition-colors hover:text-foreground"
+                activeClassName="font-medium text-brand"
               >
                 {coffee.label}
-              </Link>
+              </NavLink>
             ))}
           </div>
         </nav>

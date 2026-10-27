@@ -8,7 +8,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import type { Product } from "@/modules/catalog/domain/product";
+import { formatCents } from "@/modules/catalog/presentation/format";
 import { productTypeLabel } from "@/modules/catalog/presentation/labels";
+import {
+  HARMONIZATION_KIT_DISCOUNT_PERCENT,
+  computeHarmonizationDiscount,
+} from "@/modules/shared/domain/harmonization-kit";
+import { AddKitButton } from "@/modules/pairing/presentation/add-kit-button";
 import type {
   PairingCriterion,
   PairingOrigin,
@@ -31,6 +37,67 @@ function ProductChip({ product }: { product: Product }) {
       </span>
       <span className="truncate text-sm font-medium">{product.name}</span>
     </Link>
+  );
+}
+
+function KitOffer({ products }: { products: Product[] }) {
+  const discount = computeHarmonizationDiscount(
+    products.map((product) => ({
+      productId: product.id.value,
+      type: product.type,
+      priceCents: product.price?.cents ?? 0,
+      quantity: 1,
+    })),
+  );
+  const totalCents = products.reduce(
+    (sum, product) => sum + (product.price?.cents ?? 0),
+    0,
+  );
+  const kitCents = totalCents - discount.totalCents;
+  const purchasable =
+    products.length >= 2 && products.every((product) => product.purchasable);
+
+  return (
+    <div className="flex flex-col gap-4 rounded-lg border border-brand/20 bg-brand/5 p-4">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex min-w-0 flex-col gap-1.5">
+          <span className="text-[0.625rem] font-medium tracking-[0.16em] text-brand uppercase">
+            Kit de harmonização · {HARMONIZATION_KIT_DISCOUNT_PERCENT}% off
+          </span>
+          <ul className="flex flex-col gap-0.5 text-sm text-muted-foreground">
+            {products.map((product) => (
+              <li
+                key={product.id.value}
+                className="flex items-baseline justify-between gap-4"
+              >
+                <span className="truncate">{product.name}</span>
+                <span className="shrink-0 tabular-nums">
+                  {product.price ? formatCents(product.price.cents) : "—"}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="flex flex-col items-end gap-0.5 text-right">
+          <span className="text-[0.625rem] font-medium tracking-[0.16em] text-muted-foreground uppercase">
+            Preço do kit
+          </span>
+          <span className="text-2xl font-medium text-brand tabular-nums">
+            {formatCents(kitCents)}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            Economize {formatCents(discount.totalCents)}
+          </span>
+        </div>
+      </div>
+
+      <AddKitButton
+        productIds={products.map((product) => product.id.value)}
+        kitName={products.map((product) => product.name).join(" + ")}
+        disabled={!purchasable}
+      />
+    </div>
   );
 }
 
@@ -96,6 +163,8 @@ export function PairingPanel({
       </header>
 
       <ProductRow products={products} />
+
+      <KitOffer products={products} />
 
       <p className="text-sm leading-relaxed text-foreground/80">{explanation}</p>
 

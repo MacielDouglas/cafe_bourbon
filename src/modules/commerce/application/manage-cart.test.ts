@@ -46,16 +46,48 @@ describe("ManageCart + GetCart", () => {
     const { manage, getCart } = setup();
     await manage.add(identity, "coffee-1");
     await manage.add(identity, "coffee-1");
-    await manage.add(identity, "cheese-1", 2);
 
     const summary = await getCart.execute(identity);
-    expect(summary.totalQuantity).toBe(4);
-    expect(summary.total.cents).toBe(2000 * 2 + 3500 * 2);
+    expect(summary.totalQuantity).toBe(2);
+    expect(summary.total.cents).toBe(4000);
+    expect(summary.discount.cents).toBe(0);
     const coffeeLine = summary.lines.find(
       (line) => line.product.id.value === "coffee-1",
     );
     expect(coffeeLine?.quantity).toBe(2);
     expect(coffeeLine?.subtotal.cents).toBe(4000);
+  });
+
+  it("aplica 5% ao formar um kit de harmonização", async () => {
+    const { manage, getCart } = setup();
+    await manage.add(identity, "coffee-1");
+    await manage.add(identity, "cheese-1");
+
+    const summary = await getCart.execute(identity);
+    expect(summary.kitCount).toBe(1);
+    expect(summary.discountPercent).toBe(5);
+    expect(summary.discount.cents).toBe(275);
+    expect(summary.total.cents).toBe(5225);
+  });
+
+  it("adiciona um kit completo ao carrinho", async () => {
+    const { manage, getCart } = setup();
+    await manage.addKit(identity, ["coffee-1", "cheese-1"]);
+
+    const summary = await getCart.execute(identity);
+    expect(summary.totalQuantity).toBe(2);
+    expect(summary.kitCount).toBe(1);
+    expect(summary.total.cents).toBe(5225);
+  });
+
+  it("recusa kit com categorias iguais ou produto indisponível", async () => {
+    const { manage } = setup();
+    await expect(
+      manage.addKit(identity, ["coffee-1", "coffee-1"]),
+    ).rejects.toBeInstanceOf(DomainError);
+    await expect(
+      manage.addKit(identity, ["coffee-1", "wine-off"]),
+    ).rejects.toBeInstanceOf(DomainError);
   });
 
   it("recusa produto indisponível", async () => {

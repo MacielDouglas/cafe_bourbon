@@ -1,4 +1,5 @@
 import { connection } from "next/server";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { commerceUseCases } from "@/modules/commerce/presentation/composition";
 import {
@@ -50,6 +51,7 @@ export async function POST(request: Request) {
       parsed.data.productId,
       parsed.data.quantity ?? 1,
     );
+    revalidatePath("/carrinho");
     return Response.json(serializeCart(await getCart.execute(identity)));
   } catch (error) {
     return (
@@ -80,6 +82,7 @@ export async function PATCH(request: Request) {
       parsed.data.productId,
       parsed.data.quantity,
     );
+    revalidatePath("/carrinho");
     return Response.json(serializeCart(await getCart.execute(identity)));
   } catch (error) {
     return (
@@ -104,5 +107,6 @@ export async function DELETE(request: Request) {
     await manageCart.clear(identity);
   }
 
+  revalidatePath("/carrinho");
   return Response.json(serializeCart(await getCart.execute(identity)));
 }

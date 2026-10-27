@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { formatCents } from "@/modules/catalog/presentation/format";
 import { productTypeLabel } from "@/modules/catalog/presentation/labels";
 import type { SerializedCart } from "@/modules/commerce/presentation/serialize";
+import { CartSkeleton } from "@/modules/commerce/presentation/skeletons";
 import { notifyCartUpdated } from "@/lib/auth-client";
 
 async function parseCart(response: Response): Promise<SerializedCart> {
@@ -59,12 +60,39 @@ export function CartView({
   const router = useRouter();
   const [cart, setCart] = useState(initialCart);
   const [pending, setPending] = useState<string | null>(null);
+  const [revalidating, setRevalidating] = useState(true);
+  const mutated = useRef(false);
+
+  // Garante dados frescos ao entrar na página, mesmo que a navegação
+  // cliente tenha reutilizado um payload em cache (ex.: carrinho vazio).
+  useEffect(() => {
+    let active = true;
+
+    async function refresh() {
+      try {
+        const response = await fetch("/api/cart", { cache: "no-store" });
+        if (!response.ok) return;
+        const fresh = (await response.json()) as SerializedCart;
+        if (active && !mutated.current) setCart(fresh);
+      } catch {
+        // mantém o estado atual; mutações continuam disponíveis
+      } finally {
+        if (active) setRevalidating(false);
+      }
+    }
+
+    void refresh();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function send(
     key: string,
     path: string,
     init: RequestInit,
   ): Promise<void> {
+    mutated.current = true;
     setPending(key);
     try {
       setCart(await parseCart(await fetch(path, init)));
@@ -101,6 +129,7 @@ export function CartView({
       return;
     }
 
+    mutated.current = true;
     setPending("__checkout__");
     try {
       const response = await fetch("/api/checkout", { method: "POST" });
@@ -126,6 +155,10 @@ export function CartView({
         totalQuantity: 0,
         totalCents: 0,
         totalLabel: formatCents(0),
+        kitDiscountCents: 0,
+        kitDiscountLabel: formatCents(0),
+        kitDiscountPercent: 5,
+        kitCount: 0,
       });
       notifyCartUpdated();
       toast.success("Pedido demonstrativo confirmado", {
@@ -137,6 +170,10 @@ export function CartView({
     } finally {
       setPending(null);
     }
+  }
+
+  if (revalidating && cart.lines.length === 0) {
+    return <CartSkeleton />;
   }
 
   if (cart.lines.length === 0) {
@@ -233,6 +270,17 @@ export function CartView({
           <span>Itens</span>
           <span className="tabular-nums">{cart.totalQuantity}</span>
         </div>
+        {cart.kitDiscountCents > 0 && (
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-brand">
+              Kit de harmonização ({cart.kitCount}× ·{" "}
+              {cart.kitDiscountPercent}% off)
+            </span>
+            <span className="font-medium text-brand tabular-nums">
+              − {cart.kitDiscountLabel}
+            </span>
+          </div>
+        )}
         <Separator />
         <div className="flex items-center justify-between">
           <span className="font-medium">Total</span>

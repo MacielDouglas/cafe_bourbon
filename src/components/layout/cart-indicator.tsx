@@ -2,11 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ShoppingBagIcon } from "lucide-react";
+import { cn } from "cn";
 import { Button } from "@/components/ui/button";
 import { CART_UPDATED_EVENT } from "@/lib/auth-client";
 
 export function CartIndicator() {
+  const pathname = usePathname();
+  const active = pathname === "/carrinho";
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -37,9 +41,10 @@ export function CartIndicator() {
       variant="ghost"
       size="icon"
       aria-label={count > 0 ? `Carrinho (${count} itens)` : "Carrinho"}
+      aria-current={active ? "page" : undefined}
       nativeButton={false}
-      render={<Link href="/carrinho" />}
-      className="relative"
+      render={<Link href="/carrinho" prefetch={false} />}
+      className={cn("relative", active && "bg-accent text-brand")}
     >
       <ShoppingBagIcon />
       {count > 0 && (
