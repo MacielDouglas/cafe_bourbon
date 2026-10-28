@@ -1,16 +1,32 @@
 import { cn } from "cn";
 import type { SensoryAxes } from "@/modules/catalog/domain/product";
 
-function ScaleBar({ label, value }: { label: string; value: number }) {
+function ScaleBar({
+  label,
+  value,
+  compact,
+}: {
+  label: string;
+  value: number;
+  compact?: boolean;
+}) {
   return (
-    <div className="flex items-center justify-between gap-4">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <div className="flex gap-1" aria-hidden>
+    <div className="flex items-center justify-between gap-2">
+      <span
+        className={cn(
+          "text-muted-foreground",
+          compact ? "text-[0.6875rem]" : "text-sm",
+        )}
+      >
+        {label}
+      </span>
+      <div className={cn("flex", compact ? "gap-0.5" : "gap-1")} aria-hidden>
         {Array.from({ length: 5 }).map((_, index) => (
           <span
             key={index}
             className={cn(
-              "h-1.5 w-7 rounded-full",
+              "rounded-full",
+              compact ? "h-1 w-3" : "h-1.5 w-7",
               index < value ? "bg-brand" : "bg-border",
             )}
           />
@@ -23,13 +39,19 @@ function ScaleBar({ label, value }: { label: string; value: number }) {
   );
 }
 
-export function SensoryProfile({ sensory }: { sensory: SensoryAxes }) {
+export function SensoryProfile({
+  sensory,
+  compact = false,
+}: {
+  sensory: SensoryAxes;
+  compact?: boolean;
+}) {
   return (
-    <div className="flex flex-col gap-3">
-      <ScaleBar label="Intensidade" value={sensory.intensity} />
-      <ScaleBar label="Corpo" value={sensory.body} />
+    <div className={cn("flex flex-col", compact ? "gap-1" : "gap-3")}>
+      <ScaleBar label="Intensidade" value={sensory.intensity} compact={compact} />
+      <ScaleBar label="Corpo" value={sensory.body} compact={compact} />
       {sensory.acidity !== null && (
-        <ScaleBar label="Acidez" value={sensory.acidity} />
+        <ScaleBar label="Acidez" value={sensory.acidity} compact={compact} />
       )}
     </div>
   );

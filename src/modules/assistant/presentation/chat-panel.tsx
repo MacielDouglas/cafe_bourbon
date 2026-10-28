@@ -10,12 +10,14 @@ interface ChatMessage {
   role: "user" | "assistant";
   text: string;
   productSlugs: string[];
+  productNames: Record<string, string>;
   degraded: boolean;
 }
 
 interface ChatResponse {
   reply: string;
   productSlugs: string[];
+  productNames: Record<string, string>;
   pairingIds: string[];
   degraded: boolean;
 }
@@ -27,9 +29,14 @@ const suggestions = [
 ];
 
 function humanizeSlug(slug: string): string {
+  const minor = new Set(["de", "do", "da", "dos", "das", "e"]);
   return slug
     .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .map((part, index) =>
+      index > 0 && minor.has(part)
+        ? part
+        : part.charAt(0).toUpperCase() + part.slice(1),
+    )
     .join(" ");
 }
 
@@ -45,7 +52,13 @@ export function ChatPanel() {
 
     setMessages((current) => [
       ...current,
-      { role: "user", text: trimmed, productSlugs: [], degraded: false },
+      {
+        role: "user",
+        text: trimmed,
+        productSlugs: [],
+        productNames: {},
+        degraded: false,
+      },
     ]);
     setInput("");
     setLoading(true);
@@ -65,6 +78,7 @@ export function ChatPanel() {
           role: "assistant",
           text: data.reply,
           productSlugs: data.productSlugs,
+          productNames: data.productNames ?? {},
           degraded: data.degraded,
         },
       ]);
@@ -111,7 +125,8 @@ export function ChatPanel() {
 
             {message.role === "assistant" && message.degraded && (
               <span className="text-xs text-muted-foreground">
-                Modo degradado (IA indisponível no momento).
+                Modo local: a IA está indisponível, então sugeri itens do
+                catálogo.
               </span>
             )}
 
@@ -123,7 +138,7 @@ export function ChatPanel() {
                     href={`/produtos/${slug}`}
                     className="inline-flex min-h-9 items-center rounded-full border border-border px-4 text-xs text-foreground/75 outline-none transition-colors hover:border-foreground/40 hover:bg-secondary focus-visible:ring-2 focus-visible:ring-ring/60"
                   >
-                    {humanizeSlug(slug)}
+                    {message.productNames[slug] ?? humanizeSlug(slug)}
                   </Link>
                 ))}
               </div>

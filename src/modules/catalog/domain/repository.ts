@@ -1,10 +1,17 @@
 import type { Product } from "@/modules/catalog/domain/product";
 import type { ProductType } from "@/modules/catalog/domain/value-objects";
 
+export type ProductSort =
+  | "name"
+  | "price-asc"
+  | "price-desc"
+  | "intensity-desc";
+
 export interface ProductFilter {
   type?: ProductType;
   availableOnly?: boolean;
   search?: string;
+  sort?: ProductSort;
   page?: number;
   pageSize?: number;
 }

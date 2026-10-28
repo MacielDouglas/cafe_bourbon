@@ -143,11 +143,13 @@ export function ProductForm({ mode, product }: ProductFormProps) {
   });
 
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   function changeType(next: ProductType) {
     setType(next);
-    setNotes("");
-    if (next === "COFFEE") setBrewMethods(["COADO"]);
+    if (next === "COFFEE" && brewMethods.length === 0) {
+      setBrewMethods(["COADO"]);
+    }
   }
 
   function buildProfile() {
@@ -194,6 +196,7 @@ export function ProductForm({ mode, product }: ProductFormProps) {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setFormError(null);
     setLoading(true);
 
     try {
@@ -223,7 +226,7 @@ export function ProductForm({ mode, product }: ProductFormProps) {
         const data = (await response.json().catch(() => null)) as {
           error?: string;
         } | null;
-        toast.error(data?.error ?? "Não foi possível salvar o produto.");
+        setFormError(data?.error ?? "Não foi possível salvar o produto.");
         return;
       }
 
@@ -238,15 +241,27 @@ export function ProductForm({ mode, product }: ProductFormProps) {
         router.refresh();
       }
     } catch {
-      toast.error("Não foi possível salvar o produto.");
+      setFormError("Não foi possível salvar o produto. Tente novamente.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-      <section className="grid gap-4 sm:grid-cols-2">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      {formError && (
+        <p
+          role="alert"
+          className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive"
+        >
+          {formError}
+        </p>
+      )}
+
+      <section className="grid gap-4 rounded-xl border border-border bg-card p-5 sm:grid-cols-2">
+        <h2 className="text-lg font-medium sm:col-span-2">
+          Identificação e venda
+        </h2>
         <div className="flex flex-col gap-2">
           <Label htmlFor="name">Nome</Label>
           <Input
@@ -338,7 +353,16 @@ export function ProductForm({ mode, product }: ProductFormProps) {
           />
         </div>
 
-        <div className="flex flex-col gap-2 sm:col-span-2">
+      </section>
+
+      <section className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5">
+        <div>
+          <h2 className="text-lg font-medium">Perfil sensorial</h2>
+          <p className="text-sm text-muted-foreground">
+            As notas alimentam a busca, as recomendações e as harmonizações.
+          </p>
+        </div>
+        <div className="flex flex-col gap-2">
           <Label htmlFor="notes">Notas sensoriais (separadas por vírgula)</Label>
           <Input
             id="notes"
@@ -351,7 +375,7 @@ export function ProductForm({ mode, product }: ProductFormProps) {
       </section>
 
       {type === "COFFEE" && (
-        <section className="grid gap-4 sm:grid-cols-2">
+        <section className="grid gap-4 rounded-xl border border-border bg-card p-5 sm:grid-cols-2">
           <h2 className="text-lg font-medium sm:col-span-2">Perfil do café</h2>
           <div className="flex flex-col gap-2">
             <Label htmlFor="origin">Origem</Label>
@@ -385,22 +409,30 @@ export function ProductForm({ mode, product }: ProductFormProps) {
             />
           </div>
           <ScaleField
-            label="Torra (1-5)"
+            label="Torra"
+            low="Clara"
+            high="Escura"
             value={coffee.roastLevel}
             onChange={(value) => setCoffee({ ...coffee, roastLevel: value })}
           />
           <ScaleField
-            label="Intensidade (1-5)"
+            label="Intensidade"
+            low="Suave"
+            high="Marcante"
             value={coffee.intensity}
             onChange={(value) => setCoffee({ ...coffee, intensity: value })}
           />
           <ScaleField
-            label="Acidez (1-5)"
+            label="Acidez"
+            low="Baixa"
+            high="Vibrante"
             value={coffee.acidity}
             onChange={(value) => setCoffee({ ...coffee, acidity: value })}
           />
           <ScaleField
-            label="Corpo (1-5)"
+            label="Corpo"
+            low="Leve"
+            high="Encorpado"
             value={coffee.body}
             onChange={(value) => setCoffee({ ...coffee, body: value })}
           />
@@ -433,7 +465,7 @@ export function ProductForm({ mode, product }: ProductFormProps) {
       )}
 
       {type === "CHEESE" && (
-        <section className="grid gap-4 sm:grid-cols-2">
+        <section className="grid gap-4 rounded-xl border border-border bg-card p-5 sm:grid-cols-2">
           <h2 className="text-lg font-medium sm:col-span-2">Perfil do queijo</h2>
           <div className="flex flex-col gap-2">
             <Label htmlFor="milkType">Tipo de leite</Label>
@@ -481,7 +513,9 @@ export function ProductForm({ mode, product }: ProductFormProps) {
             />
           </div>
           <ScaleField
-            label="Intensidade (1-5)"
+            label="Intensidade"
+            low="Suave"
+            high="Marcante"
             value={cheese.intensity}
             onChange={(value) => setCheese({ ...cheese, intensity: value })}
           />
@@ -512,7 +546,7 @@ export function ProductForm({ mode, product }: ProductFormProps) {
       )}
 
       {type === "WINE" && (
-        <section className="grid gap-4 sm:grid-cols-2">
+        <section className="grid gap-4 rounded-xl border border-border bg-card p-5 sm:grid-cols-2">
           <h2 className="text-lg font-medium sm:col-span-2">Perfil do vinho</h2>
           <div className="flex flex-col gap-2 sm:col-span-2">
             <Label htmlFor="grapes">Uvas (separadas por vírgula)</Label>
@@ -560,12 +594,16 @@ export function ProductForm({ mode, product }: ProductFormProps) {
             />
           </div>
           <ScaleField
-            label="Corpo (1-5)"
+            label="Corpo"
+            low="Leve"
+            high="Encorpado"
             value={wine.body}
             onChange={(value) => setWine({ ...wine, body: value })}
           />
           <ScaleField
-            label="Acidez (1-5)"
+            label="Acidez"
+            low="Baixa"
+            high="Vibrante"
             value={wine.acidity}
             onChange={(value) => setWine({ ...wine, acidity: value })}
           />
@@ -622,24 +660,45 @@ export function ProductForm({ mode, product }: ProductFormProps) {
 
 function ScaleField({
   label,
+  low,
+  high,
   value,
   onChange,
 }: {
   label: string;
+  low: string;
+  high: string;
   value: number;
   onChange: (value: number) => void;
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <Label>{label}</Label>
-      <Input
-        type="number"
-        min={1}
-        max={5}
-        value={value}
-        onChange={(event) => onChange(Number(event.target.value))}
-        required
-      />
+      <Label id={`scale-${label}`}>{label}</Label>
+      <div
+        role="group"
+        aria-labelledby={`scale-${label}`}
+        className="flex gap-1"
+      >
+        {[1, 2, 3, 4, 5].map((level) => (
+          <button
+            key={level}
+            type="button"
+            aria-pressed={value === level}
+            onClick={() => onChange(level)}
+            className={
+              value === level
+                ? "min-h-9 flex-1 rounded-lg bg-primary text-sm font-medium text-primary-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+                : "min-h-9 flex-1 rounded-lg border border-border bg-card text-sm text-muted-foreground outline-none transition-colors hover:border-foreground/30 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/60"
+            }
+          >
+            {level}
+          </button>
+        ))}
+      </div>
+      <div className="flex justify-between text-xs text-muted-foreground">
+        <span>{low}</span>
+        <span>{high}</span>
+      </div>
     </div>
   );
 }

@@ -39,18 +39,45 @@ export class PrismaProductRepository implements ProductRepository {
         : {}),
     };
 
+    const byIntensity = filter.sort === "intensity-desc";
+    const orderBy =
+      filter.sort === "price-asc"
+        ? { priceCents: "asc" as const }
+        : filter.sort === "price-desc"
+          ? { priceCents: "desc" as const }
+          : { name: "asc" as const };
+
     // Leituras independentes: Promise.all evita transação interativa do Neon,
     // que pode estourar o tempo de início (P2028) em conexões frias.
     const [records, total] = await Promise.all([
       this.prisma.product.findMany({
         where,
         include: includeProfiles,
-        orderBy: { name: "asc" },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
+        orderBy,
+        // A intensidade é derivada do perfil (café/queijo) ou do corpo (vinho),
+        // então ordenamos em memória sobre o conjunto filtrado.
+        ...(byIntensity
+          ? {}
+          : { skip: (page - 1) * pageSize, take: pageSize }),
       }),
       this.prisma.product.count({ where }),
     ]);
+
+    if (byIntensity) {
+      const sorted = records
+        .map(toDomainProduct)
+        .sort(
+          (a, b) =>
+            b.sensory.intensity - a.sensory.intensity ||
+            a.name.localeCompare(b.name),
+        );
+      return {
+        items: sorted.slice((page - 1) * pageSize, page * pageSize),
+        total,
+        page,
+        pageSize,
+      };
+    }
 
     return {
       items: records.map(toDomainProduct),

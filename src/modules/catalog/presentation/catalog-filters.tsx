@@ -9,10 +9,17 @@ const tabs: { label: string; type?: ProductType }[] = [
   { label: "Vinhos", type: "WINE" },
 ];
 
-function hrefFor(type: ProductType | undefined, search: string | undefined) {
+function hrefFor(
+  type: ProductType | undefined,
+  search: string | undefined,
+  sort: string | undefined,
+  compare: string | undefined,
+) {
   const params = new URLSearchParams();
   if (type) params.set("tipo", type);
   if (search) params.set("busca", search);
+  if (sort) params.set("ordem", sort);
+  if (compare) params.set("comparar", compare);
   const query = params.toString();
   return query ? `/produtos?${query}` : "/produtos";
 }
@@ -20,9 +27,13 @@ function hrefFor(type: ProductType | undefined, search: string | undefined) {
 export function CatalogFilters({
   active,
   search,
+  sort,
+  compare,
 }: {
   active?: ProductType;
   search?: string;
+  sort?: string;
+  compare?: string;
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -31,7 +42,7 @@ export function CatalogFilters({
         return (
           <Link
             key={tab.label}
-            href={hrefFor(tab.type, search)}
+            href={hrefFor(tab.type, search, sort, compare)}
             className={cn(
               "inline-flex min-h-10 items-center rounded-full border px-5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
               isActive

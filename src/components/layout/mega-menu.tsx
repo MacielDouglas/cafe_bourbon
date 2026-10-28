@@ -10,8 +10,8 @@ export function MegaMenu({ className }: { className?: string }) {
     <div className={cn("group relative", className)}>
       <NavLink
         href="/produtos"
-        className="inline-flex items-center gap-1 py-2 text-sm text-foreground/70 transition-colors hover:text-foreground group-hover:text-foreground"
-        activeClassName="font-medium text-brand"
+        className="relative inline-flex items-center gap-1 py-2 text-sm text-foreground/70 transition-colors hover:text-foreground group-hover:text-foreground"
+        activeClassName="font-medium text-brand after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-brand"
       >
         Catálogo
         <ChevronDownIcon className="size-3.5 transition-transform duration-200 group-hover:rotate-180" />

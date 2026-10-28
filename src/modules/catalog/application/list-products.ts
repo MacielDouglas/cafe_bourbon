@@ -4,6 +4,7 @@ import {
   type PaginatedProducts,
   type ProductFilter,
   type ProductRepository,
+  type ProductSort,
 } from "@/modules/catalog/domain/repository";
 import type { ProductType } from "@/modules/catalog/domain/value-objects";
 
@@ -11,6 +12,7 @@ export interface ListProductsInput {
   type?: ProductType;
   availableOnly?: boolean;
   search?: string;
+  sort?: ProductSort;
   page?: number;
   pageSize?: number;
 }
@@ -23,6 +25,7 @@ export class ListProducts {
       ...(input.type ? { type: input.type } : {}),
       ...(input.availableOnly ? { availableOnly: true } : {}),
       ...(input.search?.trim() ? { search: input.search.trim() } : {}),
+      ...(input.sort ? { sort: input.sort } : {}),
       page: clampPage(input.page),
       pageSize: clampPageSize(input.pageSize),
     };

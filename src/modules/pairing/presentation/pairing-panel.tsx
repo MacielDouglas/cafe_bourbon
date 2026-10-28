@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { DemoBadge } from "@/components/demo-badge";
 import { Badge } from "@/components/ui/badge";
 import {
   Accordion,
@@ -33,8 +34,9 @@ function ProductChip({ product }: { product: Product }) {
       className="flex min-h-14 min-w-0 flex-1 flex-col justify-center gap-0.5 rounded-lg bg-secondary/70 px-3 py-2 outline-none transition-colors hover:bg-secondary focus-visible:ring-2 focus-visible:ring-ring/60"
     >
       <span className="truncate text-sm font-medium">{product.name}</span>
-      <span className="text-xs text-muted-foreground">
+      <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
         {productTypeLabel[product.type]}
+        {product.isDemoData && <DemoBadge />}
       </span>
     </Link>
   );
@@ -63,7 +65,7 @@ function KitOffer({ products }: { products: Product[] }) {
         <div className="flex min-w-0 flex-col gap-1.5">
           <h3 className="text-sm font-medium">
             Kit de harmonização{" "}
-            <span className="font-normal text-brand">
+            <span className="font-normal text-muted-foreground">
               · {HARMONIZATION_KIT_DISCOUNT_PERCENT}% off
             </span>
           </h3>
@@ -83,10 +85,10 @@ function KitOffer({ products }: { products: Product[] }) {
         </div>
 
         <div className="flex flex-col items-end gap-0.5 text-right">
-          <span className="text-[0.625rem] font-medium tracking-[0.16em] text-muted-foreground uppercase">
+          <span className="text-[0.6875rem] font-medium tracking-[0.16em] text-muted-foreground uppercase">
             Preço do kit
           </span>
-          <span className="text-2xl font-medium text-brand tabular-nums">
+          <span className="text-2xl font-medium tabular-nums">
             {formatCents(kitCents)}
           </span>
           <span className="text-xs text-muted-foreground">
@@ -157,7 +159,10 @@ export function PairingPanel({
   footer?: ReactNode;
 }) {
   return (
-    <article className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-soft transition-shadow hover:shadow-lift">
+    <article className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-soft">
+      <h3 className="sr-only">
+        Harmonização entre {products.map((product) => product.name).join(" e ")}
+      </h3>
       <header className="flex items-start justify-between gap-4">
         <PairingScoreBadge value={score.value} tier={score.tier} />
         <Badge variant="outline" className="text-muted-foreground">

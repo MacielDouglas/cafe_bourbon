@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { cn } from "cn";
+import { DemoBadge } from "@/components/demo-badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -61,6 +62,12 @@ export function TasteQuiz() {
   const [result, setResult] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState<{
+    values: Record<ScaleKey, number>;
+    categories: string[];
+    notes: string[];
+    price: string;
+  } | null>(null);
 
   function setScale(key: ScaleKey, raw: number | readonly number[]) {
     const value = Array.isArray(raw) ? raw[0] : raw;
@@ -73,6 +80,7 @@ export function TasteQuiz() {
     event.preventDefault();
     setLoading(true);
     setError(null);
+    setSubmitted({ values, categories, notes, price });
 
     const parsedPrice = price.trim() ? Number(price.replace(",", ".")) : null;
     const maxPriceCents =
@@ -119,6 +127,7 @@ export function TasteQuiz() {
               max={5}
               step={1}
               value={values[field.key]}
+              aria-label={field.label}
               onValueChange={(value) => setScale(field.key, value)}
             />
             <div className="flex justify-between text-xs text-muted-foreground">
@@ -209,6 +218,42 @@ export function TasteQuiz() {
             {result.reason && (
               <p className="text-sm text-muted-foreground">{result.reason}</p>
             )}
+
+            {submitted && (
+              <div className="flex flex-col gap-1.5 rounded-xl border border-border bg-secondary/40 px-4 py-3 text-xs text-muted-foreground">
+                <p className="font-medium text-foreground/80">
+                  Como lemos seu perfil
+                </p>
+                <p>
+                  {scaleFields
+                    .map(
+                      (field) =>
+                        `${field.label} ${submitted.values[field.key]}/5`,
+                    )
+                    .join(" · ")}
+                </p>
+                <p>
+                  Coleções:{" "}
+                  {submitted.categories.length > 0
+                    ? submitted.categories
+                        .map(
+                          (value) =>
+                            discoveryCategoryOptions.find(
+                              (option) => option.value === value,
+                            )?.label ?? value,
+                        )
+                        .join(", ")
+                    : "todas"}
+                </p>
+                <p>
+                  Notas:{" "}
+                  {submitted.notes.length > 0
+                    ? submitted.notes.join(", ")
+                    : "sem preferência"}
+                  {submitted.price.trim() ? ` · até R$ ${submitted.price}` : ""}
+                </p>
+              </div>
+            )}
             {result.recommendations.length === 0 ? (
               <p className="rounded-2xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground shadow-soft">
                 Não encontramos produtos para esse perfil. Tente ampliar as
@@ -227,17 +272,18 @@ export function TasteQuiz() {
                         <span className="truncate text-sm text-muted-foreground">
                           {item.subtitle}
                         </span>
-                        <span className="mt-1 text-xs">
+                        <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
                           <span className="text-brand">
                             {discoveryScoreTierLabel[item.tier]} · {item.score}/100
                           </span>
                           <span className="text-muted-foreground">
-                            {" · "}
                             {item.typeLabel}
-                            {item.isDemoData ? " demonstrativo" : ""}
                           </span>
+                          {item.isDemoData && <DemoBadge />}
                         </span>
-                        <span className="sr-only">{item.reason}</span>
+                        <span className="mt-1 text-xs leading-relaxed text-foreground/70">
+                          {item.reason}
+                        </span>
                       </span>
                       <span className="shrink-0 text-sm tabular-nums">
                         {item.priceCents !== null ? formatCents(item.priceCents) : "—"}

@@ -5,9 +5,25 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PencilIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
+import { DemoBadge } from "@/components/demo-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { formatCents } from "@/modules/catalog/presentation/format";
 import { productTypeLabel } from "@/modules/catalog/presentation/labels";
 import type { AdminProduct } from "@/modules/admin/presentation/data";
@@ -23,6 +39,9 @@ export function AdminProductTable({ products }: { products: AdminProduct[] }) {
   const router = useRouter();
   const [pending, setPending] = useState<string | null>(null);
   const [stockDraft, setStockDraft] = useState<Record<string, string>>({});
+  const [query, setQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState("ALL");
+  const [deleteTarget, setDeleteTarget] = useState<AdminProduct | null>(null);
 
   async function saveStock(product: AdminProduct) {
     const raw = stockDraft[product.id];
@@ -79,14 +98,7 @@ export function AdminProductTable({ products }: { products: AdminProduct[] }) {
   }
 
   async function remove(product: AdminProduct) {
-    if (
-      !window.confirm(
-        `Excluir definitivamente "${product.name}"? Esta ação não pode ser desfeita.`,
-      )
-    ) {
-      return;
-    }
-
+    setDeleteTarget(null);
     setPending(product.id);
     try {
       const response = await fetch(`/api/admin/products/${product.id}`, {
@@ -113,8 +125,52 @@ export function AdminProductTable({ products }: { products: AdminProduct[] }) {
     );
   }
 
+  const term = query.trim().toLowerCase();
+  const filtered = products.filter((product) => {
+    const matchesTerm =
+      !term ||
+      product.name.toLowerCase().includes(term) ||
+      product.slug.toLowerCase().includes(term);
+    const matchesType = typeFilter === "ALL" || product.type === typeFilter;
+    return matchesTerm && matchesType;
+  });
+
   return (
-    <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-soft">
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <Input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Buscar por nome ou slug"
+          aria-label="Buscar produtos"
+          className="sm:max-w-xs"
+        />
+        <Select
+          value={typeFilter}
+          onValueChange={(value) => setTypeFilter(String(value))}
+          items={[
+            { value: "ALL", label: "Todos os tipos" },
+            { value: "COFFEE", label: "Cafés" },
+            { value: "CHEESE", label: "Queijos" },
+            { value: "WINE", label: "Vinhos" },
+          ]}
+        >
+          <SelectTrigger className="sm:w-48" aria-label="Filtrar por tipo">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">Todos os tipos</SelectItem>
+            <SelectItem value="COFFEE">Cafés</SelectItem>
+            <SelectItem value="CHEESE">Queijos</SelectItem>
+            <SelectItem value="WINE">Vinhos</SelectItem>
+          </SelectContent>
+        </Select>
+        <span className="text-sm text-muted-foreground">
+          {filtered.length} de {products.length}
+        </span>
+      </div>
+
+      <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-soft">
       <table className="w-full min-w-[760px] text-sm">
         <thead className="bg-muted/50 text-left text-xs text-muted-foreground uppercase">
           <tr>
@@ -127,14 +183,17 @@ export function AdminProductTable({ products }: { products: AdminProduct[] }) {
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
-          {products.map((product) => {
+          {filtered.map((product) => {
             const busy = pending === product.id;
             const draft = stockDraft[product.id];
             return (
               <tr key={product.id}>
                 <td className="px-4 py-3">
-                  <div className="flex flex-col">
-                    <span className="font-medium">{product.name}</span>
+                  <div className="flex flex-col gap-1">
+                    <span className="flex flex-wrap items-center gap-2 font-medium">
+                      {product.name}
+                      {product.isDemoData && <DemoBadge />}
+                    </span>
                     <span className="text-xs text-muted-foreground">
                       /{product.slug}
                     </span>
@@ -179,18 +238,21 @@ export function AdminProductTable({ products }: { products: AdminProduct[] }) {
                   </div>
                 </td>
                 <td className="px-4 py-3">
-                  <button
-                    type="button"
-                    disabled={busy}
-                    onClick={() => void toggleAvailability(product)}
-                    className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-card disabled:opacity-50"
-                  >
+                  <div className="flex flex-col items-start gap-1.5">
                     <Badge
                       variant={product.available ? "secondary" : "destructive"}
                     >
                       {product.available ? "Disponível" : "Indisponível"}
                     </Badge>
-                  </button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={busy}
+                      onClick={() => void toggleAvailability(product)}
+                    >
+                      {product.available ? "Pausar venda" : "Ativar venda"}
+                    </Button>
+                  </div>
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-1">
@@ -209,7 +271,7 @@ export function AdminProductTable({ products }: { products: AdminProduct[] }) {
                       size="icon"
                       aria-label={`Excluir ${product.name}`}
                       disabled={busy}
-                      onClick={() => void remove(product)}
+                      onClick={() => setDeleteTarget(product)}
                       className="text-destructive"
                     >
                       <Trash2Icon />
@@ -221,6 +283,41 @@ export function AdminProductTable({ products }: { products: AdminProduct[] }) {
           })}
         </tbody>
       </table>
+      {filtered.length === 0 && (
+        <p className="px-4 py-10 text-center text-sm text-muted-foreground">
+          Nenhum produto corresponde a esse filtro.
+        </p>
+      )}
+      </div>
+
+      <Dialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Excluir produto</DialogTitle>
+            <DialogDescription>
+              Excluir definitivamente “{deleteTarget?.name}”? Esta ação não pode
+              ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={pending !== null}
+              onClick={() => deleteTarget && void remove(deleteTarget)}
+            >
+              Excluir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

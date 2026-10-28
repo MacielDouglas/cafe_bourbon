@@ -3,6 +3,10 @@ import { z } from "zod";
 export const catalogSearchParamsSchema = z.object({
   tipo: z.enum(["COFFEE", "CHEESE", "WINE"]).optional(),
   busca: z.string().trim().min(1).max(80).optional(),
+  ordem: z
+    .enum(["name", "price-asc", "price-desc", "intensity-desc"])
+    .optional(),
+  comparar: z.string().trim().max(200).optional(),
   pagina: z.coerce.number().int().min(1).max(10_000).optional(),
 });
 

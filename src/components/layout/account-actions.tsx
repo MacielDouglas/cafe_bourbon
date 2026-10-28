@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { LogOutIcon, UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +19,7 @@ import { authClient, useSession } from "@/lib/auth-client";
 export function AccountActions() {
   const { data } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
 
@@ -53,11 +54,11 @@ export function AccountActions() {
                 <Button
                   nativeButton={false}
                   render={
-                    <Link href="/admin" onClick={() => setOpen(false)} />
-                  }
-                >
-                  Painel do owner
-                </Button>
+                  <Link href="/admin" onClick={() => setOpen(false)} />
+                }
+              >
+                Painel da casa
+              </Button>
               )}
               <Button
                 variant="outline"
@@ -66,7 +67,7 @@ export function AccountActions() {
                   <Link href="/assinatura" onClick={() => setOpen(false)} />
                 }
               >
-                Assinaturas
+                Planos de assinatura
               </Button>
               <Button
                 variant="ghost"
@@ -85,7 +86,11 @@ export function AccountActions() {
           size="icon"
           aria-label="Entrar"
           nativeButton={false}
-          render={<Link href="/entrar" />}
+          render={
+            <Link
+              href={`/entrar?redirect=${encodeURIComponent(pathname || "/")}`}
+            />
+          }
         >
           <UserIcon />
         </Button>

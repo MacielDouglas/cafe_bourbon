@@ -1,5 +1,6 @@
 import { connection } from "next/server";
 import type { Product } from "@/modules/catalog/domain/product";
+import type { ProductSort } from "@/modules/catalog/domain/repository";
 import type { ProductType } from "@/modules/catalog/domain/value-objects";
 import { catalogUseCases } from "@/modules/catalog/presentation/composition";
 
@@ -12,6 +13,7 @@ export interface CatalogListResult {
 export interface CatalogListInput {
   type?: ProductType;
   search?: string;
+  sort?: ProductSort;
   page?: number;
   pageSize?: number;
 }
@@ -36,6 +38,23 @@ export async function loadProducts(
   } catch (error) {
     console.error("[catalog] falha ao listar produtos:", describe(error));
     return { products: [], total: 0, failed: true };
+  }
+}
+
+/** Resolve vários slugs de uma vez, preservando a ordem recebida. */
+export async function loadProductsBySlugs(
+  slugs: readonly string[],
+): Promise<Product[]> {
+  await connection();
+  try {
+    const { getProductDetails } = catalogUseCases();
+    const products = await Promise.all(
+      slugs.map((slug) => getProductDetails.execute(slug)),
+    );
+    return products.filter((product): product is Product => product !== null);
+  } catch (error) {
+    console.error("[catalog] falha ao comparar produtos:", describe(error));
+    return [];
   }
 }
 

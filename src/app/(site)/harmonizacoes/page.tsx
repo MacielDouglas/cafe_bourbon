@@ -7,6 +7,8 @@ import {
 } from "@/modules/pairing/presentation/pairing-skeleton";
 import { parsePairingSearchParams } from "@/modules/pairing/presentation/search-params";
 
+export const instant = false;
+
 export const metadata = {
   title: "Harmonizações",
   description:

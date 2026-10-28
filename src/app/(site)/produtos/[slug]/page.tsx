@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
+import { DemoBadge } from "@/components/demo-badge";
 import { Separator } from "@/components/ui/separator";
 import { StateLink, StateMessage } from "@/components/state-message";
 import { loadProduct } from "@/modules/catalog/presentation/data";
@@ -111,11 +111,7 @@ export default async function ProductPage({ params }: PageProps) {
             <span className="text-3xl font-medium tracking-tight">
               {price ?? "Indisponível"}
             </span>
-            {product.isDemoData && (
-              <Badge variant="outline" className="text-muted-foreground">
-                Dados demonstrativos
-              </Badge>
-            )}
+            {product.isDemoData && <DemoBadge />}
           </div>
 
           <ProductActions
@@ -140,7 +136,12 @@ export default async function ProductPage({ params }: PageProps) {
           <Separator />
 
           <div className="flex flex-col gap-4">
-            <h2 className="text-sm font-medium">Perfil sensorial</h2>
+            <div className="flex flex-col gap-1">
+              <h2 className="text-lg font-medium">Perfil sensorial</h2>
+              <p className="text-sm text-muted-foreground">
+                Escala de 1 a 5; as barras mostram a intensidade de cada eixo.
+              </p>
+            </div>
             <SensoryProfile sensory={product.sensory} />
             <SensoryNotes notes={product.sensory.notes} />
           </div>
@@ -162,7 +163,7 @@ export default async function ProductPage({ params }: PageProps) {
             <>
               <Separator />
               <div className="flex flex-col gap-3">
-                <h2 className="text-sm font-medium">Métodos de preparo</h2>
+                <h2 className="text-lg font-medium">Métodos de preparo</h2>
                 <SensoryNotes notes={brewMethods.map((method) => brewMethodLabel[method])} />
               </div>
             </>

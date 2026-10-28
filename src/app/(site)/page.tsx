@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { DemoBadge } from "@/components/demo-badge";
 import { StateLink, StateMessage } from "@/components/state-message";
 import { categoryLinks } from "@/components/layout/navigation";
 import { loadProducts } from "@/modules/catalog/presentation/data";
@@ -73,9 +74,9 @@ export default function Home() {
           sizes="100vw"
           className="object-cover opacity-80"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-espresso via-espresso/25 to-transparent" />
         <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-16 text-creme sm:px-6 lg:px-8">
-          <h1 className="max-w-3xl text-4xl font-medium tracking-tight text-balance sm:text-6xl lg:text-7xl">
+          <h1 className="max-w-3xl text-4xl font-medium tracking-tight text-balance sm:text-5xl lg:text-6xl">
             Do grão à mesa: cafés, queijos e vinhos para harmonizar.
           </h1>
           <p className="max-w-xl text-lg opacity-85">
@@ -146,7 +147,7 @@ export default function Home() {
                       sizes="(min-width: 768px) 33vw, 100vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-espresso/90 via-espresso/30 to-transparent" />
                   </>
                 ) : (
                   <div className="absolute inset-0 bg-secondary" />
@@ -160,6 +161,17 @@ export default function Home() {
                 >
                   <h3 className="text-2xl font-medium">{category.label}</h3>
                   <p className="mt-1 text-sm opacity-85">{category.blurb}</p>
+                  {category.type !== "COFFEE" && (
+                    <p className="mt-3">
+                      <DemoBadge
+                        className={
+                          image
+                            ? "border-creme/30 bg-espresso/40 text-creme"
+                            : undefined
+                        }
+                      />
+                    </p>
+                  )}
                 </div>
               </Link>
             );

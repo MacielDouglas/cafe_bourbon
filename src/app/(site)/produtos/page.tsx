@@ -1,8 +1,11 @@
 import { Suspense } from "react";
 import { CatalogFilters } from "@/modules/catalog/presentation/catalog-filters";
 import { CatalogResults } from "@/modules/catalog/presentation/catalog-results";
+import { CatalogSort } from "@/modules/catalog/presentation/catalog-sort";
 import { CatalogGridSkeleton } from "@/modules/catalog/presentation/catalog-skeleton";
 import { parseCatalogSearchParams } from "@/modules/catalog/presentation/search-params";
+
+export const instant = false;
 
 export const metadata = {
   title: "Catálogo",
@@ -25,12 +28,26 @@ export default async function ProdutosPage({
         </h1>
         <p className="text-muted-foreground">
           Perfis sensoriais de origem única, prontos para combinar à mesa. Filtre
-          por coleção ou busque pelo nome e pelas notas.
+          por coleção, ordene por preço e compare intensidade, corpo e acidez na
+          própria ficha. Queijos e vinhos são dados demonstrativos.
         </p>
       </header>
 
       <div className="mt-10 flex flex-col gap-8">
-        <CatalogFilters active={params.tipo} search={params.busca} />
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <CatalogFilters
+            active={params.tipo}
+            search={params.busca}
+            sort={params.ordem}
+            compare={params.comparar}
+          />
+          <CatalogSort
+            active={params.tipo}
+            search={params.busca}
+            sort={params.ordem}
+            compare={params.comparar}
+          />
+        </div>
         <Suspense fallback={<CatalogGridSkeleton />}>
           <CatalogResults params={params} />
         </Suspense>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CheckIcon } from "lucide-react";
@@ -41,6 +41,15 @@ const grindOptions: { value: GrindOption; label: string }[] = [
   { value: "MOIDO", label: "Moído" },
 ];
 
+const DRAFT_KEY = "cb_subscription_draft";
+
+interface SubscriptionDraft {
+  plan?: string;
+  coffeeId?: string;
+  grind?: GrindOption;
+  brewMethod?: BrewMethod | "";
+}
+
 export function SubscriptionForm({
   plans,
   coffees,
@@ -57,13 +66,55 @@ export function SubscriptionForm({
   const [brewMethod, setBrewMethod] = useState<BrewMethod | "">("");
   const [loading, setLoading] = useState(false);
   const [confirmed, setConfirmed] = useState<string | null>(null);
+  const hydrated = useRef(false);
+
+  useEffect(() => {
+    if (!hydrated.current) {
+      hydrated.current = true;
+      let cancelled = false;
+      queueMicrotask(() => {
+        if (cancelled) return;
+        try {
+          const raw = sessionStorage.getItem(DRAFT_KEY);
+          if (!raw) return;
+          const draft = JSON.parse(raw) as SubscriptionDraft;
+          const matchingPlan = plans.find((item) => item.id === draft.plan);
+          if (matchingPlan) {
+            setPlan(matchingPlan.id);
+          }
+          if (draft.coffeeId && coffees.some((item) => item.id === draft.coffeeId)) {
+            setCoffeeId(draft.coffeeId);
+          }
+          if (draft.grind && grindOptions.some((item) => item.value === draft.grind)) {
+            setGrind(draft.grind);
+          }
+          if (
+            draft.brewMethod === "" ||
+            (draft.brewMethod && brewMethods.includes(draft.brewMethod))
+          ) {
+            setBrewMethod(draft.brewMethod);
+          }
+        } catch {
+          sessionStorage.removeItem(DRAFT_KEY);
+        }
+      });
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    sessionStorage.setItem(
+      DRAFT_KEY,
+      JSON.stringify({ plan, coffeeId, grind, brewMethod }),
+    );
+  }, [plan, coffeeId, grind, brewMethod, plans, coffees]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!isAuthenticated) {
-      toast.info("Entre na sua conta para assinar.");
-      router.push("/entrar");
+      toast.info("Entre na sua conta para assinar. Suas escolhas ficam salvas.");
+      router.push("/entrar?redirect=/assinatura");
       return;
     }
     if (!coffeeId) {
@@ -85,8 +136,8 @@ export function SubscriptionForm({
       });
 
       if (response.status === 401) {
-        toast.info("Entre na sua conta para assinar.");
-        router.push("/entrar");
+        toast.info("Entre na sua conta para assinar. Suas escolhas ficam salvas.");
+        router.push("/entrar?redirect=/assinatura");
         return;
       }
       if (!response.ok) {
@@ -101,6 +152,7 @@ export function SubscriptionForm({
         subscription: { planName: string };
       };
       setConfirmed(data.subscription.planName);
+      sessionStorage.removeItem(DRAFT_KEY);
       toast.success("Assinatura confirmada", {
         description: `Plano ${data.subscription.planName} ativado.`,
       });
@@ -208,8 +260,8 @@ export function SubscriptionForm({
           </Select>
         </label>
 
-        <label className="flex flex-col gap-2">
-          <span className="text-sm font-medium">Moagem</span>
+        <fieldset className="flex flex-col gap-2">
+          <legend className="text-sm font-medium">Moagem</legend>
           <RadioGroup
             value={grind}
             onValueChange={(value) => setGrind(value as GrindOption)}
@@ -225,7 +277,7 @@ export function SubscriptionForm({
               </label>
             ))}
           </RadioGroup>
-        </label>
+        </fieldset>
 
         <label className="flex flex-col gap-2">
           <span className="text-sm font-medium">
@@ -261,7 +313,7 @@ export function SubscriptionForm({
           <p className="text-sm text-muted-foreground">
             Você será direcionado para entrar.{" "}
             <Link
-              href="/entrar"
+              href="/entrar?redirect=/assinatura"
               className="rounded-sm font-medium text-brand underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring/60"
             >
               Entrar agora

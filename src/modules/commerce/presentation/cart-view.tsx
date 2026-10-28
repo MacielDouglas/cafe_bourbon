@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { MinusIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
+import { DemoBadge } from "@/components/demo-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -43,7 +44,7 @@ function Thumb({
   }
   return (
     <div className="flex size-full items-center justify-center bg-secondary">
-      <span className="text-[0.625rem] font-medium tracking-[0.16em] text-muted-foreground uppercase">
+      <span className="text-[0.6875rem] font-medium tracking-[0.16em] text-muted-foreground uppercase">
         {productTypeLabel[type]}
       </span>
     </div>
@@ -91,14 +92,16 @@ export function CartView({
     key: string,
     path: string,
     init: RequestInit,
-  ): Promise<void> {
+  ): Promise<boolean> {
     mutated.current = true;
     setPending(key);
     try {
       setCart(await parseCart(await fetch(path, init)));
       notifyCartUpdated();
+      return true;
     } catch {
       toast.error("Não foi possível atualizar o carrinho.");
+      return false;
     } finally {
       setPending(null);
     }
@@ -112,20 +115,64 @@ export function CartView({
     });
   }
 
-  function removeLine(productId: string) {
-    return send(productId, `/api/cart?productId=${encodeURIComponent(productId)}`, {
-      method: "DELETE",
+  async function removeLine(productId: string) {
+    const line = cart.lines.find((item) => item.productId === productId);
+    const ok = await send(
+      productId,
+      `/api/cart?productId=${encodeURIComponent(productId)}`,
+      { method: "DELETE" },
+    );
+    if (ok && line) {
+      toast.success(`${line.name} removido`, {
+        action: {
+          label: "Desfazer",
+          onClick: () => void setQuantity(line.productId, line.quantity),
+        },
+      });
+    }
+  }
+
+  async function clear() {
+    const snapshot = cart.lines.map((line) => ({
+      productId: line.productId,
+      quantity: line.quantity,
+    }));
+    const ok = await send("__all__", "/api/cart", { method: "DELETE" });
+    if (!ok || snapshot.length === 0) return;
+    toast.success("Carrinho esvaziado", {
+      action: {
+        label: "Desfazer",
+        onClick: () => void restore(snapshot),
+      },
     });
   }
 
-  function clear() {
-    return send("__all__", "/api/cart", { method: "DELETE" });
+  async function restore(
+    lines: { productId: string; quantity: number }[],
+  ): Promise<void> {
+    mutated.current = true;
+    try {
+      await Promise.all(
+        lines.map((line) =>
+          fetch("/api/cart", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(line),
+          }),
+        ),
+      );
+      const response = await fetch("/api/cart", { cache: "no-store" });
+      if (response.ok) setCart((await response.json()) as SerializedCart);
+      notifyCartUpdated();
+    } catch {
+      toast.error("Não foi possível restaurar o carrinho.");
+    }
   }
 
   async function checkout() {
     if (!isAuthenticated) {
       toast.info("Entre na sua conta para finalizar o pedido.");
-      router.push("/entrar");
+      router.push("/entrar?redirect=/carrinho");
       return;
     }
 
@@ -136,7 +183,7 @@ export function CartView({
 
       if (response.status === 401) {
         toast.info("Entre na sua conta para finalizar o pedido.");
-        router.push("/entrar");
+        router.push("/entrar?redirect=/carrinho");
         return;
       }
       if (!response.ok) {
@@ -214,8 +261,9 @@ export function CartView({
                   <span className="text-sm text-muted-foreground">
                     {line.priceLabel} cada
                   </span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     {productTypeLabel[line.type]}
+                    {line.isDemoData && <DemoBadge />}
                   </span>
                 </div>
                 <span className="shrink-0 font-medium tabular-nums">
@@ -300,6 +348,7 @@ export function CartView({
             ? "Confirmando..."
             : "Finalizar pedido (demonstrativo)"}
         </Button>
+        <Separator />
         <Button variant="ghost" size="sm" onClick={clear} disabled={pending !== null}>
           Esvaziar carrinho
         </Button>

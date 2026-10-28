@@ -19,6 +19,12 @@ const dateFormat = new Intl.DateTimeFormat("pt-BR", {
   timeStyle: "short",
 });
 
+const statusLabel: Record<string, string> = {
+  PENDING: "Pendente",
+  CONFIRMED: "Confirmado",
+  CANCELLED: "Cancelado",
+};
+
 export default async function AdminHomePage() {
   const { overview, failed } = await loadSalesOverview();
 
@@ -44,6 +50,13 @@ export default async function AdminHomePage() {
 
   return (
     <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-1">
+        <h2 className="text-2xl font-medium tracking-tight">Visão geral</h2>
+        <p className="text-sm text-muted-foreground">
+          Métricas de todos os pedidos demonstrativos desde o início. Não há
+          recorte por período nesta versão.
+        </p>
+      </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
           <Card key={stat.label} size="sm">
@@ -155,7 +168,9 @@ export default async function AdminHomePage() {
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Badge variant="secondary">{order.status}</Badge>
+                    <Badge variant="secondary">
+                      {statusLabel[order.status] ?? order.status}
+                    </Badge>
                     <span className="font-medium tabular-nums">
                       {formatCents(order.totalCents)}
                     </span>

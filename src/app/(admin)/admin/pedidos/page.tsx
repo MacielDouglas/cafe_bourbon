@@ -9,6 +9,7 @@ import {
 import { StateLink, StateMessage } from "@/components/state-message";
 import { formatCents } from "@/modules/catalog/presentation/format";
 import { loadOrders } from "@/modules/admin/presentation/data";
+import { OrderFilters } from "@/modules/admin/presentation/order-filters";
 
 export const instant = false;
 
@@ -23,7 +24,19 @@ const statusLabel: Record<string, string> = {
   CANCELLED: "Cancelado",
 };
 
-export default async function AdminOrdersPage() {
+export default async function AdminOrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const raw = await searchParams;
+  const term = typeof raw.q === "string" ? raw.q.trim().toLowerCase() : "";
+  const status =
+    typeof raw.status === "string" &&
+    ["PENDING", "CONFIRMED", "CANCELLED"].includes(raw.status)
+      ? raw.status
+      : "ALL";
+
   const { orders, failed } = await loadOrders();
 
   if (failed) {
@@ -36,19 +49,31 @@ export default async function AdminOrdersPage() {
     );
   }
 
+  const filtered = orders.filter((order) => {
+    const matchesStatus = status === "ALL" || order.status === status;
+    const matchesTerm =
+      !term ||
+      order.customerName.toLowerCase().includes(term) ||
+      order.customerEmail.toLowerCase().includes(term);
+    return matchesStatus && matchesTerm;
+  });
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Pedidos</CardTitle>
         <CardDescription>
-          {orders.length} pedido(s) mais recentes.
+          {filtered.length} de {orders.length} pedido(s) mais recentes.
+          Pedidos são demonstrativos.
         </CardDescription>
+        <OrderFilters search={term} status={status} />
       </CardHeader>
       <CardContent>
-        {orders.length === 0 ? (
+        {filtered.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            Nenhum pedido registrado ainda. Finalize um carrinho para gerar o
-            primeiro pedido demonstrativo.
+            {orders.length === 0
+              ? "Nenhum pedido registrado ainda. Finalize um carrinho para gerar o primeiro pedido demonstrativo."
+              : "Nenhum pedido corresponde a esse filtro. Ajuste a busca ou o status."}
           </p>
         ) : (
           <div className="overflow-x-auto">
@@ -63,7 +88,7 @@ export default async function AdminOrdersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {orders.map((order) => (
+                {filtered.map((order) => (
                   <tr key={order.id} className="align-top">
                     <td className="py-3 pr-4">
                       <div className="flex flex-col">

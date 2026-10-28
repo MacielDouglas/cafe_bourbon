@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -15,11 +15,19 @@ export function CredentialsForm({
   redirectTo?: string;
 }) {
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const isSignUp = mode === "sign-up";
+
+  function showError(message: string) {
+    setFormError(message);
+    formRef.current?.querySelector<HTMLInputElement>("input")?.focus();
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setFormError(null);
     const form = new FormData(event.currentTarget);
     const email = String(form.get("email") ?? "").trim();
     const password = String(form.get("password") ?? "");
@@ -32,7 +40,7 @@ export function CredentialsForm({
         : await authClient.signIn.email({ email, password });
 
       if (result.error) {
-        toast.error(result.error.message ?? "Não foi possível continuar.");
+        showError(result.error.message ?? "Não foi possível continuar.");
         return;
       }
 
@@ -40,7 +48,7 @@ export function CredentialsForm({
       router.push(redirectTo);
       router.refresh();
     } catch {
-      toast.error("Não foi possível continuar. Tente novamente.");
+      showError("Não foi possível continuar. Tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -48,9 +56,19 @@ export function CredentialsForm({
 
   return (
     <form
+      ref={formRef}
       onSubmit={handleSubmit}
       className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 shadow-soft"
     >
+      {formError && (
+        <p
+          role="alert"
+          className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive"
+        >
+          {formError}
+        </p>
+      )}
+
       {isSignUp && (
         <label className="flex flex-col gap-2">
           <span className="text-sm font-medium">Nome</span>

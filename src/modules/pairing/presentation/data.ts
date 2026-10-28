@@ -21,7 +21,7 @@ export interface EditorialPairingsResult {
 
 /** Lista as harmonizações editoriais publicadas, resolvendo os produtos de cada uma. */
 export async function loadEditorialPairings(
-  limit = 12,
+  limit = 6,
 ): Promise<EditorialPairingsResult> {
   await connection();
   try {
@@ -92,7 +92,7 @@ export async function loadHarmonizer(
     const { getCalculatedPairings } = pairingUseCases();
     const results = await getCalculatedPairings.execute({
       productId: base.id.value,
-      limit: 12,
+      limit: 6,
     });
     return { coffees, base, results, failed: false };
   } catch (error) {

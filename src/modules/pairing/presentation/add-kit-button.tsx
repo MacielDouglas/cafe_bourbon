@@ -6,6 +6,7 @@ import { ShoppingBagIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { notifyCartUpdated } from "@/lib/auth-client";
+import { HARMONIZATION_KIT_DISCOUNT_PERCENT } from "@/modules/shared/domain/harmonization-kit";
 
 export function AddKitButton({
   productIds,
@@ -40,7 +41,7 @@ export function AddKitButton({
       notifyCartUpdated();
       router.refresh();
       toast.success("Kit adicionado ao carrinho", {
-        description: `${kitName} · ${data.totalQuantity} item(ns) · 5% de desconto aplicado.`,
+        description: `${kitName} · ${data.totalQuantity} item(ns) · ${HARMONIZATION_KIT_DISCOUNT_PERCENT}% de desconto aplicado.`,
         action: {
           label: "Ver carrinho",
           onClick: () => router.push("/carrinho"),

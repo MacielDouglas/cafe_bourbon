@@ -2,6 +2,7 @@ import { connection } from "next/server";
 import { z } from "zod";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assistantUseCases } from "@/modules/assistant/presentation/composition";
+import { catalogUseCases } from "@/modules/catalog/presentation/composition";
 
 const chatRequestSchema = z.object({
   message: z.string().trim().min(1).max(1000),
@@ -56,7 +57,17 @@ export async function POST(request: Request) {
     const result = await askVirtualBarista.execute({
       message: parsed.data.message,
     });
-    return Response.json(result);
+
+    const { getProductDetails } = catalogUseCases();
+    const details = await Promise.all(
+      result.productSlugs.map((slug) => getProductDetails.execute(slug)),
+    );
+    const productNames: Record<string, string> = {};
+    for (const product of details) {
+      if (product) productNames[product.slug] = product.name;
+    }
+
+    return Response.json({ ...result, productNames });
   } catch {
     return Response.json(
       { error: "O assistente está indisponível agora." },
