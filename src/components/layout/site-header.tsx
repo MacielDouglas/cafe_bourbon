@@ -9,9 +9,9 @@ import { SearchButton } from "@/components/layout/search-button";
 import { primaryLinks } from "@/components/layout/navigation";
 
 const navItem =
-  "relative py-2.5 text-sm text-foreground/70 transition-colors hover:text-foreground";
+  "relative py-2.5 text-sm text-foreground/70 transition-colors after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:rounded-full after:bg-brand after:transition-transform after:duration-300 hover:text-foreground hover:after:scale-x-100";
 const navItemActive =
-  "font-medium text-brand after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-brand";
+  "font-medium text-brand hover:text-brand after:h-0.5 after:scale-x-100";
 
 function DesktopNav() {
   return (

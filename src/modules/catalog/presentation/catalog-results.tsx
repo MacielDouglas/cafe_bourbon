@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { cn } from "cn";
 import { StateLink, StateMessage } from "@/components/state-message";
 import {
@@ -52,7 +53,7 @@ function compareHref(
 }
 
 const paginationLink =
-  "inline-flex min-h-10 items-center rounded-full border border-border px-5 text-sm outline-none transition-colors hover:bg-secondary focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "group inline-flex min-h-10 items-center gap-1.5 rounded-full border border-border px-5 text-sm outline-none transition-colors hover:bg-secondary focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 const paginationDisabled =
   "pointer-events-none opacity-40";
 
@@ -124,15 +125,22 @@ export async function CatalogResults({ params }: { params: CatalogSearchParams }
           : ""}
       </p>
       <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-3 lg:grid-cols-4">
-        {products.map((product) => (
-          <ProductCard
+        {products.map((product, index) => (
+          <div
             key={product.id.value}
-            product={product}
-            compare={{
-              selected: selected.includes(product.slug),
-              href: compareHref(params, product.slug, selected),
-            }}
-          />
+            className={cn(
+              "h-full",
+              index < 8 && `catalog-in catalog-delay-${index + 1}`,
+            )}
+          >
+            <ProductCard
+              product={product}
+              compare={{
+                selected: selected.includes(product.slug),
+                href: compareHref(params, product.slug, selected),
+              }}
+            />
+          </div>
         ))}
       </div>
 
@@ -143,10 +151,12 @@ export async function CatalogResults({ params }: { params: CatalogSearchParams }
         >
           {page > 1 ? (
             <Link href={pageHref(params, page - 1)} className={paginationLink}>
+              <ArrowLeftIcon className="size-4 transition-transform duration-300 group-hover:-translate-x-0.5" />
               Anterior
             </Link>
           ) : (
             <span aria-disabled className={cn(paginationLink, paginationDisabled)}>
+              <ArrowLeftIcon className="size-4" />
               Anterior
             </span>
           )}
@@ -156,10 +166,12 @@ export async function CatalogResults({ params }: { params: CatalogSearchParams }
           {page < totalPages ? (
             <Link href={pageHref(params, page + 1)} className={paginationLink}>
               Próxima
+              <ArrowRightIcon className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
             </Link>
           ) : (
             <span aria-disabled className={cn(paginationLink, paginationDisabled)}>
               Próxima
+              <ArrowRightIcon className="size-4" />
             </span>
           )}
         </nav>

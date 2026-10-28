@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowUpRightIcon } from "lucide-react";
 import { cn } from "cn";
 import { DemoBadge } from "@/components/demo-badge";
 import type { Product } from "@/modules/catalog/domain/product";
@@ -53,6 +54,15 @@ export function ProductCard({
       >
         <div className="relative aspect-square overflow-hidden rounded-xl bg-muted shadow-soft ring-1 ring-foreground/5 transition-shadow group-hover:shadow-lift">
           <ProductThumb product={product} />
+          <div
+            aria-hidden
+            className="absolute inset-0 flex items-end justify-end bg-linear-to-t from-espresso/30 via-transparent to-transparent p-3 opacity-0 transition-opacity duration-300 group-focus-visible:opacity-100 group-hover:opacity-100"
+          >
+            <span className="inline-flex translate-y-1 items-center gap-1.5 rounded-full bg-creme/95 px-3 py-1.5 text-xs font-medium text-foreground shadow-soft transition-transform duration-300 group-hover:translate-y-0">
+              Ver ficha
+              <ArrowUpRightIcon className="size-3.5" />
+            </span>
+          </div>
         </div>
 
         <div className="flex flex-1 flex-col gap-2">

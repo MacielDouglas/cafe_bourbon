@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { DemoBadge } from "@/components/demo-badge";
 import { categoryLinks, coffeeLinks, primaryLinks } from "@/components/layout/navigation";
 import { NavLink } from "@/components/layout/nav-link";
 
@@ -56,10 +57,11 @@ export function MobileMenu() {
                 key={category.type}
                 href={category.href}
                 onClick={() => setOpen(false)}
-                className="text-2xl font-medium text-foreground/70 transition-colors hover:text-foreground"
+                className="flex items-center gap-2 text-2xl font-medium text-foreground/70 transition-colors hover:text-foreground"
                 activeClassName="text-brand"
               >
                 {category.label}
+                {category.type !== "COFFEE" && <DemoBadge />}
               </NavLink>
             ))}
             <NavLink

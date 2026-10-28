@@ -36,24 +36,28 @@ export function CatalogFilters({
   compare?: string;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <nav
+      aria-label="Filtrar por coleção"
+      className="flex flex-wrap items-center gap-2"
+    >
       {tabs.map((tab) => {
         const isActive = tab.type === active || (!tab.type && !active);
         return (
           <Link
             key={tab.label}
             href={hrefFor(tab.type, search, sort, compare)}
+            aria-current={isActive ? "page" : undefined}
             className={cn(
-              "inline-flex min-h-10 items-center rounded-full border px-5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              "inline-flex min-h-10 items-center rounded-full border px-5 text-sm outline-none transition-[color,background-color,border-color,box-shadow,transform] duration-200 focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
               isActive
                 ? "border-primary bg-primary text-primary-foreground shadow-soft"
-                : "border-border bg-card text-foreground/70 hover:border-foreground/20 hover:bg-secondary hover:text-foreground",
+                : "border-border bg-card text-foreground/70 hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-secondary hover:text-foreground hover:shadow-soft",
             )}
           >
             {tab.label}
           </Link>
         );
       })}
-    </div>
+    </nav>
   );
 }

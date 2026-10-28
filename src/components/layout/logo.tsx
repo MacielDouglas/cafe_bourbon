@@ -17,7 +17,7 @@ function Logo({ className }: { className?: string }) {
     >
       <span
         aria-hidden
-        className="block h-6 w-[122px] bg-current [mask-image:url(/bourbon.svg)] [mask-repeat:no-repeat] [mask-position:left_center] [mask-size:contain]"
+        className="block h-6 w-[122px] bg-current [mask-image:url(/bourbon.svg)] [mask-repeat:no-repeat] [mask-position:left_center] [mask-size:contain] sm:h-7 sm:w-[142px]"
       />
     </Link>
   );

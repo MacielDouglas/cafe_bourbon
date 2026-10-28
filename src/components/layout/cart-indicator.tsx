@@ -48,7 +48,10 @@ export function CartIndicator() {
     >
       <ShoppingBagIcon />
       {count > 0 && (
-        <span className="absolute -top-0.5 -right-0.5 flex size-4.5 items-center justify-center rounded-full bg-brand text-[0.6875rem] font-medium text-brand-foreground tabular-nums">
+        <span
+          key={count}
+          className="cart-count-in absolute -top-0.5 -right-0.5 flex size-4.5 items-center justify-center rounded-full bg-brand text-[0.6875rem] font-medium text-brand-foreground tabular-nums"
+        >
           {count > 9 ? "9+" : count}
         </span>
       )}

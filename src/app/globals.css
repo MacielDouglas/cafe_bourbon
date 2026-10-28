@@ -169,3 +169,149 @@
   --color-linho: oklch(0.945 0.014 78);
   --color-bordo: oklch(0.42 0.13 27);
 }
+
+/* Coreografia da home: a foto assenta, o texto ganha foco e a mesa entra.
+   O estado final é o estado padrão; se o CSS falhar, o conteúdo continua visível. */
+@keyframes home-hero-settle {
+  from {
+    opacity: 0.35;
+    transform: scale(1.08);
+  }
+  to {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+}
+
+@keyframes home-hero-focus {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes home-mesa-in {
+  from {
+    opacity: 0;
+    transform: translateY(28px) rotate(-0.7deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}
+
+@keyframes home-pairing-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes catalog-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cart-count-in {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.home-hero-media {
+  animation: home-hero-settle 1600ms var(--ease-out-soft) both;
+}
+
+.home-hero-focus {
+  animation: home-hero-focus 900ms var(--ease-out-soft) both;
+}
+
+.home-mesa-in {
+  animation: home-mesa-in 1000ms var(--ease-out-soft) both;
+}
+
+.home-pairing-in {
+  animation: home-pairing-in 420ms var(--ease-out-soft) both;
+}
+
+.catalog-in {
+  animation: catalog-in 480ms var(--ease-out-soft) both;
+}
+
+.cart-count-in {
+  animation: cart-count-in 180ms var(--ease-out-soft) both;
+}
+
+.catalog-delay-1 {
+  animation-delay: 40ms;
+}
+
+.catalog-delay-2 {
+  animation-delay: 80ms;
+}
+
+.catalog-delay-3 {
+  animation-delay: 120ms;
+}
+
+.catalog-delay-4 {
+  animation-delay: 160ms;
+}
+
+.catalog-delay-5 {
+  animation-delay: 200ms;
+}
+
+.catalog-delay-6 {
+  animation-delay: 240ms;
+}
+
+.catalog-delay-7 {
+  animation-delay: 280ms;
+}
+
+.catalog-delay-8 {
+  animation-delay: 320ms;
+}
+
+.home-delay-1 {
+  animation-delay: 100ms;
+}
+
+.home-delay-2 {
+  animation-delay: 220ms;
+}
+
+.home-delay-3 {
+  animation-delay: 340ms;
+}
+
+.home-delay-4 {
+  animation-delay: 460ms;
+}
+
+.home-delay-5 {
+  animation-delay: 580ms;
+}

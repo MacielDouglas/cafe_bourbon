@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { ArrowUpRightIcon } from "lucide-react";
+
 export function AnnouncementBar() {
   const message = "Torra artesanal · Franca, São Paulo";
   const secondary = "Assinaturas a partir de R$ 90";
@@ -9,7 +12,13 @@ export function AnnouncementBar() {
         <span aria-hidden className="hidden opacity-40 sm:inline">
           —
         </span>
-        <span className="hidden sm:inline">{secondary}</span>
+        <Link
+          href="/assinatura"
+          className="group hidden items-center gap-1 rounded-sm underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-creme/60 sm:inline-flex"
+        >
+          {secondary}
+          <ArrowUpRightIcon className="size-3 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+        </Link>
       </div>
     </div>
   );
