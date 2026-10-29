@@ -31,7 +31,7 @@ export function CoffeeSelect({
         label: coffee.name,
       }))}
     >
-      <SelectTrigger aria-label="Escolha o café" className="w-full sm:w-80">
+      <SelectTrigger aria-label="Escolha o café" className="w-full">
         <SelectValue placeholder="Selecione um café" />
       </SelectTrigger>
       <SelectContent>

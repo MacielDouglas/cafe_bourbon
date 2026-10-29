@@ -37,7 +37,7 @@ export class CreateSubscription {
       userId,
       plan: input.plan,
       grind: input.grind,
-      brewMethod: input.brewMethod,
+      brewMethod: input.grind === "MOIDO" ? input.brewMethod : null,
       coffeeId: coffee.id.value,
     });
 

@@ -22,17 +22,36 @@ export function CartSkeleton() {
 
 export function SubscriptionSkeleton() {
   return (
-    <div className="flex flex-col gap-8">
-      <div className="grid gap-4 sm:grid-cols-3">
-        {[0, 1, 2].map((card) => (
-          <Skeleton key={card} className="h-56 w-full rounded-xl" />
-        ))}
+    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_21rem] lg:items-start">
+      <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-5">
+          <Skeleton className="h-7 w-48" />
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[0, 1, 2].map((card) => (
+              <Skeleton key={card} className="h-64 w-full rounded-2xl" />
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-col gap-5">
+          <Skeleton className="h-7 w-56" />
+          <div className="grid gap-6 sm:grid-cols-2">
+            <Skeleton className="h-16 w-full rounded-lg" />
+            <Skeleton className="h-16 w-full rounded-lg" />
+            <Skeleton className="h-16 w-full rounded-lg" />
+          </div>
+        </div>
       </div>
-      <div className="grid gap-6 sm:grid-cols-2">
-        <Skeleton className="h-16 w-full rounded-lg" />
-        <Skeleton className="h-16 w-full rounded-lg" />
+      <div className="flex flex-col gap-5 rounded-3xl border border-border bg-card p-6">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-7 w-36" />
+        <Skeleton className="h-6 w-28" />
+        <div className="flex flex-col gap-3 border-y border-border py-5">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+        </div>
+        <Skeleton className="h-10 w-full rounded-lg" />
       </div>
-      <Skeleton className="h-9 w-40 rounded-lg" />
     </div>
   );
 }

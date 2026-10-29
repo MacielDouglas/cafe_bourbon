@@ -62,6 +62,18 @@ describe("CreateSubscription", () => {
     });
   });
 
+  it("ignora o método de preparo quando o café vai em grãos", async () => {
+    const { useCase, subscriptions } = setup();
+    await useCase.execute("user-1", {
+      plan: "MENSAL",
+      grind: "GRAOS",
+      brewMethod: "FRENCH_PRESS",
+      coffeeId: "coffee-1",
+    });
+
+    expect(subscriptions.created[0]?.brewMethod).toBeNull();
+  });
+
   it("recusa item que não é café", async () => {
     const { useCase } = setup();
     await expect(

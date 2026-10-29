@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { ArrowUpRightIcon } from "lucide-react";
 import { cn } from "cn";
 import { DemoBadge } from "@/components/demo-badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Slider } from "@/components/ui/slider";
 import { formatCents } from "@/modules/catalog/presentation/format";
 import type { PairingTier } from "@/modules/pairing/presentation/labels";
@@ -48,10 +50,99 @@ const initialValues: Record<ScaleKey, number> = {
   body: 3,
 };
 
+const resultDelay = [
+  "catalog-delay-1",
+  "catalog-delay-2",
+  "catalog-delay-3",
+  "catalog-delay-4",
+  "catalog-delay-5",
+  "catalog-delay-6",
+  "catalog-delay-7",
+  "catalog-delay-8",
+] as const;
+
 function toggled(list: string[], value: string): string[] {
   return list.includes(value)
     ? list.filter((item) => item !== value)
     : [...list, value];
+}
+
+function LiveProfile({
+  values,
+  categories,
+  notes,
+}: {
+  values: Record<ScaleKey, number>;
+  categories: string[];
+  notes: string[];
+}) {
+  const categoryLabels = discoveryCategoryOptions
+    .filter((option) => categories.includes(option.value))
+    .map((option) => option.label);
+
+  return (
+    <div className="rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8">
+      <div className="flex flex-col gap-1">
+        <h2 className="text-2xl font-medium tracking-tight">Seu perfil</h2>
+        <p className="text-sm text-muted-foreground">
+          Atualiza conforme você ajusta os controles.
+        </p>
+      </div>
+
+      <div className="mt-6 flex flex-col gap-5">
+        {scaleFields.map((field) => (
+          <div key={field.key} className="flex flex-col gap-2">
+            <div className="flex items-baseline justify-between gap-4">
+              <span className="text-sm">{field.label}</span>
+              <span className="text-xl font-medium tabular-nums">
+                {values[field.key]}
+                <span className="ml-1 text-xs font-normal text-muted-foreground">
+                  /5
+                </span>
+              </span>
+            </div>
+            <div className="grid grid-cols-5 gap-1.5" aria-hidden>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <span
+                  key={index}
+                  className={cn(
+                    "h-1.5 rounded-full transition-colors duration-300",
+                    index < values[field.key] ? "bg-brand" : "bg-border",
+                  )}
+                />
+              ))}
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>{field.low}</span>
+              <span>{field.high}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <dl className="mt-6 flex flex-col gap-3 border-t border-border pt-5 text-sm">
+        <div className="flex items-baseline justify-between gap-4">
+          <dt className="text-muted-foreground">Coleções</dt>
+          <dd className="text-right">
+            {categoryLabels.length > 0
+              ? categoryLabels.join(", ")
+              : "Todas"}
+          </dd>
+        </div>
+        <div className="flex items-baseline justify-between gap-4">
+          <dt className="text-muted-foreground">Notas</dt>
+          <dd className="text-right">
+            {notes.length > 0 ? notes.join(" · ") : "Sem preferência"}
+          </dd>
+        </div>
+      </dl>
+
+      <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
+        Quando estiver pronto, peça uma seleção sob medida. O resultado mostra o
+        motivo de cada escolha.
+      </p>
+    </div>
+  );
 }
 
 export function TasteQuiz() {
@@ -80,6 +171,7 @@ export function TasteQuiz() {
     event.preventDefault();
     setLoading(true);
     setError(null);
+    setResult(null);
     setSubmitted({ values, categories, notes, price });
 
     const parsedPrice = price.trim() ? Number(price.replace(",", ".")) : null;
@@ -112,14 +204,17 @@ export function TasteQuiz() {
     <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr]">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-8 rounded-2xl border border-border bg-card p-6 shadow-soft"
+        className="flex flex-col gap-8 rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8"
       >
         {scaleFields.map((field) => (
           <div key={field.key} className="flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{field.label}</span>
-              <span className="text-sm tabular-nums text-muted-foreground">
-                {values[field.key]}/5
+            <div className="flex items-baseline justify-between gap-4">
+              <span className="text-base font-medium">{field.label}</span>
+              <span className="text-2xl leading-none font-medium tabular-nums">
+                {values[field.key]}
+                <span className="ml-1 text-sm font-normal text-muted-foreground">
+                  /5
+                </span>
               </span>
             </div>
             <Slider
@@ -138,7 +233,7 @@ export function TasteQuiz() {
         ))}
 
         <div className="flex flex-col gap-3">
-          <span className="text-sm font-medium">Coleções de interesse</span>
+          <span className="text-base font-medium">Coleções de interesse</span>
           <div className="flex flex-wrap gap-2">
             {discoveryCategoryOptions.map((option) => (
               <button
@@ -163,7 +258,7 @@ export function TasteQuiz() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <span className="text-sm font-medium">Notas que você gosta</span>
+          <span className="text-base font-medium">Notas que você gosta</span>
           <div className="flex flex-wrap gap-2">
             {discoveryNoteSuggestions.map((note) => (
               <button
@@ -185,7 +280,9 @@ export function TasteQuiz() {
         </div>
 
         <label className="flex flex-col gap-2">
-          <span className="text-sm font-medium">Preço máximo por item (opcional)</span>
+          <span className="text-base font-medium">
+            Preço máximo por item (opcional)
+          </span>
           <Input
             inputMode="decimal"
             placeholder="Ex.: 30,00"
@@ -194,106 +291,180 @@ export function TasteQuiz() {
           />
         </label>
 
-        <Button type="submit" disabled={loading} className="w-full sm:w-fit">
+        <Button
+          type="submit"
+          size="lg"
+          disabled={loading}
+          className="w-full sm:w-fit"
+        >
           {loading ? "Buscando..." : "Ver recomendações"}
         </Button>
       </form>
 
-      <div className="flex flex-col gap-5" aria-live="polite">
+      <div className="flex flex-col gap-5">
         {error && (
-          <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          <p
+            role="alert"
+            className="rounded-2xl border border-destructive/30 bg-destructive/5 px-5 py-4 text-sm text-destructive"
+          >
             {error}
           </p>
         )}
 
-        {!result && !error && (
-          <p className="rounded-2xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground shadow-soft">
-            Ajuste os controles e toque em “Ver recomendações” para receber uma
-            seleção feita sob medida.
-          </p>
-        )}
-
-        {result && (
-          <>
+        {loading ? (
+          <div
+            role="status"
+            className="flex flex-col gap-5 rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-8"
+          >
+            <div className="flex items-center gap-3">
+              <span
+                className="size-2.5 animate-pulse rounded-full bg-brand"
+                aria-hidden
+              />
+              <p className="text-base font-medium">Lendo seu perfil...</p>
+            </div>
+            <div className="flex flex-col gap-3" aria-hidden>
+              {[0, 1, 2].map((row) => (
+                <div
+                  key={row}
+                  className="flex flex-col gap-2 rounded-2xl border border-border px-4 py-4"
+                >
+                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-3 w-56" />
+                </div>
+              ))}
+            </div>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Cruzando intensidade, acidez, corpo e notas com o catálogo da
+              casa.
+            </p>
+          </div>
+        ) : result ? (
+          <div aria-live="polite" className="flex flex-col gap-5">
             {result.reason && (
-              <p className="text-sm text-muted-foreground">{result.reason}</p>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {result.reason}
+              </p>
             )}
 
             {submitted && (
-              <div className="flex flex-col gap-1.5 rounded-xl border border-border bg-secondary/40 px-4 py-3 text-xs text-muted-foreground">
-                <p className="font-medium text-foreground/80">
-                  Como lemos seu perfil
-                </p>
-                <p>
-                  {scaleFields
-                    .map(
-                      (field) =>
-                        `${field.label} ${submitted.values[field.key]}/5`,
-                    )
-                    .join(" · ")}
-                </p>
-                <p>
-                  Coleções:{" "}
-                  {submitted.categories.length > 0
-                    ? submitted.categories
+              <div className="rounded-2xl border border-border bg-secondary/40 px-5 py-4">
+                <p className="text-sm font-medium">Como lemos seu perfil</p>
+                <dl className="mt-3 grid gap-3 text-xs sm:grid-cols-3">
+                  <div className="flex flex-col gap-1">
+                    <dt className="text-muted-foreground">Eixos</dt>
+                    <dd className="leading-relaxed text-foreground/80">
+                      {scaleFields
                         .map(
-                          (value) =>
-                            discoveryCategoryOptions.find(
-                              (option) => option.value === value,
-                            )?.label ?? value,
+                          (field) =>
+                            `${field.label} ${submitted.values[field.key]}/5`,
                         )
-                        .join(", ")
-                    : "todas"}
-                </p>
-                <p>
-                  Notas:{" "}
-                  {submitted.notes.length > 0
-                    ? submitted.notes.join(", ")
-                    : "sem preferência"}
-                  {submitted.price.trim() ? ` · até R$ ${submitted.price}` : ""}
-                </p>
+                        .join(" · ")}
+                    </dd>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <dt className="text-muted-foreground">Coleções</dt>
+                    <dd className="leading-relaxed text-foreground/80">
+                      {submitted.categories.length > 0
+                        ? submitted.categories
+                            .map(
+                              (value) =>
+                                discoveryCategoryOptions.find(
+                                  (option) => option.value === value,
+                                )?.label ?? value,
+                            )
+                            .join(", ")
+                        : "Todas"}
+                    </dd>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <dt className="text-muted-foreground">Notas</dt>
+                    <dd className="leading-relaxed text-foreground/80">
+                      {submitted.notes.length > 0
+                        ? submitted.notes.join(" · ")
+                        : "Sem preferência"}
+                      {submitted.price.trim()
+                        ? ` · até R$ ${submitted.price}`
+                        : ""}
+                    </dd>
+                  </div>
+                </dl>
               </div>
             )}
+
             {result.recommendations.length === 0 ? (
-              <p className="rounded-2xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground shadow-soft">
+              <p className="rounded-3xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground shadow-soft">
                 Não encontramos produtos para esse perfil. Tente ampliar as
                 coleções ou o preço máximo.
               </p>
             ) : (
-              <ul className="flex flex-col gap-3">
-                {result.recommendations.map((item) => (
-                  <li key={item.slug}>
-                    <Link
-                      href={`/produtos/${item.slug}`}
-                      className="flex items-center justify-between gap-4 rounded-xl border border-border bg-card px-4 py-4 shadow-soft outline-none transition-shadow hover:shadow-lift focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              <div className="flex flex-col gap-4">
+                <div className="flex items-baseline justify-between gap-2 border-b border-border pb-3">
+                  <p className="text-sm font-medium">Seleção para você</p>
+                  <p className="text-xs text-muted-foreground">
+                    {result.recommendations.length === 1
+                      ? "1 item"
+                      : `${result.recommendations.length} itens`}
+                  </p>
+                </div>
+                <ul className="flex flex-col gap-3">
+                  {result.recommendations.map((item, index) => (
+                    <li
+                      key={item.slug}
+                      className={cn("catalog-in", resultDelay[index])}
                     >
-                      <span className="flex min-w-0 flex-col">
-                        <span className="truncate font-medium">{item.name}</span>
-                        <span className="truncate text-sm text-muted-foreground">
-                          {item.subtitle}
-                        </span>
-                        <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-                          <span className="text-brand">
-                            {discoveryScoreTierLabel[item.tier]} · {item.score}/100
+                      <Link
+                        href={`/produtos/${item.slug}`}
+                        className="group flex items-start justify-between gap-4 rounded-2xl border border-border bg-card px-5 py-4 shadow-soft outline-none transition-shadow hover:shadow-lift focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                      >
+                        <span className="flex min-w-0 flex-col gap-1">
+                          <span className="flex flex-wrap items-center gap-2">
+                            <span className="text-lg font-medium">
+                              {item.name}
+                            </span>
+                            {item.isDemoData && <DemoBadge />}
                           </span>
-                          <span className="text-muted-foreground">
-                            {item.typeLabel}
+                          <span className="text-sm text-muted-foreground">
+                            {item.subtitle}
                           </span>
-                          {item.isDemoData && <DemoBadge />}
+                          <span className="mt-1 flex flex-wrap items-center gap-2 text-xs">
+                            <span className="rounded-full bg-brand/10 px-2.5 py-0.5 font-medium text-brand">
+                              {discoveryScoreTierLabel[item.tier]}
+                            </span>
+                            <span className="text-muted-foreground">
+                              {item.typeLabel}
+                            </span>
+                          </span>
+                          <span className="mt-1 text-xs leading-relaxed text-foreground/70">
+                            {item.reason}
+                          </span>
                         </span>
-                        <span className="mt-1 text-xs leading-relaxed text-foreground/70">
-                          {item.reason}
+                        <span className="flex shrink-0 flex-col items-end gap-1 text-right">
+                          <span className="text-2xl font-medium tabular-nums">
+                            {item.score}
+                          </span>
+                          <span className="text-[0.6875rem] text-muted-foreground">
+                            de 100
+                          </span>
+                          <span className="mt-2 text-sm font-medium tabular-nums">
+                            {item.priceCents !== null
+                              ? formatCents(item.priceCents)
+                              : "—"}
+                          </span>
+                          <ArrowUpRightIcon
+                            className="mt-1 size-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                            aria-hidden
+                          />
                         </span>
-                      </span>
-                      <span className="shrink-0 text-sm tabular-nums">
-                        {item.priceCents !== null ? formatCents(item.priceCents) : "—"}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
-          </>
+          </div>
+        ) : (
+          <LiveProfile values={values} categories={categories} notes={notes} />
         )}
       </div>
     </div>

@@ -41,6 +41,12 @@ const grindOptions: { value: GrindOption; label: string }[] = [
   { value: "MOIDO", label: "Moído" },
 ];
 
+const planDelay = [
+  "catalog-delay-1",
+  "catalog-delay-2",
+  "catalog-delay-3",
+] as const;
+
 const DRAFT_KEY = "cb_subscription_draft";
 
 interface SubscriptionDraft {
@@ -68,6 +74,17 @@ export function SubscriptionForm({
   const [confirmed, setConfirmed] = useState<string | null>(null);
   const hydrated = useRef(false);
 
+  const selectedPlan = plans.find((item) => item.id === plan);
+  const selectedCoffee = coffees.find((coffee) => coffee.id === coffeeId);
+  const selectedGrind =
+    grindOptions.find((option) => option.value === grind)?.label ?? "Em grãos";
+  const methodApplies = grind === "MOIDO";
+  const selectedBrew = methodApplies
+    ? brewMethod
+      ? brewMethodLabel[brewMethod]
+      : "Qualquer método"
+    : "Não se aplica";
+
   useEffect(() => {
     if (!hydrated.current) {
       hydrated.current = true;
@@ -85,14 +102,22 @@ export function SubscriptionForm({
           if (draft.coffeeId && coffees.some((item) => item.id === draft.coffeeId)) {
             setCoffeeId(draft.coffeeId);
           }
-          if (draft.grind && grindOptions.some((item) => item.value === draft.grind)) {
-            setGrind(draft.grind);
+          let nextGrind: GrindOption = "GRAOS";
+          if (
+            draft.grind &&
+            grindOptions.some((item) => item.value === draft.grind)
+          ) {
+            nextGrind = draft.grind;
+            setGrind(nextGrind);
           }
           if (
-            draft.brewMethod === "" ||
-            (draft.brewMethod && brewMethods.includes(draft.brewMethod))
+            nextGrind === "MOIDO" &&
+            (draft.brewMethod === "" ||
+              (draft.brewMethod && brewMethods.includes(draft.brewMethod)))
           ) {
             setBrewMethod(draft.brewMethod);
+          } else {
+            setBrewMethod("");
           }
         } catch {
           sessionStorage.removeItem(DRAFT_KEY);
@@ -130,7 +155,7 @@ export function SubscriptionForm({
         body: JSON.stringify({
           plan,
           grind,
-          brewMethod: brewMethod || null,
+          brewMethod: grind === "MOIDO" ? brewMethod || null : null,
           coffeeId,
         }),
       });
@@ -165,12 +190,14 @@ export function SubscriptionForm({
 
   if (confirmed) {
     return (
-      <div className="flex flex-col items-start gap-4 rounded-2xl border border-border bg-card px-8 py-12 shadow-soft">
-        <span className="flex size-10 items-center justify-center rounded-full bg-brand text-brand-foreground">
-          <CheckIcon />
+      <div className="home-pairing-in flex flex-col items-start gap-4 rounded-3xl border border-border bg-card px-8 py-12 shadow-soft sm:px-10">
+        <span className="flex size-14 items-center justify-center rounded-full bg-brand text-brand-foreground">
+          <CheckIcon className="size-6" />
         </span>
-        <h2 className="text-xl font-medium">Assinatura confirmada</h2>
-        <p className="max-w-md text-sm text-muted-foreground">
+        <h2 className="text-3xl font-medium tracking-tight text-balance">
+          A mesa está garantida.
+        </h2>
+        <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
           Plano <strong>{confirmed}</strong> ativado. Esta é uma assinatura
           demonstrativa — nenhuma cobrança é realizada nesta versão.
         </p>
@@ -178,10 +205,7 @@ export function SubscriptionForm({
           <Button nativeButton={false} render={<Link href="/produtos" />}>
             Continuar comprando
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => setConfirmed(null)}
-          >
+          <Button variant="outline" onClick={() => setConfirmed(null)}>
             Fazer outra assinatura
           </Button>
         </div>
@@ -190,127 +214,197 @@ export function SubscriptionForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-      <fieldset className="flex flex-col gap-4">
-        <legend className="text-sm font-medium">Escolha o plano</legend>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {plans.map((item) => {
-            const active = plan === item.id;
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setPlan(item.id)}
-                aria-pressed={active}
-                className={cn(
-                  "flex flex-col gap-3 rounded-2xl border p-5 text-left outline-none transition-all focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                  active
-                    ? "border-brand/40 bg-card shadow-lift ring-1 ring-brand/20"
-                    : "border-border bg-card shadow-soft hover:border-foreground/30 hover:shadow-lift",
-                )}
-              >
-                <span className="flex items-center justify-between">
-                  <span className="font-medium">{item.name}</span>
-                  {active && <CheckIcon className="size-4 text-brand" />}
-                </span>
-                <span className="text-2xl font-medium tabular-nums">
-                  {formatCents(item.priceCents)}
-                  <span className="ml-1 text-sm font-normal text-muted-foreground">
-                    {item.cadence}
+    <form
+      onSubmit={handleSubmit}
+      className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_21rem] lg:items-start"
+    >
+      <div className="flex flex-col gap-10">
+        <fieldset className="flex flex-col gap-5">
+          <legend className="text-2xl font-medium tracking-tight">
+            Escolha o plano
+          </legend>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {plans.map((item, index) => {
+              const active = plan === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setPlan(item.id)}
+                  aria-pressed={active}
+                  className={cn(
+                    "catalog-in flex h-full flex-col gap-3 rounded-2xl border p-5 text-left outline-none transition-all focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                    planDelay[index],
+                    active
+                      ? "border-brand/40 bg-card shadow-lift ring-1 ring-brand/20"
+                      : "border-border bg-card shadow-soft hover:border-foreground/30 hover:shadow-lift",
+                  )}
+                >
+                  <span className="flex items-center justify-between gap-3">
+                    <span className="text-lg font-medium">{item.name}</span>
+                    {active && <CheckIcon className="size-4 text-brand" />}
                   </span>
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  {item.description}
-                </span>
-                <span className="flex flex-col gap-1 text-xs text-muted-foreground">
-                  {item.perks.map((perk) => (
-                    <span key={perk} className="flex items-center gap-1.5">
-                      <CheckIcon className="size-3 text-brand" />
-                      {perk}
+                  <span className="text-3xl font-medium tabular-nums">
+                    {formatCents(item.priceCents)}
+                    <span className="ml-1 text-sm font-normal text-muted-foreground">
+                      {item.cadence}
                     </span>
-                  ))}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </fieldset>
-
-      <div className="grid gap-6 sm:grid-cols-2">
-        <label className="flex flex-col gap-2">
-          <span className="text-sm font-medium">Café do mês</span>
-          <Select
-            value={coffeeId}
-            onValueChange={(value) => setCoffeeId(String(value))}
-            items={coffees.map((coffee) => ({
-              value: coffee.id,
-              label: coffee.name,
-            }))}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Escolha um café" />
-            </SelectTrigger>
-            <SelectContent>
-              {coffees.map((coffee) => (
-                <SelectItem key={coffee.id} value={coffee.id}>
-                  {coffee.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </label>
-
-        <fieldset className="flex flex-col gap-2">
-          <legend className="text-sm font-medium">Moagem</legend>
-          <RadioGroup
-            value={grind}
-            onValueChange={(value) => setGrind(value as GrindOption)}
-            className="grid-cols-2"
-          >
-            {grindOptions.map((option) => (
-              <label
-                key={option.value}
-                className="flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-4 text-sm transition-colors has-data-[checked]:border-brand/40 has-data-[checked]:bg-brand/5 focus-within:ring-2 focus-within:ring-ring/60"
-              >
-                <RadioGroupItem value={option.value} />
-                {option.label}
-              </label>
-            ))}
-          </RadioGroup>
+                  </span>
+                  <span className="text-sm leading-relaxed text-muted-foreground">
+                    {item.description}
+                  </span>
+                  <span className="flex flex-col gap-1 text-xs text-muted-foreground">
+                    {item.perks.map((perk) => (
+                      <span key={perk} className="flex items-center gap-1.5">
+                        <CheckIcon className="size-3 text-brand" />
+                        {perk}
+                      </span>
+                    ))}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </fieldset>
 
-        <label className="flex flex-col gap-2">
-          <span className="text-sm font-medium">
-            Método de preparo (opcional)
-          </span>
-          <Select
-            value={brewMethod}
-            onValueChange={(value) => setBrewMethod(value as BrewMethod | "")}
-            items={brewMethods.map((method) => ({
-              value: method,
-              label: brewMethodLabel[method],
-            }))}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Qualquer método" />
-            </SelectTrigger>
-            <SelectContent>
-              {brewMethods.map((method) => (
-                <SelectItem key={method} value={method}>
-                  {brewMethodLabel[method]}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </label>
+        <div className="flex flex-col gap-5">
+          <h2 className="text-2xl font-medium tracking-tight">
+            A próxima entrega
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-2">
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-medium">Café do mês</span>
+              <Select
+                value={coffeeId}
+                onValueChange={(value) => setCoffeeId(String(value))}
+                items={coffees.map((coffee) => ({
+                  value: coffee.id,
+                  label: coffee.name,
+                }))}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Escolha um café" />
+                </SelectTrigger>
+                <SelectContent>
+                  {coffees.map((coffee) => (
+                    <SelectItem key={coffee.id} value={coffee.id}>
+                      {coffee.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </label>
+
+            <fieldset className="flex flex-col gap-2">
+              <legend className="text-sm font-medium">Moagem</legend>
+              <RadioGroup
+                value={grind}
+                onValueChange={(value) => {
+                  const next = value as GrindOption;
+                  setGrind(next);
+                  if (next === "GRAOS") setBrewMethod("");
+                }}
+                className="grid-cols-2"
+              >
+                {grindOptions.map((option) => (
+                  <label
+                    key={option.value}
+                    className="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-4 text-sm transition-colors has-data-[checked]:border-brand/40 has-data-[checked]:bg-brand/5 focus-within:ring-2 focus-within:ring-ring/60"
+                  >
+                    <RadioGroupItem value={option.value} />
+                    {option.label}
+                  </label>
+                ))}
+              </RadioGroup>
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                {methodApplies
+                  ? "Escolha o método para moer no ponto certo."
+                  : "Em grãos preserva a escolha do método para depois."}
+              </p>
+            </fieldset>
+
+            {methodApplies && (
+              <label className="flex flex-col gap-2 sm:col-span-2 sm:max-w-sm">
+                <span className="text-sm font-medium">
+                  Método de preparo (opcional)
+                </span>
+                <Select
+                  value={brewMethod}
+                  onValueChange={(value) =>
+                    setBrewMethod(value as BrewMethod | "")
+                  }
+                  items={brewMethods.map((method) => ({
+                    value: method,
+                    label: brewMethodLabel[method],
+                  }))}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Qualquer método" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {brewMethods.map((method) => (
+                      <SelectItem key={method} value={method}>
+                        {brewMethodLabel[method]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </label>
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <Button type="submit" size="lg" disabled={loading || !coffeeId}>
-          {loading ? "Confirmando..." : "Assinar plano"}
+      <aside className="flex flex-col gap-5 rounded-3xl border border-border bg-card p-6 shadow-soft lg:sticky lg:top-24">
+        <div className="flex flex-col gap-1">
+          <p className="text-sm text-muted-foreground">Sua escolha</p>
+          <p className="text-2xl font-medium tracking-tight">
+            {selectedPlan?.name ?? "—"}
+          </p>
+          <p className="flex flex-wrap items-baseline gap-x-1.5">
+            <span
+              key={plan}
+              className="home-pairing-in text-xl font-medium tabular-nums"
+            >
+              {selectedPlan ? formatCents(selectedPlan.priceCents) : "—"}
+            </span>
+            <span className="text-sm text-muted-foreground">
+              {selectedPlan?.cadence}
+            </span>
+          </p>
+        </div>
+
+        <dl className="flex flex-col gap-3 border-y border-border py-5 text-sm">
+          <div className="flex items-baseline justify-between gap-4">
+            <dt className="text-muted-foreground">Café</dt>
+            <dd className="text-right">
+              {selectedCoffee?.name ?? "Escolha um café"}
+            </dd>
+          </div>
+          <div className="flex items-baseline justify-between gap-4">
+            <dt className="text-muted-foreground">Moagem</dt>
+            <dd className="text-right">{selectedGrind}</dd>
+          </div>
+          <div className="flex items-baseline justify-between gap-4">
+            <dt className="text-muted-foreground">Preparo</dt>
+            <dd className="text-right">{selectedBrew}</dd>
+          </div>
+        </dl>
+
+        <Button
+          type="submit"
+          size="lg"
+          disabled={loading || !coffeeId}
+          className="w-full"
+        >
+          {loading ? "Confirmando..." : "Confirmar assinatura"}
         </Button>
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          Assinatura demonstrativa: nenhuma cobrança é realizada nesta versão.
+        </p>
+
         {!isAuthenticated && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm leading-relaxed text-muted-foreground">
             Você será direcionado para entrar.{" "}
             <Link
               href="/entrar?redirect=/assinatura"
@@ -320,7 +414,7 @@ export function SubscriptionForm({
             </Link>
           </p>
         )}
-      </div>
+      </aside>
     </form>
   );
 }
