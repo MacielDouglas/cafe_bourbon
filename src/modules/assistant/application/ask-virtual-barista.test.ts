@@ -137,7 +137,7 @@ const editorialPairing = Pairing.create({
   published: true,
 });
 
-function useCase(provider: LanguageModelProvider | null, pairings = [editorialPairing]) {
+function createUseCase(provider: LanguageModelProvider | null, pairings = [editorialPairing]) {
   return new AskVirtualBarista(
     new FakeProductRepository([brasil, curado, encorpado]),
     new FakePairingRepository(pairings),
@@ -147,7 +147,7 @@ function useCase(provider: LanguageModelProvider | null, pairings = [editorialPa
 
 describe("AskVirtualBarista", () => {
   it("resolve produtos citados no texto do modelo", async () => {
-    const result = await useCase(
+    const result = await createUseCase(
       new FakeLanguageModelProvider("reply", "Recomendo o Café do Brasil com o Queijo Curado."),
     ).execute({ message: "monte uma experiência para mim" });
 
@@ -161,7 +161,7 @@ describe("AskVirtualBarista", () => {
       "reply",
       "Recomendo o Tinto Encorpado.",
     );
-    const result = await useCase(provider).execute({
+    const result = await createUseCase(provider).execute({
       message: "Quero uma sugestão de vinho",
     });
 
@@ -170,12 +170,104 @@ describe("AskVirtualBarista", () => {
     expect(result.productSlugs).toEqual(["tinto-encorpado"]);
   });
 
+  it("recusa perguntas fora do catálogo sem chamar o modelo", async () => {
+    const provider = new FakeLanguageModelProvider(
+      "reply",
+      "A capital da França é Paris.",
+    );
+    const result = await createUseCase(provider).execute({
+      message: "Qual é a capital da França?",
+    });
+
+    expect(provider.lastRequest).toBeNull();
+    expect(result.degraded).toBe(false);
+    expect(result.productSlugs).toEqual([]);
+    expect(result.persona.name).toBe("Casa Bourbon");
+    expect(result.reply).toContain("só converso sobre café, queijo e vinho");
+  });
+
+  it("não deixa um pedido genérico abrir espaço para tema externo", async () => {
+    const provider = new FakeLanguageModelProvider(
+      "reply",
+      "Aqui vai uma sugestão de filme.",
+    );
+    const result = await createUseCase(provider).execute({
+      message: "Me dê uma sugestão de filme",
+    });
+
+    expect(provider.lastRequest).toBeNull();
+    expect(result.persona.name).toBe("Casa Bourbon");
+  });
+
+  it.each([
+    ["Quero um café especial", "Lorenzo Giovanni", "Barista", "sotaque italiano"],
+    ["Me indique um vinho tinto", "Jean Pierre", "Sommelier", "sotaque francês"],
+    ["Qual queijo combina com mel?", "Chico da Dona Zezé", "Queijista", "sotaque mineiro"],
+  ])(
+    "escala a persona certa para %s",
+    async (message, name, role, accent) => {
+      const provider = new FakeLanguageModelProvider("reply", "Recomendo uma opção da casa.");
+      const result = await createUseCase(provider).execute({ message });
+
+      expect(result.persona.name).toBe(name);
+      expect(result.persona.role).toBe(role);
+      expect(provider.lastRequest?.system).toContain("REGRA DE ESCOPO");
+      expect(provider.lastRequest?.system).toContain(accent);
+    },
+  );
+
+  it("reforça o vocabulário de cada sotaque no prompt", async () => {
+    const cases = [
+      {
+        message: "Quero um café especial",
+        words: [
+          "culturale",
+          "naturale",
+          "escritore",
+          "emozione",
+          "operacione",
+          "nacionale",
+        ],
+      },
+      {
+        message: "Me indique um vinho tinto",
+        words: ["voilà", "magnifique", "terroir", "mon ami", "délicieux"],
+      },
+      {
+        message: "Qual queijo combina com mel?",
+        words: ["ocê", "uai", "trem", "sô", "tiquim", "bão", "nigucin"],
+      },
+    ] as const;
+
+    for (const entry of cases) {
+      const provider = new FakeLanguageModelProvider("reply", "Uma opção da casa.");
+      await createUseCase(provider).execute({ message: entry.message });
+      for (const word of entry.words) {
+        expect(provider.lastRequest?.system).toContain(word);
+      }
+    }
+  });
+
+  it("mantém o sotaque nas respostas locais", async () => {
+    const coffee = await createUseCase(null).execute({ message: "quero um café" });
+    expect(coffee.reply).toContain("ecco");
+    expect(coffee.reply).toContain("culturale");
+
+    const wine = await createUseCase(null).execute({ message: "quero um vinho" });
+    expect(wine.reply).toContain("voilà");
+    expect(wine.reply).toContain("mon ami");
+
+    const cheese = await createUseCase(null).execute({ message: "quero um queijo" });
+    expect(cheese.reply).toContain("Uai");
+    expect(cheese.reply).toContain("tiquim");
+  });
+
   it("mantém as três categorias em pedidos genéricos", async () => {
     const provider = new FakeLanguageModelProvider(
       "reply",
       "Podemos começar com o Café do Brasil.",
     );
-    await useCase(provider).execute({ message: "O que você recomenda?" });
+    await createUseCase(provider).execute({ message: "O que você recomenda?" });
 
     const prompt = provider.lastRequest?.prompt ?? "";
     expect(prompt).toContain("Cafés: 1");
@@ -191,7 +283,7 @@ describe("AskVirtualBarista", () => {
       "reply",
       "Sugiro o Tinto Encorpado com o Queijo Curado.",
     );
-    const result = await useCase(provider).execute({
+    const result = await createUseCase(provider).execute({
       message: "Quero um vinho para acompanhar queijo curado",
     });
 
@@ -203,16 +295,18 @@ describe("AskVirtualBarista", () => {
   });
 
   it("não inventa produtos ausentes do contexto", async () => {
-    const result = await useCase(
+    const result = await createUseCase(
       new FakeLanguageModelProvider("reply", "Sugiro um chá verde gelado."),
-    ).execute({ message: "quero uma bebida" });
+    ).execute({ message: "quero uma sugestão de café" });
 
     expect(result.productSlugs).toEqual([]);
     expect(result.pairingIds).toEqual([]);
   });
 
   it("entra em modo degradado sem provider configurado", async () => {
-    const result = await useCase(null).execute({ message: "me ajude a escolher" });
+    const result = await createUseCase(null).execute({
+      message: "me ajude a escolher um café",
+    });
 
     expect(result.degraded).toBe(true);
     expect(result.productSlugs.length).toBeGreaterThan(0);
@@ -220,15 +314,15 @@ describe("AskVirtualBarista", () => {
   });
 
   it("entra em modo degradado quando o provider falha", async () => {
-    const result = await useCase(new FakeLanguageModelProvider("throw")).execute({
-      message: "oi",
+    const result = await createUseCase(new FakeLanguageModelProvider("throw")).execute({
+      message: "quero um café",
     });
     expect(result.degraded).toBe(true);
   });
 
   it("trata resposta vazia do modelo como degradada", async () => {
-    const result = await useCase(new FakeLanguageModelProvider("empty")).execute({
-      message: "oi",
+    const result = await createUseCase(new FakeLanguageModelProvider("empty")).execute({
+      message: "quero um café",
     });
     expect(result.degraded).toBe(true);
   });
