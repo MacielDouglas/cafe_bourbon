@@ -15,7 +15,10 @@ const navItemActive =
 
 function DesktopNav() {
   return (
-    <nav className="hidden items-center gap-7 lg:flex">
+    <nav
+      aria-label="Navegação principal"
+      className="hidden items-center gap-7 lg:flex"
+    >
       <MegaMenu />
       {primaryLinks.map((link) => (
         <NavLink
@@ -36,15 +39,17 @@ export function SiteHeader() {
     <div>
       <AnnouncementBar />
       <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
-        <div className="mx-auto flex h-18 max-w-7xl items-center gap-8 px-4 sm:px-6 lg:px-8">
-          <Logo className="text-foreground" />
+        <div className="mx-auto flex h-18 max-w-7xl items-center gap-4 px-4 sm:gap-6 sm:px-6 lg:gap-8 lg:px-8">
+          <Logo className="shrink-0 text-foreground" />
 
           <Suspense fallback={<div className="hidden lg:block" />}>
             <DesktopNav />
           </Suspense>
 
-          <div className="ml-auto flex items-center gap-0.5">
-            <SearchButton />
+          <div className="ml-auto flex items-center gap-1 sm:gap-0.5">
+            <div className="hidden sm:block">
+              <SearchButton />
+            </div>
             <AccountActions />
             <div className="lg:hidden">
               <Suspense fallback={null}>

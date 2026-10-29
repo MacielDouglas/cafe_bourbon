@@ -18,8 +18,8 @@ export function MegaMenu({ className }: { className?: string }) {
         <ChevronDownIcon className="size-3.5 transition-transform duration-300 group-hover:rotate-180" />
       </NavLink>
 
-      <div className="invisible absolute top-full left-1/2 z-50 w-[min(56rem,90vw)] -translate-x-1/2 translate-y-1 pt-3 opacity-0 transition-[opacity,transform] duration-200 ease-[var(--ease-out-soft)] group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-        <div className="grid grid-cols-[1.4fr_1fr_1.1fr] gap-8 rounded-2xl border border-border bg-popover p-8 text-popover-foreground shadow-lift">
+      <div className="invisible absolute top-full left-0 z-50 w-[min(56rem,calc(100vw-16rem))] translate-y-1 pt-3 opacity-0 transition-[opacity,transform] duration-200 ease-[var(--ease-out-soft)] group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+        <div className="grid max-h-[calc(100dvh-7rem)] grid-cols-[1.4fr_1fr_1.1fr] gap-8 overflow-y-auto rounded-2xl border border-border bg-popover p-8 text-popover-foreground shadow-lift">
           <div className="flex flex-col gap-5">
             <p className="text-[0.6875rem] font-medium tracking-[0.18em] text-muted-foreground uppercase">
               Coleções

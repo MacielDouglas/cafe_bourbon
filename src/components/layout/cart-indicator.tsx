@@ -44,7 +44,7 @@ export function CartIndicator() {
       aria-current={active ? "page" : undefined}
       nativeButton={false}
       render={<Link href="/carrinho" prefetch={false} />}
-      className={cn("relative", active && "bg-accent text-brand")}
+      className={cn("relative size-11 sm:size-10", active && "bg-accent text-brand")}
     >
       <ShoppingBagIcon />
       {count > 0 && (

@@ -38,7 +38,7 @@ export const categoryLinks: CategoryLink[] = [
 export const primaryLinks: SimpleLink[] = [
   { label: "Harmonizações", href: "/harmonizacoes" },
   { label: "Descobrir", href: "/descobrir" },
-  { label: "Barista", href: "/barista" },
+  { label: "Tire dúvidas", href: "/barista" },
   { label: "Assinatura", href: "/assinatura" },
 ];
 

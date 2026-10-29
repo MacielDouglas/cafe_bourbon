@@ -30,11 +30,18 @@ export function SearchButton() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
-        render={<Button variant="ghost" size="icon" aria-label="Buscar produtos" />}
+        render={
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Buscar produtos"
+            className="size-11 sm:size-10"
+          />
+        }
       >
         <SearchIcon />
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Buscar</DialogTitle>
           <DialogDescription>
@@ -45,12 +52,18 @@ export function SearchButton() {
           <Input
             autoFocus
             name="busca"
+            type="search"
+            enterKeyHint="search"
+            autoComplete="off"
             value={term}
             onChange={(event) => setTerm(event.target.value)}
             placeholder="Ex.: café do brasil, tanino..."
             aria-label="Termo de busca"
+            className="h-11 sm:h-10"
           />
-          <Button type="submit">Ir</Button>
+          <Button type="submit" className="h-11 sm:h-10">
+            Ir
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

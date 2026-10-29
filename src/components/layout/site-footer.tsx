@@ -9,7 +9,7 @@ const helpLinks = [
   { label: "Nossa história", href: "/#historia" },
   { label: "Nosso processo", href: "/#processo" },
   { label: "Descobrir seu paladar", href: "/descobrir" },
-  { label: "Barista virtual", href: "/barista" },
+  { label: "Tire dúvidas", href: "/barista" },
   { label: "Assinatura de café", href: "/assinatura" },
   { label: "Carrinho", href: "/carrinho" },
   { label: "Contato", href: "mailto:contato@bourboncafes.com" },

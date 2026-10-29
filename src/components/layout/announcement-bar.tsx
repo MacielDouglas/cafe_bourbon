@@ -7,8 +7,8 @@ export function AnnouncementBar() {
 
   return (
     <div className="bg-espresso text-creme">
-      <div className="mx-auto flex max-w-7xl items-center justify-center gap-3 px-4 py-2.5 text-center text-xs font-medium tracking-[0.14em] uppercase">
-        <span>{message}</span>
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-3 gap-y-1 px-4 py-2 text-center text-[0.6875rem] font-medium tracking-[0.1em] uppercase sm:py-2.5 sm:text-xs sm:tracking-[0.14em]">
+        <span className="text-balance">{message}</span>
         <span aria-hidden className="hidden opacity-40 sm:inline">
           —
         </span>

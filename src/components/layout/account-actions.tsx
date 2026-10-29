@@ -36,15 +36,22 @@ export function AccountActions() {
   }
 
   return (
-    <div className="flex items-center gap-0.5">
+    <div className="flex items-center gap-1 sm:gap-0.5">
       {user ? (
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger
-            render={<Button variant="ghost" size="icon" aria-label="Minha conta" />}
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Minha conta"
+                className="size-11 sm:size-10"
+              />
+            }
           >
             <UserIcon />
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{user.name || "Minha conta"}</DialogTitle>
               <DialogDescription>{user.email}</DialogDescription>
@@ -52,16 +59,16 @@ export function AccountActions() {
             <div className="flex flex-col gap-2">
               {isOwner && (
                 <Button
+                  className="h-11 sm:h-10"
                   nativeButton={false}
-                  render={
-                  <Link href="/admin" onClick={() => setOpen(false)} />
-                }
-              >
-                Painel da casa
-              </Button>
+                  render={<Link href="/admin" onClick={() => setOpen(false)} />}
+                >
+                  Painel da casa
+                </Button>
               )}
               <Button
                 variant="outline"
+                className="h-11 sm:h-10"
                 nativeButton={false}
                 render={
                   <Link href="/assinatura" onClick={() => setOpen(false)} />
@@ -71,6 +78,7 @@ export function AccountActions() {
               </Button>
               <Button
                 variant="ghost"
+                className="h-11 sm:h-10"
                 onClick={handleSignOut}
                 disabled={signingOut}
               >
@@ -86,6 +94,7 @@ export function AccountActions() {
           size="icon"
           aria-label="Entrar"
           nativeButton={false}
+          className="size-11 sm:size-10"
           render={
             <Link
               href={`/entrar?redirect=${encodeURIComponent(pathname || "/")}`}
