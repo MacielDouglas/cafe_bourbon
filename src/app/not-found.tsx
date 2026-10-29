@@ -5,14 +5,17 @@ import { SiteHeader } from "@/components/layout/site-header";
 export default function NotFound() {
   return (
     <div className="flex min-h-screen flex-col">
+      <a
+        href="#conteudo"
+        className="sr-only z-50 rounded-lg bg-espresso px-4 py-2 text-sm font-medium text-creme outline-none focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus-visible:ring-2 focus-visible:ring-ring/60"
+      >
+        Pular para o conteúdo
+      </a>
       <SiteHeader />
       <main
         id="conteudo"
         className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-start gap-4 px-4 py-24 sm:px-6"
       >
-        <p className="text-sm font-medium tracking-[0.16em] text-brand uppercase">
-          Página não encontrada
-        </p>
         <h1 className="text-3xl font-medium tracking-tight sm:text-4xl">
           Esta página saiu da mesa.
         </h1>

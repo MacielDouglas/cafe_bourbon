@@ -168,7 +168,13 @@ export default async function AdminHomePage() {
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Badge variant="secondary">
+                    <Badge
+                      variant={
+                        order.status === "CANCELLED"
+                          ? "destructive"
+                          : "secondary"
+                      }
+                    >
                       {statusLabel[order.status] ?? order.status}
                     </Badge>
                     <span className="font-medium tabular-nums">

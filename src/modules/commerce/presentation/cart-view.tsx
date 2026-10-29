@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { MinusIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
 import { DemoBadge } from "@/components/demo-badge";
+import { StateMessage } from "@/components/state-message";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -225,15 +226,15 @@ export function CartView({
 
   if (cart.lines.length === 0) {
     return (
-      <div className="flex flex-col items-start gap-4 rounded-2xl border border-border bg-card px-8 py-16 shadow-soft sm:items-center sm:text-center">
-        <h2 className="text-xl font-medium">Seu carrinho está vazio</h2>
-        <p className="max-w-md text-sm text-muted-foreground">
-          Explore o catálogo de cafés, queijos e vinhos e monte sua mesa.
-        </p>
-        <Button nativeButton={false} render={<Link href="/produtos" />}>
-          Ver o catálogo
-        </Button>
-      </div>
+      <StateMessage
+        title="Seu carrinho está vazio"
+        description="Explore o catálogo de cafés, queijos e vinhos e monte sua mesa."
+        action={
+          <Button nativeButton={false} render={<Link href="/produtos" />}>
+            Ver o catálogo
+          </Button>
+        }
+      />
     );
   }
 
@@ -298,7 +299,7 @@ export function CartView({
 
                 <Button
                   variant="ghost"
-                  className="text-muted-foreground"
+                  className="text-muted-foreground hover:text-destructive"
                   disabled={pending === line.productId}
                   onClick={() => removeLine(line.productId)}
                 >

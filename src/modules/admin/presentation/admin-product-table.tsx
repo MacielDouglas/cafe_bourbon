@@ -214,6 +214,7 @@ export function AdminProductTable({ products }: { products: AdminProduct[] }) {
                       min={0}
                       value={draft ?? String(product.stock)}
                       disabled={busy}
+                      aria-label={`Estoque de ${product.name}`}
                       onChange={(event) =>
                         setStockDraft((current) => ({
                           ...current,

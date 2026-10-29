@@ -16,9 +16,6 @@ export default function GlobalError({
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-2xl flex-col items-start justify-center gap-4 px-4 py-24 sm:px-6">
-      <p className="text-sm font-medium tracking-[0.16em] text-brand uppercase">
-        Algo saiu do ritmo
-      </p>
       <h1 className="text-3xl font-medium tracking-tight sm:text-4xl">
         Não conseguimos carregar esta página.
       </h1>

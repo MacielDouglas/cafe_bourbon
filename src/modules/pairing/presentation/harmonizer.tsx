@@ -43,10 +43,10 @@ export async function Harmonizer({ coffeeSlug }: { coffeeSlug?: string }) {
   const axes = sensory
     ? [
         { label: "Intensidade", value: sensory.intensity },
+        { label: "Corpo", value: sensory.body },
         ...(sensory.acidity !== null
           ? [{ label: "Acidez", value: sensory.acidity }]
           : []),
-        { label: "Corpo", value: sensory.body },
       ]
     : [];
 

@@ -25,7 +25,7 @@ export default function DescobrirPage() {
             O paladar não é um botão.
           </p>
           <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            Intensidade, acidez e corpo são pontos de partida. O resto é o que
+            Intensidade, corpo e acidez são pontos de partida. O resto é o que
             você gosta de lembrar na xícara.
           </p>
         </div>

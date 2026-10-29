@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -144,6 +144,11 @@ export function ProductForm({ mode, product }: ProductFormProps) {
 
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const errorRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (formError) errorRef.current?.focus();
+  }, [formError]);
 
   function changeType(next: ProductType) {
     setType(next);
@@ -251,8 +256,10 @@ export function ProductForm({ mode, product }: ProductFormProps) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       {formError && (
         <p
+          ref={errorRef}
+          tabIndex={-1}
           role="alert"
-          className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive"
+          className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive outline-none"
         >
           {formError}
         </p>
@@ -289,13 +296,13 @@ export function ProductForm({ mode, product }: ProductFormProps) {
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label>Tipo</Label>
+          <Label htmlFor="type">Tipo</Label>
           <Select
             value={type}
             onValueChange={(value) => changeType(value as ProductType)}
             items={typeOptions}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger id="type" className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

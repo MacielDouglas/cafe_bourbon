@@ -272,7 +272,7 @@ export function SubscriptionForm({
             A próxima entrega
           </h2>
           <div className="grid gap-6 sm:grid-cols-2">
-            <label className="flex flex-col gap-2">
+            <label htmlFor="coffee" className="flex flex-col gap-2">
               <span className="text-sm font-medium">Café do mês</span>
               <Select
                 value={coffeeId}
@@ -282,7 +282,7 @@ export function SubscriptionForm({
                   label: coffee.name,
                 }))}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger id="coffee" className="w-full">
                   <SelectValue placeholder="Escolha um café" />
                 </SelectTrigger>
                 <SelectContent>
@@ -324,7 +324,10 @@ export function SubscriptionForm({
             </fieldset>
 
             {methodApplies && (
-              <label className="flex flex-col gap-2 sm:col-span-2 sm:max-w-sm">
+              <label
+                htmlFor="brew-method"
+                className="flex flex-col gap-2 sm:col-span-2 sm:max-w-sm"
+              >
                 <span className="text-sm font-medium">
                   Método de preparo (opcional)
                 </span>
@@ -338,7 +341,7 @@ export function SubscriptionForm({
                     label: brewMethodLabel[method],
                   }))}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger id="brew-method" className="w-full">
                     <SelectValue placeholder="Qualquer método" />
                   </SelectTrigger>
                   <SelectContent>

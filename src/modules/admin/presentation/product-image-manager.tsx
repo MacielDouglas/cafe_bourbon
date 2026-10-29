@@ -6,6 +6,14 @@ import { useRouter } from "next/navigation";
 import { ImagePlusIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export function ProductImageManager({
   productId,
@@ -18,6 +26,7 @@ export function ProductImageManager({
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState(imageUrl);
   const [loading, setLoading] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   async function upload(file: File) {
     if (file.size > 4 * 1024 * 1024) {
@@ -55,7 +64,7 @@ export function ProductImageManager({
   }
 
   async function remove() {
-    if (!window.confirm("Remover a imagem deste produto?")) return;
+    setConfirmOpen(false);
     setLoading(true);
     try {
       const response = await fetch(`/api/admin/products/${productId}/image`, {
@@ -132,13 +141,37 @@ export function ProductImageManager({
             variant="ghost"
             className="text-destructive"
             disabled={loading}
-            onClick={() => void remove()}
+            onClick={() => setConfirmOpen(true)}
           >
             <Trash2Icon />
             Remover
           </Button>
         )}
       </div>
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Remover imagem</DialogTitle>
+            <DialogDescription>
+              Remover a imagem principal deste produto? Você pode enviar outra
+              depois.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={loading}
+              onClick={() => void remove()}
+            >
+              Remover
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

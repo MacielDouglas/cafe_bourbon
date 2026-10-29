@@ -56,7 +56,11 @@ export function OrderFilters({
       />
       <Select
         value={currentStatus}
-        onValueChange={(value) => setCurrentStatus(String(value))}
+        onValueChange={(value) => {
+          const nextStatus = String(value);
+          setCurrentStatus(nextStatus);
+          apply(term, nextStatus);
+        }}
         items={statusOptions}
       >
         <SelectTrigger className="sm:w-48" aria-label="Filtrar por status">

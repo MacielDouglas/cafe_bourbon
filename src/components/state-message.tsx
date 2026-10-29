@@ -11,7 +11,7 @@ export function StateMessage({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-card px-8 py-16 text-center shadow-soft sm:items-center">
+    <div className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-card px-8 py-16 shadow-soft sm:items-center sm:text-center">
       <h2 className="text-xl font-medium tracking-tight">{title}</h2>
       <p className="max-w-md text-sm text-muted-foreground">{description}</p>
       {action}

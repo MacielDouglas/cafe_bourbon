@@ -25,6 +25,23 @@ export function CredentialsForm({
     formRef.current?.querySelector<HTMLInputElement>("input")?.focus();
   }
 
+  function translateAuthError(message: string | undefined): string {
+    const normalized = message?.toLowerCase() ?? "";
+    if (/invalid email or password|incorrect password/.test(normalized)) {
+      return "E-mail ou senha incorretos.";
+    }
+    if (/already (exists|registered)|user exists/.test(normalized)) {
+      return "Já existe uma conta com este e-mail.";
+    }
+    if (/password/.test(normalized)) {
+      return "A senha precisa ter pelo menos 8 caracteres.";
+    }
+    if (/email/.test(normalized)) {
+      return "Confira o e-mail informado.";
+    }
+    return "Não foi possível continuar. Tente novamente.";
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFormError(null);
@@ -40,7 +57,7 @@ export function CredentialsForm({
         : await authClient.signIn.email({ email, password });
 
       if (result.error) {
-        showError(result.error.message ?? "Não foi possível continuar.");
+        showError(translateAuthError(result.error.message));
         return;
       }
 
@@ -95,8 +112,11 @@ export function CredentialsForm({
           autoComplete={isSignUp ? "new-password" : "current-password"}
           required
           minLength={8}
-          placeholder="Mínimo de 8 caracteres"
+          aria-describedby="password-hint"
         />
+        <span id="password-hint" className="text-xs text-muted-foreground">
+          Mínimo de 8 caracteres.
+        </span>
       </label>
 
       <Button type="submit" size="lg" disabled={loading}>

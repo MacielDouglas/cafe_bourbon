@@ -38,8 +38,8 @@ interface ApiResponse {
 
 const scaleFields = [
   { key: "intensity", label: "Intensidade", low: "Suave", high: "Marcante" },
-  { key: "acidity", label: "Acidez", low: "Baixa", high: "Vibrante" },
   { key: "body", label: "Corpo", low: "Leve", high: "Encorpado" },
+  { key: "acidity", label: "Acidez", low: "Baixa", high: "Vibrante" },
 ] as const;
 
 type ScaleKey = (typeof scaleFields)[number]["key"];
