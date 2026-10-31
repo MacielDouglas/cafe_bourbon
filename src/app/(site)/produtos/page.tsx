@@ -33,7 +33,7 @@ export default async function ProdutosPage({
             <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
               Perfis sensoriais de origem única, prontos para combinar à mesa.
               Filtre por coleção, ordene por preço e compare intensidade, corpo e
-              acidez na própria ficha. Queijos e vinhos são dados demonstrativos.
+              acidez na própria ficha. Queijos e vinhos estão disponíveis para harmonização.
             </p>
           </header>
 

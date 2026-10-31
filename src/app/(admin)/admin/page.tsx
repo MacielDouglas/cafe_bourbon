@@ -53,7 +53,7 @@ export default async function AdminHomePage() {
       <div className="flex flex-col gap-1">
         <h2 className="text-2xl font-medium tracking-tight">Visão geral</h2>
         <p className="text-sm text-muted-foreground">
-          Métricas de todos os pedidos demonstrativos desde o início. Não há
+          Métricas de todos os pedidos desde o início. Não há
           recorte por período nesta versão.
         </p>
       </div>
@@ -134,7 +134,7 @@ export default async function AdminHomePage() {
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Pedidos recentes</CardTitle>
-            <CardDescription>Últimos pedidos demonstrativos</CardDescription>
+            <CardDescription>Últimos pedidos</CardDescription>
           </div>
           <Button
             variant="outline"

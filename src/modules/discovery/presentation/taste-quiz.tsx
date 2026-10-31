@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowUpRightIcon } from "lucide-react";
 import { cn } from "cn";
-import { DemoBadge } from "@/components/demo-badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -422,7 +421,7 @@ export function TasteQuiz() {
                             <span className="text-lg font-medium">
                               {item.name}
                             </span>
-                            {item.isDemoData && <DemoBadge />}
+                            
                           </span>
                           <span className="text-sm text-muted-foreground">
                             {item.subtitle}

@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { cn } from "cn";
-import { DemoBadge } from "@/components/demo-badge";
 import { StateLink, StateMessage } from "@/components/state-message";
 import { Skeleton } from "@/components/ui/skeleton";
 import { categoryLinks } from "@/components/layout/navigation";
@@ -150,9 +149,7 @@ export default function Home() {
                     <span className="flex min-w-0 flex-col gap-0.5">
                       <span className="flex items-center gap-2 font-medium transition-colors group-hover:text-brand">
                         {category.label}
-                        {category.type !== "COFFEE" && (
-                          <DemoBadge className="font-normal" />
-                        )}
+                        
                       </span>
                       <span className="truncate text-xs text-muted-foreground">
                         {category.blurb}
@@ -252,13 +249,7 @@ export default function Home() {
                     <p className="mt-1 text-sm opacity-85">{category.blurb}</p>
                     {category.type !== "COFFEE" && (
                       <p className="mt-3">
-                        <DemoBadge
-                          className={
-                            image
-                              ? "border-creme/30 bg-espresso/40 text-creme"
-                              : undefined
-                          }
-                        />
+                        
                       </p>
                     )}
                   </div>

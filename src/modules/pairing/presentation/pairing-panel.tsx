@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { DemoBadge } from "@/components/demo-badge";
 import { Badge } from "@/components/ui/badge";
 import {
   Accordion,
@@ -36,7 +35,7 @@ function ProductChip({ product }: { product: Product }) {
       <span className="truncate text-sm font-medium">{product.name}</span>
       <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
         {productTypeLabel[product.type]}
-        {product.isDemoData && <DemoBadge />}
+        
       </span>
     </Link>
   );

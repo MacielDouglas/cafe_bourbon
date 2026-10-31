@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRightIcon, ChevronDownIcon } from "lucide-react";
 import { cn } from "cn";
-import { DemoBadge } from "@/components/demo-badge";
 import { categoryLinks, coffeeLinks } from "@/components/layout/navigation";
 import { NavLink } from "@/components/layout/nav-link";
 
@@ -33,7 +32,7 @@ export function MegaMenu({ className }: { className?: string }) {
                   >
                     <span className="flex items-center gap-2 text-base font-medium transition-colors group-hover/item:text-brand">
                       {category.label}
-                      {category.type !== "COFFEE" && <DemoBadge />}
+                      
                     </span>
                     <span className="text-sm text-muted-foreground">
                       {category.blurb}

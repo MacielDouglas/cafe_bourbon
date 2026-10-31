@@ -13,7 +13,7 @@ import {
 import { DomainError } from "@/modules/shared/domain/errors";
 
 /**
- * Mantém o carrinho demonstrativo. Toda validação de disponibilidade e preço é
+ * Mantém o carrinho. Toda validação de disponibilidade e preço é
  * feita aqui, a partir do catálogo do servidor — o cliente nunca define preço.
  */
 export class ManageCart {

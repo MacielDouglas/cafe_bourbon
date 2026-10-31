@@ -64,7 +64,6 @@ export default async function AdminOrdersPage({
         <CardTitle>Pedidos</CardTitle>
         <CardDescription>
           {filtered.length} de {orders.length} pedido(s) mais recentes.
-          Pedidos são demonstrativos.
         </CardDescription>
         <OrderFilters search={term} status={status} />
       </CardHeader>
@@ -72,7 +71,7 @@ export default async function AdminOrdersPage({
         {filtered.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             {orders.length === 0
-              ? "Nenhum pedido registrado ainda. Finalize um carrinho para gerar o primeiro pedido demonstrativo."
+              ? "Nenhum pedido registrado ainda. Finalize um carrinho para gerar o primeiro pedido."
               : "Nenhum pedido corresponde a esse filtro. Ajuste a busca ou o status."}
           </p>
         ) : (

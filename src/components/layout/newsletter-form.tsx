@@ -13,7 +13,7 @@ export function NewsletterForm() {
     if (!email.trim()) return;
     setEmail("");
     toast.success("Inscrição registrada!", {
-      description: "Demonstrativo — o envio real por e-mail será ativado em breve.",
+      description: "O envio real por e-mail será ativado em breve.",
     });
   }
 

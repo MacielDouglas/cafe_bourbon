@@ -14,7 +14,7 @@ export interface CheckoutCustomer {
 }
 
 /**
- * Checkout demonstrativo: valida o carrinho contra o catálogo do servidor e
+ * Checkout: valida o carrinho contra o catálogo do servidor e
  * delega a baixa de estoque + criação do pedido ao repositório (transação).
  */
 export class CreateOrder {

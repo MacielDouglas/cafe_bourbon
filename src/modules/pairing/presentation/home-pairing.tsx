@@ -4,7 +4,6 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, RotateCw } from "lucide-react";
-import { DemoBadge } from "@/components/demo-badge";
 import { Button } from "@/components/ui/button";
 import type { ProductType } from "@/modules/catalog/domain/value-objects";
 import { productTypeLabel } from "@/modules/catalog/presentation/labels";
@@ -95,7 +94,7 @@ export function HomePairing({ items }: { items: HomePairingItem[] }) {
                       <span className="text-xs text-muted-foreground">
                         {productTypeLabel[product.type]}
                       </span>
-                      {product.isDemoData && <DemoBadge />}
+                      
                     </Link>
                   </li>
                 ))}
@@ -133,7 +132,7 @@ export function HomePairing({ items }: { items: HomePairingItem[] }) {
 
           {hasDemo && (
             <p className="text-xs text-muted-foreground">
-              Queijos e vinhos desta sugestão são dados demonstrativos.
+              Queijos e vinhos desta sugestão estão disponíveis para harmonização.
             </p>
           )}
         </div>

@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { DemoBadge } from "@/components/demo-badge";
 import { Separator } from "@/components/ui/separator";
 import { StateLink, StateMessage } from "@/components/state-message";
 import { loadProduct } from "@/modules/catalog/presentation/data";
@@ -111,7 +110,7 @@ export default async function ProductPage({ params }: PageProps) {
             <span className="text-3xl font-medium tracking-tight">
               {price ?? "Indisponível"}
             </span>
-            {product.isDemoData && <DemoBadge />}
+            
           </div>
 
           <ProductActions

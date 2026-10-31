@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PencilIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
-import { DemoBadge } from "@/components/demo-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -192,7 +191,7 @@ export function AdminProductTable({ products }: { products: AdminProduct[] }) {
                   <div className="flex flex-col gap-1">
                     <span className="flex flex-wrap items-center gap-2 font-medium">
                       {product.name}
-                      {product.isDemoData && <DemoBadge />}
+                      
                     </span>
                     <span className="text-xs text-muted-foreground">
                       /{product.slug}

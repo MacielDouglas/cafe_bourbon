@@ -12,7 +12,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { DemoBadge } from "@/components/demo-badge";
 import { categoryLinks, coffeeLinks, primaryLinks } from "@/components/layout/navigation";
 import { NavLink } from "@/components/layout/nav-link";
 
@@ -95,7 +94,7 @@ export function MobileMenu() {
                 activeClassName="text-brand"
               >
                 {category.label}
-                {category.type !== "COFFEE" && <DemoBadge />}
+                
               </NavLink>
             ))}
             <NavLink

@@ -5,7 +5,7 @@ import { CartSkeleton } from "@/modules/commerce/presentation/skeletons";
 export const metadata = {
   title: "Carrinho",
   description:
-    "Revise os itens do seu carrinho demonstrativo. Preços sempre calculados no servidor.",
+    "Revise os itens do seu carrinho. Preços sempre calculados no servidor.",
 };
 
 export default function CarrinhoPage() {
@@ -17,7 +17,7 @@ export default function CarrinhoPage() {
         </h1>
         <p className="text-muted-foreground">
           Preços e totais são calculados no servidor a cada atualização. Nesta
-          versão o pedido é demonstrativo, sem pagamento.
+          versão o pedido é sem pagamento.
         </p>
       </header>
 

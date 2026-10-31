@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { DemoBadge } from "@/components/demo-badge";
 import type { Product } from "@/modules/catalog/domain/product";
 import { formatProductPrice } from "@/modules/catalog/presentation/format";
 import {
@@ -55,7 +54,7 @@ export function ProductCompare({
               <div className="flex flex-col gap-1">
                 <span className="flex flex-wrap items-center gap-2 text-sm font-medium">
                   {product.name}
-                  {product.isDemoData && <DemoBadge />}
+                  
                 </span>
                 <span className="text-xs text-muted-foreground">
                   {productTypeLabel[product.type]} · {productSubtitle(product)}

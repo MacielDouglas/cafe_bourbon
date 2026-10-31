@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { MinusIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
-import { DemoBadge } from "@/components/demo-badge";
 import { StateMessage } from "@/components/state-message";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -217,7 +216,7 @@ export function CartView({
         kitCount: 0,
       });
       notifyCartUpdated();
-      toast.success("Pedido demonstrativo confirmado", {
+      toast.success("Pedido confirmado", {
         description: `Pedido ${data.order.id.slice(-6)} · ${data.order.itemCount} item(ns) · ${formatCents(data.order.totalCents)}`,
       });
       router.refresh();
@@ -272,7 +271,7 @@ export function CartView({
                   </span>
                   <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     {productTypeLabel[line.type]}
-                    {line.isDemoData && <DemoBadge />}
+                    
                   </span>
                 </div>
                 <span className="shrink-0 font-medium tabular-nums">
@@ -345,7 +344,7 @@ export function CartView({
           </span>
         </div>
         <p className="text-xs text-muted-foreground">
-          Carrinho demonstrativo — preços calculados no servidor. O checkout não
+          Preços calculados no servidor. O checkout não
           realiza pagamento nesta versão.
         </p>
         <Button
@@ -355,17 +354,13 @@ export function CartView({
         >
           {pending === "__checkout__"
             ? "Confirmando..."
-            : "Finalizar pedido (demonstrativo)"}
+            : "Finalizar pedido"}
         </Button>
         <Separator />
         <Button variant="ghost" size="sm" onClick={clear} disabled={pending !== null}>
           Esvaziar carrinho
         </Button>
-        {cart.lines.some((line) => line.isDemoData) && (
-          <Badge variant="outline" className="w-fit text-muted-foreground">
-            Inclui itens demonstrativos
-          </Badge>
-        )}
+        
       </aside>
     </div>
   );

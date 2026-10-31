@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRightIcon } from "lucide-react";
 import { cn } from "cn";
-import { DemoBadge } from "@/components/demo-badge";
 import type { Product } from "@/modules/catalog/domain/product";
 import { formatProductPrice } from "@/modules/catalog/presentation/format";
 import {
@@ -89,7 +88,7 @@ export function ProductCard({
               <span>{price ?? "Indisponível"}</span>
               <span className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
                 {productTypeLabel[product.type]}
-                {product.isDemoData && <DemoBadge />}
+                
               </span>
             </div>
           </div>

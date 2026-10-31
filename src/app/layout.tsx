@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     template: "%s · Café Bourbon",
   },
   description:
-    "Cafés especiais de origem única, queijos e vinhos para harmonizar. Descubra, compare perfis sensoriais e monte sua mesa. Queijos e vinhos são dados demonstrativos.",
+    "Cafés especiais de origem única, queijos e vinhos para harmonizar. Descubra, compare perfis sensoriais e monte sua mesa.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
