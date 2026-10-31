@@ -84,16 +84,11 @@ O aplicativo inclui um assistente de IA que ajuda os usuários a descobrir combi
 
 ## Evolução do Código
 
-### Remoção de badges "demonstrativo"
-
-- **Antes**: Componente `DemoBadge` usado em 15+ arquivos com marca "Demonstrativo" em badges, textos e metadata
-- **Depois**: Componente removido totalmente, todos os imports e usos eliminados, textos substituídos por conteúdo real
 
 ### Principais mudanças recentes
 
 | Área | O que mudou |
 |------|-------------|
-| **Badges** | `DemoBadge` deletado, 67 remoções de código |
 | **Textos** | "demonstrativo" removido de descriptions, pages e toasts |
 | **CSP** | `next.config.ts` adicionou `'unsafe-eval'` para dev |
 | **IA** | Assistente Groq adicionado (Fase 7) |
