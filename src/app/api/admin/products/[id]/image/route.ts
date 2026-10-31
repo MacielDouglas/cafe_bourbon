@@ -1,14 +1,13 @@
 import { connection } from "next/server";
 import { requireOwnerApi } from "@/infrastructure/auth/api-guard";
-import { processImageToWebp } from "@/infrastructure/images/webp";
+import {
+  domainErrorResponse,
+  type IdRouteContext,
+} from "@/infrastructure/http/api";
+import { isAllowedImageMime, processImageToWebp } from "@/infrastructure/images/webp";
 import { catalogAdminUseCases } from "@/modules/catalog/presentation/composition";
-import { DomainError } from "@/modules/shared/domain/errors";
 
-interface RouteContext {
-  params: Promise<{ id: string }>;
-}
-
-export async function POST(request: Request, context: RouteContext) {
+export async function POST(request: Request, context: IdRouteContext) {
   await connection();
   const guard = await requireOwnerApi();
   if (guard.response) return guard.response;
@@ -35,6 +34,10 @@ export async function POST(request: Request, context: RouteContext) {
       { status: 413 },
     );
   }
+  // Tipo declarado precisa estar na allow-list; o conteúdo é validado depois pelo sharp.
+  if (file.type && !isAllowedImageMime(file.type)) {
+    return Response.json({ error: "Formato de imagem não suportado." }, { status: 415 });
+  }
 
   try {
     const image = await processImageToWebp(Buffer.from(await file.arrayBuffer()));
@@ -47,17 +50,11 @@ export async function POST(request: Request, context: RouteContext) {
       height: image.height,
     });
   } catch (error) {
-    if (error instanceof DomainError) {
-      return Response.json({ error: error.message }, { status: 422 });
-    }
-    return Response.json(
-      { error: "Não foi possível processar a imagem." },
-      { status: 503 },
-    );
+    return domainErrorResponse(error, "Não foi possível processar a imagem.");
   }
 }
 
-export async function DELETE(_request: Request, context: RouteContext) {
+export async function DELETE(_request: Request, context: IdRouteContext) {
   await connection();
   const guard = await requireOwnerApi();
   if (guard.response) return guard.response;
@@ -68,12 +65,6 @@ export async function DELETE(_request: Request, context: RouteContext) {
     await removeProductImage.execute(id);
     return Response.json({ ok: true });
   } catch (error) {
-    if (error instanceof DomainError) {
-      return Response.json({ error: error.message }, { status: 422 });
-    }
-    return Response.json(
-      { error: "Não foi possível remover a imagem." },
-      { status: 503 },
-    );
+    return domainErrorResponse(error, "Não foi possível remover a imagem.");
   }
 }

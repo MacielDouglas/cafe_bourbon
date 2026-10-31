@@ -1,13 +1,18 @@
 import { connection } from "next/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import {
+  domainErrorResponse,
+  parseBody,
+  rateLimitResponse,
+} from "@/infrastructure/http/api";
 import { commerceUseCases } from "@/modules/commerce/presentation/composition";
 import {
+  cartCookieKey,
   ensureCartIdentity,
   readCartIdentity,
 } from "@/modules/commerce/presentation/identity";
 import { serializeCart } from "@/modules/commerce/presentation/serialize";
-import { DomainError } from "@/modules/shared/domain/errors";
 
 const addSchema = z.object({
   productId: z.string().trim().min(1).max(64),
@@ -19,12 +24,12 @@ const setSchema = z.object({
   quantity: z.coerce.number().int().min(0).max(99),
 });
 
-function domainError(error: unknown): Response | null {
-  if (error instanceof DomainError) {
-    return Response.json({ error: error.message }, { status: 422 });
-  }
-  return null;
-}
+const removeSchema = z.object({
+  productId: z.string().trim().min(1).max(64),
+});
+
+const RATE_LIMIT = 60;
+const RATE_WINDOW_MS = 60_000;
 
 export async function GET() {
   await connection();
@@ -35,44 +40,34 @@ export async function GET() {
 
 export async function POST(request: Request) {
   await connection();
-  const parsed = addSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) {
-    return Response.json(
-      { error: "Payload inválido.", issues: parsed.error.issues },
-      { status: 400 },
-    );
-  }
+  const blocked = rateLimitResponse(request, "cart", RATE_LIMIT, RATE_WINDOW_MS, {
+    subkey: cartCookieKey(request),
+  });
+  if (blocked) return blocked;
+
+  const parsed = await parseBody(addSchema, request);
+  if (!parsed.ok) return parsed.response;
 
   try {
     const { getCart, manageCart } = commerceUseCases();
     const identity = await ensureCartIdentity();
-    await manageCart.add(
-      identity,
-      parsed.data.productId,
-      parsed.data.quantity ?? 1,
-    );
+    await manageCart.add(identity, parsed.data.productId, parsed.data.quantity ?? 1);
     revalidatePath("/carrinho");
     return Response.json(serializeCart(await getCart.execute(identity)));
   } catch (error) {
-    return (
-      domainError(error) ??
-      Response.json(
-        { error: "Não foi possível adicionar ao carrinho." },
-        { status: 503 },
-      )
-    );
+    return domainErrorResponse(error, "Não foi possível adicionar ao carrinho.");
   }
 }
 
 export async function PATCH(request: Request) {
   await connection();
-  const parsed = setSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) {
-    return Response.json(
-      { error: "Payload inválido.", issues: parsed.error.issues },
-      { status: 400 },
-    );
-  }
+  const blocked = rateLimitResponse(request, "cart", RATE_LIMIT, RATE_WINDOW_MS, {
+    subkey: cartCookieKey(request),
+  });
+  if (blocked) return blocked;
+
+  const parsed = await parseBody(setSchema, request);
+  if (!parsed.ok) return parsed.response;
 
   try {
     const { getCart, manageCart } = commerceUseCases();
@@ -85,28 +80,41 @@ export async function PATCH(request: Request) {
     revalidatePath("/carrinho");
     return Response.json(serializeCart(await getCart.execute(identity)));
   } catch (error) {
-    return (
-      domainError(error) ??
-      Response.json(
-        { error: "Não foi possível atualizar o carrinho." },
-        { status: 503 },
-      )
-    );
+    return domainErrorResponse(error, "Não foi possível atualizar o carrinho.");
   }
 }
 
 export async function DELETE(request: Request) {
   await connection();
-  const productId = new URL(request.url).searchParams.get("productId");
-  const { getCart, manageCart } = commerceUseCases();
-  const identity = await ensureCartIdentity();
+  const blocked = rateLimitResponse(request, "cart", RATE_LIMIT, RATE_WINDOW_MS, {
+    subkey: cartCookieKey(request),
+  });
+  if (blocked) return blocked;
 
-  if (productId) {
-    await manageCart.remove(identity, productId);
-  } else {
-    await manageCart.clear(identity);
+  const rawProductId = new URL(request.url).searchParams.get("productId");
+  let productId: string | null = null;
+  if (rawProductId !== null) {
+    const parsed = removeSchema.safeParse({ productId: rawProductId });
+    if (!parsed.success) {
+      return Response.json(
+        { error: "Produto inválido.", issues: parsed.error.issues },
+        { status: 400 },
+      );
+    }
+    productId = parsed.data.productId;
   }
 
-  revalidatePath("/carrinho");
-  return Response.json(serializeCart(await getCart.execute(identity)));
+  try {
+    const { getCart, manageCart } = commerceUseCases();
+    const identity = await ensureCartIdentity();
+    if (productId) {
+      await manageCart.remove(identity, productId);
+    } else {
+      await manageCart.clear(identity);
+    }
+    revalidatePath("/carrinho");
+    return Response.json(serializeCart(await getCart.execute(identity)));
+  } catch (error) {
+    return domainErrorResponse(error, "Não foi possível atualizar o carrinho.");
+  }
 }

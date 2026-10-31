@@ -1,11 +1,14 @@
 import { connection } from "next/server";
 import { revalidatePath } from "next/cache";
+import {
+  domainErrorResponse,
+  rateLimitResponse,
+} from "@/infrastructure/http/api";
 import { currentUser } from "@/infrastructure/auth/authorization";
 import { commerceUseCases } from "@/modules/commerce/presentation/composition";
 import { ensureCartIdentity } from "@/modules/commerce/presentation/identity";
-import { DomainError } from "@/modules/shared/domain/errors";
 
-export async function POST() {
+export async function POST(request: Request) {
   await connection();
   const user = await currentUser();
   if (!user) {
@@ -14,6 +17,12 @@ export async function POST() {
       { status: 401 },
     );
   }
+
+  const blocked = rateLimitResponse(request, "checkout", 15, 60_000, {
+    subkey: user.id,
+    message: "Muitas tentativas de compra. Aguarde um instante.",
+  });
+  if (blocked) return blocked;
 
   const identity = await ensureCartIdentity();
   try {
@@ -31,12 +40,6 @@ export async function POST() {
       },
     });
   } catch (error) {
-    if (error instanceof DomainError) {
-      return Response.json({ error: error.message }, { status: 422 });
-    }
-    return Response.json(
-      { error: "Não foi possível concluir o pedido." },
-      { status: 503 },
-    );
+    return domainErrorResponse(error, "Não foi possível concluir o pedido.");
   }
 }

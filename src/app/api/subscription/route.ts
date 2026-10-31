@@ -1,8 +1,12 @@
 import { connection } from "next/server";
 import { createSubscriptionInputSchema } from "@/modules/commerce/domain/subscription";
+import {
+  domainErrorResponse,
+  parseBody,
+  rateLimitResponse,
+} from "@/infrastructure/http/api";
 import { commerceUseCases } from "@/modules/commerce/presentation/composition";
 import { currentUserId } from "@/modules/commerce/presentation/identity";
-import { DomainError } from "@/modules/shared/domain/errors";
 
 export async function POST(request: Request) {
   await connection();
@@ -15,15 +19,18 @@ export async function POST(request: Request) {
     );
   }
 
-  const parsed = createSubscriptionInputSchema.safeParse(
-    await request.json().catch(() => null),
+  const blocked = rateLimitResponse(request, "subscription", 15, 60_000, {
+    subkey: userId,
+    message: "Muitas tentativas de assinatura. Aguarde um instante.",
+  });
+  if (blocked) return blocked;
+
+  const parsed = await parseBody(
+    createSubscriptionInputSchema,
+    request,
+    "Dados da assinatura inválidos.",
   );
-  if (!parsed.success) {
-    return Response.json(
-      { error: "Dados da assinatura inválidos.", issues: parsed.error.issues },
-      { status: 400 },
-    );
-  }
+  if (!parsed.ok) return parsed.response;
 
   try {
     const { createSubscription } = commerceUseCases();
@@ -49,12 +56,6 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (error) {
-    if (error instanceof DomainError) {
-      return Response.json({ error: error.message }, { status: 422 });
-    }
-    return Response.json(
-      { error: "Não foi possível concluir a assinatura." },
-      { status: 503 },
-    );
+    return domainErrorResponse(error, "Não foi possível concluir a assinatura.");
   }
 }

@@ -1,5 +1,9 @@
 import { connection } from "next/server";
 import {
+  parseBody,
+  rateLimitResponse,
+} from "@/infrastructure/http/api";
+import {
   productSubtitle,
   productTypeLabel,
 } from "@/modules/catalog/presentation/labels";
@@ -9,20 +13,13 @@ import { discoveryUseCases } from "@/modules/discovery/presentation/composition"
 export async function POST(request: Request) {
   await connection();
 
-  let payload: unknown;
-  try {
-    payload = await request.json();
-  } catch {
-    return Response.json({ error: "Corpo da requisição inválido." }, { status: 400 });
-  }
+  const blocked = rateLimitResponse(request, "recommendations", 30, 60_000, {
+    message: "Muitas recomendações em pouco tempo. Aguarde um instante.",
+  });
+  if (blocked) return blocked;
 
-  const parsed = tasteProfileSchema.safeParse(payload);
-  if (!parsed.success) {
-    return Response.json(
-      { error: "Perfil de paladar inválido.", issues: parsed.error.issues },
-      { status: 400 },
-    );
-  }
+  const parsed = await parseBody(tasteProfileSchema, request, "Perfil de paladar inválido.");
+  if (!parsed.ok) return parsed.response;
 
   try {
     const { recommendProductsFromPreferences } = discoveryUseCases();

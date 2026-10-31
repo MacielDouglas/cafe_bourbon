@@ -12,9 +12,6 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Legado estático (referência, fora do build Next):
-    "legacy/**",
-    "y/**",
   ]),
 ]);
 

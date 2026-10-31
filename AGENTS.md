@@ -17,7 +17,7 @@
   - SEMPRE reaproveitar componentes de `@/components/ui` quando existir um equivalente.
   - Só criar componente próprio se nenhum componente shadcn/BaseUI atender — e justificar.
   - Personalizar via `cn()` + tokens do tema, nunca com CSS global ad-hoc.
-  - NÃO usar Bootstrap em hipótese alguma (o legado vendored será removido).
+  - NÃO usar Bootstrap em hipótese alguma (o código legado já foi removido do repositório).
 - Better Auth para autenticação (email/senha + OAuth quando configurado), integrado ao Prisma.
 - Prisma ORM v7 (major estável; NÃO usar Prisma 8 RC) + Neon PostgreSQL via `@prisma/adapter-neon`.
 - Groq API somente no servidor, atrás da abstração `LanguageModelProvider`.

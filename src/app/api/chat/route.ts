@@ -1,6 +1,6 @@
 import { connection } from "next/server";
 import { z } from "zod";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { rateLimitResponse } from "@/infrastructure/http/api";
 import { assistantUseCases } from "@/modules/assistant/presentation/composition";
 import { catalogUseCases } from "@/modules/catalog/presentation/composition";
 
@@ -11,31 +11,17 @@ const chatRequestSchema = z.object({
 const RATE_LIMIT = 10;
 const RATE_WINDOW_MS = 60_000;
 
-function clientIp(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0]?.trim() ?? "unknown";
-  return request.headers.get("x-real-ip") ?? "unknown";
-}
-
 export async function POST(request: Request) {
   await connection();
 
-  const gate = checkRateLimit(
-    `chat:${clientIp(request)}`,
+  const blocked = rateLimitResponse(
+    request,
+    "chat",
     RATE_LIMIT,
     RATE_WINDOW_MS,
+    { message: "Muitas mensagens em pouco tempo. Aguarde um instante." },
   );
-  if (!gate.allowed) {
-    return Response.json(
-      { error: "Muitas mensagens em pouco tempo. Aguarde um instante." },
-      {
-        status: 429,
-        headers: {
-          "Retry-After": String(Math.ceil(gate.retryAfterMs / 1000)),
-        },
-      },
-    );
-  }
+  if (blocked) return blocked;
 
   let payload: unknown;
   try {

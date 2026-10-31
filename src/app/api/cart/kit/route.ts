@@ -1,10 +1,17 @@
 import { connection } from "next/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import {
+  domainErrorResponse,
+  parseBody,
+  rateLimitResponse,
+} from "@/infrastructure/http/api";
 import { commerceUseCases } from "@/modules/commerce/presentation/composition";
-import { ensureCartIdentity } from "@/modules/commerce/presentation/identity";
+import {
+  cartCookieKey,
+  ensureCartIdentity,
+} from "@/modules/commerce/presentation/identity";
 import { serializeCart } from "@/modules/commerce/presentation/serialize";
-import { DomainError } from "@/modules/shared/domain/errors";
 
 const kitSchema = z.object({
   productIds: z
@@ -15,13 +22,13 @@ const kitSchema = z.object({
 
 export async function POST(request: Request) {
   await connection();
-  const parsed = kitSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) {
-    return Response.json(
-      { error: "Kit inválido.", issues: parsed.error.issues },
-      { status: 400 },
-    );
-  }
+  const blocked = rateLimitResponse(request, "cart-kit", 60, 60_000, {
+    subkey: cartCookieKey(request),
+  });
+  if (blocked) return blocked;
+
+  const parsed = await parseBody(kitSchema, request, "Kit inválido.");
+  if (!parsed.ok) return parsed.response;
 
   try {
     const { getCart, manageCart } = commerceUseCases();
@@ -30,12 +37,6 @@ export async function POST(request: Request) {
     revalidatePath("/carrinho");
     return Response.json(serializeCart(await getCart.execute(identity)));
   } catch (error) {
-    if (error instanceof DomainError) {
-      return Response.json({ error: error.message }, { status: 422 });
-    }
-    return Response.json(
-      { error: "Não foi possível adicionar o kit ao carrinho." },
-      { status: 503 },
-    );
+    return domainErrorResponse(error, "Não foi possível adicionar o kit ao carrinho.");
   }
 }

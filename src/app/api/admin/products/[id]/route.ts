@@ -1,40 +1,32 @@
 import { connection } from "next/server";
 import { requireOwnerApi } from "@/infrastructure/auth/api-guard";
+import {
+  domainErrorResponse,
+  type IdRouteContext,
+} from "@/infrastructure/http/api";
 import { catalogAdminUseCases } from "@/modules/catalog/presentation/composition";
-import { DomainError } from "@/modules/shared/domain/errors";
 
-interface RouteContext {
-  params: Promise<{ id: string }>;
-}
-
-function domainError(error: unknown, fallback: string): Response {
-  if (error instanceof DomainError) {
-    return Response.json({ error: error.message }, { status: 422 });
-  }
-  return Response.json({ error: fallback }, { status: 503 });
-}
-
-export async function PUT(request: Request, context: RouteContext) {
+export async function PUT(request: Request, context: IdRouteContext) {
   await connection();
   const guard = await requireOwnerApi();
   if (guard.response) return guard.response;
 
   const { id } = await context.params;
-  const parsed = await request.json().catch(() => null);
-  if (parsed === null) {
+  const body: unknown = await request.json().catch(() => null);
+  if (body === null) {
     return Response.json({ error: "Payload inválido." }, { status: 400 });
   }
 
   try {
     const { manageProducts } = catalogAdminUseCases();
-    const product = await manageProducts.update(id, parsed);
+    const product = await manageProducts.update(id, body);
     return Response.json({ id: product.id.value });
   } catch (error) {
-    return domainError(error, "Não foi possível atualizar o produto.");
+    return domainErrorResponse(error, "Não foi possível atualizar o produto.");
   }
 }
 
-export async function PATCH(request: Request, context: RouteContext) {
+export async function PATCH(request: Request, context: IdRouteContext) {
   await connection();
   const guard = await requireOwnerApi();
   if (guard.response) return guard.response;
@@ -58,11 +50,11 @@ export async function PATCH(request: Request, context: RouteContext) {
     }
     return Response.json({ ok: true });
   } catch (error) {
-    return domainError(error, "Não foi possível atualizar o produto.");
+    return domainErrorResponse(error, "Não foi possível atualizar o produto.");
   }
 }
 
-export async function DELETE(_request: Request, context: RouteContext) {
+export async function DELETE(_request: Request, context: IdRouteContext) {
   await connection();
   const guard = await requireOwnerApi();
   if (guard.response) return guard.response;
@@ -73,6 +65,6 @@ export async function DELETE(_request: Request, context: RouteContext) {
     await manageProducts.delete(id);
     return Response.json({ ok: true });
   } catch (error) {
-    return domainError(error, "Não foi possível excluir o produto.");
+    return domainErrorResponse(error, "Não foi possível excluir o produto.");
   }
 }

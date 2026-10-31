@@ -51,8 +51,8 @@ Uma vitrine de café especial que torna visível o porquê de cada recomendaçã
 
 ## Evidence on Hand
 
-- Descrições sensoriais e perfis dos quatro cafés em `prisma/seed.ts` e no conteúdo legado em `legacy/*.html`.
-- Imagens de café em `public/images/` (quatro produtos, preparo, rosquinha e endereço) e ícones de métodos em `legacy/img/icones/`.
+- Descrições sensoriais e perfis dos quatro cafés em `prisma/seed.ts` (o site legado foi removido do repositório).
+- Imagens de café em `public/images/` (quatro produtos, preparo, rosquinha e endereço).
 - Imagens genéricas `public/images/queijos.jpg` e `public/images/vinhos.jpg`; não há fotos reais de queijos ou vinhos.
 - Contato e cidade reais do legado.
 - **Ausências que não devem ser preenchidas por invenção:** depoimentos, clientes, imprensa, benchmarks, prêmios, números de vendas e catálogo real de queijos/vinhos.

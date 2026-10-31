@@ -546,7 +546,12 @@ async function upsertProduct(seed: SeedProduct): Promise<string> {
 async function seedOwner(): Promise<void> {
   const email = "coffeemen@coffee.com";
   const name = "CoffeMen";
-  const password = "teste1234";
+  const password = process.env.SEED_OWNER_PASSWORD;
+  if (!password || password.length < 12) {
+    throw new Error(
+      "SEED_OWNER_PASSWORD ausente ou fraca (mínimo 12 caracteres). Defina no .env antes de rodar db:seed.",
+    );
+  }
 
   const user = await prisma.user.upsert({
     where: { email },
@@ -567,7 +572,7 @@ async function seedOwner(): Promise<void> {
         password: await hashPassword(password),
       },
     });
-    console.log(`Usuário owner criado: ${email} (senha inicial: ${password}).`);
+    console.log(`Usuário owner criado: ${email} (senha definida via SEED_OWNER_PASSWORD).`);
     return;
   }
 
@@ -575,6 +580,16 @@ async function seedOwner(): Promise<void> {
 }
 
 async function main() {
+  if (
+    process.env.NODE_ENV === "production" &&
+    process.env.ALLOW_PRODUCTION_SEED !== "true"
+  ) {
+    console.log(
+      "Seed ignorado em produção (defina ALLOW_PRODUCTION_SEED=true para forçar).",
+    );
+    return;
+  }
+
   const idBySlug = new Map<string, string>();
   for (const seed of products) {
     idBySlug.set(seed.slug, await upsertProduct(seed));

@@ -12,6 +12,20 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  // Rate limit explícito (evita depender de defaults implícitos da lib).
+  // Em produção o armazenamento é o próprio banco; em dev fica desligado para
+  // não interferir na suíte e2e.
+  rateLimit: {
+    enabled: process.env.NODE_ENV === "production",
+    storage: "database",
+    window: 60,
+    max: 30,
+    customRules: {
+      "/sign-in": { window: 60, max: 5 },
+      "/sign-up": { window: 60, max: 3 },
+      "/sign-out": { window: 60, max: 10 },
+    },
+  },
   user: {
     additionalFields: {
       role: {

@@ -65,7 +65,3 @@ next-env.d.ts
 .github/hooks/impeccable.json
 .github/skills/impeccable/
 
-# legacy firebase hosting (projeto estático antigo)
-.firebase
-.firebaserc
-firebase.json
