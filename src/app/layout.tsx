@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   },
   description:
     "Cafés especiais de origem única, queijos e vinhos para harmonizar. Descubra, compare perfis sensoriais e monte sua mesa.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
