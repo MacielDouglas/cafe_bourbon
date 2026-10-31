@@ -251,3 +251,17 @@ model Verification {
 
   @@map("verification")
 }
+
+// Rate limit table used by Better Auth (tabela gerada pelo `better-auth generate`)
+// Se já existir em produção, remova esta model e rode o migration correspondente.
+model RateLimit {
+  id        String    @id @default(uuid())
+  key       String
+  cost      Int
+  expiresAt DateTime
+  count     Int       @default(0)
+  lastRequest DateTime?
+  createdAt DateTime @default(now())
+
+  @@unique([key])
+}
