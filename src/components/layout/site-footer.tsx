@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpIcon } from "lucide-react";
+import { ArrowUpIcon, ExternalLinkIcon, MessageCircleIcon } from "lucide-react";
 import { CopyrightYear } from "@/components/layout/copyright-year";
 import { Logo } from "@/components/layout/logo";
 import { NewsletterForm } from "@/components/layout/newsletter-form";
@@ -113,12 +113,70 @@ export function SiteFooter() {
             <ArrowUpIcon className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
           </Link>
         </div>
-      </div>
 
-      <div className="border-t border-border">
-        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <p>© <CopyrightYear /> Café Bourbon. Todos os direitos reservados.</p>
-          <p>Feito com café, queijo e vinho.</p>
+        <div className="border-t border-border">
+          <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+            <p>© <CopyrightYear /> Café Bourbon. Todos os direitos reservados.</p>
+            <p>Feito com café, queijo e vinho.</p>
+            <div className="flex gap-6 pt-2">
+              <a
+                href="https://github.com/MacielDouglas"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-brand transition-colors"
+              >
+                <ExternalLinkIcon className="size-4" /> GitHub
+              </a>
+              <a
+                href="https://wa.me/5516997029282"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-brand transition-colors"
+              >
+                <MessageCircleIcon className="size-4" /> WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-border pt-6">
+          <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-xs text-muted-foreground sm-flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+            <p>Desenvolvedor: Douglas Maciel</p>
+            <div className="flex gap-3">
+              <a
+                href="https://github.com/MacielDouglas"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-brand transition-colors"
+              >
+                GitHub
+              </a>
+              <a
+                href="https://macield.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-brand transition-colors"
+              >
+                Portfólio
+              </a>
+              <a
+                href="https://queimandopanela.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-brand transition-colors"
+              >
+                Queimando panela
+              </a>
+              <a
+                href="https://direcciones.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-brand transition-colors"
+              >
+                Direcciones
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
