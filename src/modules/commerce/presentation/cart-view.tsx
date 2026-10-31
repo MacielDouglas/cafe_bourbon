@@ -116,6 +116,14 @@ export function CartView({
     });
   }
 
+  function addLine(productId: string, quantity: number) {
+    return send(productId, "/api/cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId, quantity }),
+    });
+  }
+
   async function removeLine(productId: string) {
     const line = cart.lines.find((item) => item.productId === productId);
     const ok = await send(
@@ -127,7 +135,7 @@ export function CartView({
       toast.success(`${line.name} removido`, {
         action: {
           label: "Desfazer",
-          onClick: () => void setQuantity(line.productId, line.quantity),
+          onClick: () => void addLine(line.productId, line.quantity),
         },
       });
     }
@@ -156,7 +164,7 @@ export function CartView({
       await Promise.all(
         lines.map((line) =>
           fetch("/api/cart", {
-            method: "PATCH",
+            method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(line),
           }),

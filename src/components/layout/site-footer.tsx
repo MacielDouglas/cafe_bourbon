@@ -106,7 +106,7 @@ export function SiteFooter() {
             Café Bourbon · Franca, SP
           </p>
           <Link
-            href="#conteudo"
+            href="#topo"
             className="group inline-flex min-h-9 w-fit items-center gap-2 rounded-sm text-sm font-medium text-foreground/75 outline-none transition-colors hover:text-brand focus-visible:ring-2 focus-visible:ring-ring/60"
           >
             Voltar ao topo

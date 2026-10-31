@@ -73,6 +73,7 @@ export function SubscriptionForm({
   const [loading, setLoading] = useState(false);
   const [confirmed, setConfirmed] = useState<string | null>(null);
   const hydrated = useRef(false);
+  const draftRead = useRef(false);
 
   const selectedPlan = plans.find((item) => item.id === plan);
   const selectedCoffee = coffees.find((coffee) => coffee.id === coffeeId);
@@ -88,46 +89,48 @@ export function SubscriptionForm({
   useEffect(() => {
     if (!hydrated.current) {
       hydrated.current = true;
-      let cancelled = false;
       queueMicrotask(() => {
-        if (cancelled) return;
         try {
           const raw = sessionStorage.getItem(DRAFT_KEY);
-          if (!raw) return;
-          const draft = JSON.parse(raw) as SubscriptionDraft;
-          const matchingPlan = plans.find((item) => item.id === draft.plan);
-          if (matchingPlan) {
-            setPlan(matchingPlan.id);
-          }
-          if (draft.coffeeId && coffees.some((item) => item.id === draft.coffeeId)) {
-            setCoffeeId(draft.coffeeId);
-          }
-          let nextGrind: GrindOption = "GRAOS";
-          if (
-            draft.grind &&
-            grindOptions.some((item) => item.value === draft.grind)
-          ) {
-            nextGrind = draft.grind;
-            setGrind(nextGrind);
-          }
-          if (
-            nextGrind === "MOIDO" &&
-            (draft.brewMethod === "" ||
-              (draft.brewMethod && brewMethods.includes(draft.brewMethod)))
-          ) {
-            setBrewMethod(draft.brewMethod);
-          } else {
-            setBrewMethod("");
+          if (raw) {
+            const draft = JSON.parse(raw) as SubscriptionDraft;
+            const matchingPlan = plans.find((item) => item.id === draft.plan);
+            if (matchingPlan) {
+              setPlan(matchingPlan.id);
+            }
+            if (
+              draft.coffeeId &&
+              coffees.some((item) => item.id === draft.coffeeId)
+            ) {
+              setCoffeeId(draft.coffeeId);
+            }
+            let nextGrind: GrindOption = "GRAOS";
+            if (
+              draft.grind &&
+              grindOptions.some((item) => item.value === draft.grind)
+            ) {
+              nextGrind = draft.grind;
+              setGrind(nextGrind);
+            }
+            if (
+              nextGrind === "MOIDO" &&
+              (draft.brewMethod === "" ||
+                (draft.brewMethod && brewMethods.includes(draft.brewMethod)))
+            ) {
+              setBrewMethod(draft.brewMethod);
+            } else {
+              setBrewMethod("");
+            }
           }
         } catch {
           sessionStorage.removeItem(DRAFT_KEY);
         }
+        draftRead.current = true;
       });
-      return () => {
-        cancelled = true;
-      };
+      return;
     }
 
+    if (!draftRead.current) return;
     sessionStorage.setItem(
       DRAFT_KEY,
       JSON.stringify({ plan, coffeeId, grind, brewMethod }),
@@ -311,7 +314,7 @@ export function SubscriptionForm({
                     key={option.value}
                     className="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-border bg-card px-4 text-sm transition-colors has-data-[checked]:border-brand/40 has-data-[checked]:bg-brand/5 focus-within:ring-2 focus-within:ring-ring/60"
                   >
-                    <RadioGroupItem value={option.value} />
+                    <RadioGroupItem value={option.value} aria-label={option.label} />
                     {option.label}
                   </label>
                 ))}

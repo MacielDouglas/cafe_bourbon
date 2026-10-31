@@ -68,7 +68,7 @@
   --secondary: oklch(0.945 0.014 78);
   --secondary-foreground: oklch(0.2 0.014 55);
   --muted: oklch(0.952 0.011 80);
-  --muted-foreground: oklch(0.47 0.016 62);
+  --muted-foreground: oklch(0.42 0.016 62);
   --accent: oklch(0.922 0.018 72);
   --accent-foreground: oklch(0.2 0.014 55);
   --destructive: oklch(0.577 0.245 27.325);
@@ -168,6 +168,13 @@
   --color-creme: oklch(0.976 0.01 82);
   --color-linho: oklch(0.945 0.014 78);
   --color-bordo: oklch(0.42 0.13 27);
+}
+
+html [data-sonner-toaster][data-sonner-theme="light"] {
+  --success-text: hsl(140, 100%, 25%);
+  --info-text: hsl(210, 100%, 30%);
+  --warning-text: hsl(49, 100%, 25%);
+  --error-text: hsl(360, 100%, 38%);
 }
 
 /* Coreografia da home: a foto assenta, o texto ganha foco e a mesa entra.

@@ -28,7 +28,9 @@ export default async function AdminLayout({
           <Logo className="text-foreground" />
           <div className="hidden h-6 w-px bg-border sm:block" aria-hidden />
           <div>
-            <p className="text-sm font-medium tracking-tight">Painel da casa</p>
+            <h1 className="text-sm font-medium tracking-tight">
+              Painel da casa
+            </h1>
             <p className="text-xs text-muted-foreground">
               Conectado como {user.name} ({user.email})
             </p>

@@ -40,7 +40,11 @@ export function CartIndicator() {
     <Button
       variant="ghost"
       size="icon"
-      aria-label={count > 0 ? `Carrinho (${count} itens)` : "Carrinho"}
+      aria-label={
+        count > 0
+          ? `Carrinho ${count} ${count === 1 ? "item" : "itens"}`
+          : "Carrinho"
+      }
       aria-current={active ? "page" : undefined}
       nativeButton={false}
       render={<Link href="/carrinho" prefetch={false} />}

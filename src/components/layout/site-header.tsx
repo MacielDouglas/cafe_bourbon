@@ -36,7 +36,7 @@ function DesktopNav() {
 
 export function SiteHeader() {
   return (
-    <div>
+    <>
       <AnnouncementBar />
       <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex h-18 max-w-7xl items-center gap-4 px-4 sm:gap-6 sm:px-6 lg:gap-8 lg:px-8">
@@ -59,6 +59,6 @@ export function SiteHeader() {
           </div>
         </div>
       </header>
-    </div>
+    </>
   );
 }

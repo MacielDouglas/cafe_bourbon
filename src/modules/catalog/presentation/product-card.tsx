@@ -85,9 +85,9 @@ export function ProductCard({
 
           <div className="mt-auto flex flex-col gap-2 border-t border-border/70 pt-2">
             <SensoryProfile sensory={product.sensory} compact />
-            <div className="flex items-center justify-between gap-2 text-sm">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
               <span>{price ?? "Indisponível"}</span>
-              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
                 {productTypeLabel[product.type]}
                 {product.isDemoData && <DemoBadge />}
               </span>

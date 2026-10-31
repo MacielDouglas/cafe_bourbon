@@ -76,15 +76,15 @@ export async function Harmonizer({ coffeeSlug }: { coffeeSlug?: string }) {
               </p>
             </div>
 
-            <dl className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3">
               {axes.map((axis) => (
                 <div key={axis.label} className="flex flex-col gap-1.5">
-                  <div className="flex items-baseline justify-between gap-3 text-xs">
+                  <dl className="flex items-baseline justify-between gap-3 text-xs">
                     <dt className="text-muted-foreground">{axis.label}</dt>
                     <dd className="tabular-nums text-foreground/75">
                       {axis.value}/5
                     </dd>
-                  </div>
+                  </dl>
                   <div className="grid grid-cols-5 gap-1" aria-hidden>
                     {Array.from({ length: 5 }).map((_, index) => (
                       <span
@@ -98,7 +98,7 @@ export async function Harmonizer({ coffeeSlug }: { coffeeSlug?: string }) {
                   </div>
                 </div>
               ))}
-            </dl>
+            </div>
 
             {sensory && sensory.notes.length > 0 && (
               <p className="text-xs leading-relaxed text-muted-foreground">
@@ -158,7 +158,7 @@ export async function Harmonizer({ coffeeSlug }: { coffeeSlug?: string }) {
             Escolha um café ao lado para ver queijos e vinhos que conversam com
             o perfil sensorial dele.
           </p>
-          <p className="flex items-center gap-2 text-sm text-foreground/60">
+          <p className="flex items-center gap-2 text-sm text-foreground/75">
             <span>Café</span>
             <span className="text-brand">+</span>
             <span>Queijo</span>
