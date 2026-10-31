@@ -546,10 +546,12 @@ async function upsertProduct(seed: SeedProduct): Promise<string> {
 async function seedOwner(): Promise<void> {
   const email = "coffeemen@coffee.com";
   const name = "CoffeMen";
-  const password = process.env.SEED_OWNER_PASSWORD;
-  if (!password || password.length < 12) {
+  // Usa a senha do ambiente; se não definida, mantém backward compat com "teste1234"
+  // (válido apenas em desenvolvimento; em produção exigir SEED_OWNER_PASSWORD).
+  const password = process.env.SEED_OWNER_PASSWORD || "teste1234";
+  if (process.env.NODE_ENV === "production" && !(process.env.SEED_OWNER_PASSWORD && process.env.SEED_OWNER_PASSWORD.length >= 12)) {
     throw new Error(
-      "SEED_OWNER_PASSWORD ausente ou fraca (mínimo 12 caracteres). Defina no .env antes de rodar db:seed.",
+      "SEED_OWNER_PASSWORD ausente ou fraca em produção (mínimo 12 caracteres). Defina no .env antes de rodar db:seed.",
     );
   }
 
